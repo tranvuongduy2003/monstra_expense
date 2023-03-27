@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "519891393566",
+    "project_id": "monstra-expense",
+    "storage_bucket": "monstra-expense.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:519891393566:android:f3e93e6ed66272c5b0e20f",
+        "android_client_info": {
+          "package_name": "com.monstra_expense"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "519891393566-e1qnm5re5mphlfsrbosr05v3bdph1t6h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.monstra_expense",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "519891393566-0fib5n8tfooeqak3qu2neb14544ji5u8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxy5mCMOclASWjThpUyMciIVlww7XgswY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "519891393566-0fib5n8tfooeqak3qu2neb14544ji5u8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
