@@ -1,7 +1,7 @@
 import React from 'react';
 import {Provider} from 'react-redux';
-import {store} from './app/store';
-import {AppNavigation} from './navigation/appNavigation';
+import {store} from 'app/store';
+import {AppNavigation} from 'navigation/appNavigation';
 
 interface IAppProps {}
 
