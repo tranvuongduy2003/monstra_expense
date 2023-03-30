@@ -1,21 +1,18 @@
 import React from 'react';
-import {
-  StyleSheet, View, Dimensions
-} from 'react-native';
+import {StyleSheet, View, Dimensions} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import { AppColors } from 'constants/AppColors';
+import {AppColors} from 'constants/AppColors';
 import scale from 'constants/Responsive';
 
 interface IProfileScreenProps {}
 
 const ProfileScreen: React.FunctionComponent<IProfileScreenProps> = props => {
-  
   return (
     <SafeAreaView style={styles.container}>
-      <View style = {styles.headerContainer}>
-      <View style={styles.avatar}>
-      </View>
-      
+      <View style={styles.headerContainer}>
+        <View style={styles.avatar}>
+          
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -47,7 +44,7 @@ const styles = StyleSheet.create({
     height: 'auto',
     fontWeight: scale(500),
     color: AppColors.introDesc,
-  }
+  },
 });
 
 export default ProfileScreen;
