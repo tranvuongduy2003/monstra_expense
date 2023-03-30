@@ -1,10 +1,11 @@
 import React from 'react';
-import {View, Text, Dimensions, StyleSheet} from 'react-native';
+import {TouchableOpacity, Text, Dimensions, StyleSheet} from 'react-native';
 
 interface IAppButtonProps {
   backgroundColor: string;
   title: string;
   color?: string;
+  onPress?: () => void;
 }
 
 const {width} = Dimensions.get('screen');
@@ -13,11 +14,14 @@ const AppButton: React.FunctionComponent<IAppButtonProps> = ({
   backgroundColor,
   title,
   color = '#FCFCFC',
+  onPress = () => {},
 }) => {
   return (
-    <View style={[styles.container, {backgroundColor}]}>
+    <TouchableOpacity
+      style={[styles.container, {backgroundColor}]}
+      onPress={onPress}>
       <Text style={[styles.title, {color}]}>{title}</Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 
