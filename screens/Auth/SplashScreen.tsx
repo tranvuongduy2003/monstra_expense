@@ -4,13 +4,14 @@ import {
   Text,
   StyleSheet,
   View,
-  ImageSourcePropType,
-  FlatList,
   Dimensions,
+  ScrollView,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {AppColors} from 'constants/AppColors';
 import Slider from './components/slider/Slider';
+import {SliderItems, SliderItemType} from './components/slider/SliderData';
+import AppButton from 'components/AppButton';
 
 interface ISplashScreenProps {}
 
@@ -20,21 +21,48 @@ const SplashScreen: React.FunctionComponent<ISplashScreenProps> = props => {
   const [isDisplayIntro, setIsDisplayIntro] = useState<boolean>(false);
 
   return (
-    <SafeAreaView>
+    <>
       {!isDisplayIntro ? (
-        <TouchableOpacity
-          style={styles.childContainer}
-          onPress={() => setIsDisplayIntro(true)}>
-          <Text style={styles.splashText}>monstra</Text>
-        </TouchableOpacity>
+        <SafeAreaView>
+          <TouchableOpacity
+            style={styles.childContainer}
+            onPress={() => setIsDisplayIntro(true)}>
+            <Text style={styles.splashText}>monstra</Text>
+          </TouchableOpacity>
+        </SafeAreaView>
       ) : (
-        <Slider />
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'space-between',
+          }}>
+          <View style={styles.slider}>
+            <Slider data={SliderItems} />
+          </View>
+          <View style={styles.buttonContainer}>
+            <AppButton
+              title="Sign Up"
+              backgroundColor={AppColors.primaryColor}
+            />
+            <AppButton
+              title="Sign Up"
+              backgroundColor={AppColors.lightPurple}
+              color={AppColors.primaryColor}
+            />
+          </View>
+        </ScrollView>
       )}
-    </SafeAreaView>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    height,
+  },
+  slider: {
+    paddingBottom: 'auto',
+  },
   childContainer: {
     width,
     height,
@@ -47,6 +75,11 @@ const styles = StyleSheet.create({
     color: '#EEEEEE',
     fontSize: 56,
     fontWeight: '700',
+  },
+  buttonContainer: {
+    paddingHorizontal: 20,
+    gap: 16,
+    marginBottom: 40,
   },
 });
 
