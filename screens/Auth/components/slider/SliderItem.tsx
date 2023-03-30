@@ -38,16 +38,19 @@ const SliderItem: React.FunctionComponent<ISliderItemProps> = ({
 const styles = StyleSheet.create({
   container: {
     width,
-    height,
     alignItems: 'center',
+    paddingHorizontal: 32,
+    paddingTop: 32,
+    paddingBottom: 40,
   },
   image: {
-    flex: 0.6,
-    width: '100%',
+    width: width - 64,
+    height: width - 64,
   },
   content: {
     flex: 0.4,
     alignItems: 'center',
+    marginTop: 40,
   },
   title: {
     color: AppColors.introTitle,

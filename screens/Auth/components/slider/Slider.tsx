@@ -13,7 +13,9 @@ import Pagination from './Pagination';
 import {SliderItems} from './SliderData';
 import SliderItem from './SliderItem';
 
-interface ISliderProps {}
+interface ISliderProps {
+  data: any;
+}
 
 type OnScrollEventHandler = (
   event: NativeSyntheticEvent<NativeScrollEvent>,
@@ -24,7 +26,7 @@ type OnViewableItemsChangedEventHandler = (info: {
   changed: ViewToken[];
 }) => void;
 
-const Slider: React.FunctionComponent<ISliderProps> = () => {
+const Slider: React.FunctionComponent<ISliderProps> = ({data}) => {
   const [index, setIndex] = useState(0);
 
   const scrollX = useRef<Animated.Value>(new Animated.Value(0)).current;
@@ -58,7 +60,7 @@ const Slider: React.FunctionComponent<ISliderProps> = () => {
   return (
     <View>
       <FlatList
-        data={SliderItems}
+        data={data}
         renderItem={({item}) => {
           return (
             <SliderItem
@@ -76,7 +78,7 @@ const Slider: React.FunctionComponent<ISliderProps> = () => {
         onViewableItemsChanged={handleOnViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
       />
-      <Pagination scrollX={scrollX} index={index} />
+      <Pagination data={data} scrollX={scrollX} index={index} />
     </View>
   );
 };
