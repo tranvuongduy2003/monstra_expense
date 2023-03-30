@@ -8,7 +8,7 @@ interface IAppProps {}
 const App: React.FunctionComponent<IAppProps> = props => {
   return (
     <Provider store={store}>
-      <AppNavigation />
+      <AppNavigation/>
     </Provider>
   );
 };
