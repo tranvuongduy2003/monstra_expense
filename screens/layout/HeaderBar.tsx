@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    backgroundColor: AppColors.screenColor,
   },
   psuedoBackIcon: {
     opacity: 0,

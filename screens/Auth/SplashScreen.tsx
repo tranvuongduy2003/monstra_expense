@@ -38,7 +38,8 @@ const SplashScreen: React.FunctionComponent<ISplashScreenProps> = props => {
           contentContainerStyle={{
             flexGrow: 1,
             justifyContent: 'space-between',
-          }}>
+          }}
+          style={{backgroundColor: AppColors.screenColor}}>
           <View style={styles.slider}>
             <Slider data={SliderItems} />
           </View>

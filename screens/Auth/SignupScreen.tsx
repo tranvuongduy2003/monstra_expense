@@ -1,14 +1,32 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, ScrollView, StyleSheet} from 'react-native';
+import Input from 'components/Input';
+import {AppColors} from 'constants/AppColors';
+import Checkbox from 'components/Checkbox';
 
 interface ISignUpScreenProps {}
 
 const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
   return (
-    <View>
-      <Text>SignUp Screen</Text>
-    </View>
+    <ScrollView style={{backgroundColor: AppColors.screenColor}}>
+      <View style={styles.inputContainer}>
+        <Input placeholder="Name" />
+        <Input placeholder="Email" />
+        <Input placeholder="Password" isPassword={true} />
+      </View>
+      <View>
+        <Checkbox />
+      </View>
+    </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  inputContainer: {
+    marginTop: 56,
+    paddingHorizontal: 16,
+    gap: 24,
+  },
+});
 
 export default SignUpScreen;
