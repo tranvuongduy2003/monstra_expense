@@ -10,8 +10,9 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {AppColors} from 'constants/AppColors';
 import Slider from './components/slider/Slider';
-import {SliderItems, SliderItemType} from './components/slider/SliderData';
+import {SliderItems} from './components/slider/SliderData';
 import AppButton from 'components/AppButton';
+import {useNavigation} from '@react-navigation/native';
 
 interface ISplashScreenProps {}
 
@@ -19,6 +20,8 @@ const {width, height} = Dimensions.get('screen');
 
 const SplashScreen: React.FunctionComponent<ISplashScreenProps> = props => {
   const [isDisplayIntro, setIsDisplayIntro] = useState<boolean>(false);
+
+  const navigation = useNavigation();
 
   return (
     <>
@@ -43,11 +46,13 @@ const SplashScreen: React.FunctionComponent<ISplashScreenProps> = props => {
             <AppButton
               title="Sign Up"
               backgroundColor={AppColors.primaryColor}
+              onPress={() => navigation.navigate('SignUp' as never)}
             />
             <AppButton
-              title="Sign Up"
+              title="Login"
               backgroundColor={AppColors.lightPurple}
               color={AppColors.primaryColor}
+              onPress={() => navigation.navigate('Login' as never)}
             />
           </View>
         </ScrollView>
