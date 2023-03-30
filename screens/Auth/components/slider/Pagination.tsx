@@ -4,19 +4,21 @@ import {StyleSheet, View, Animated, Dimensions} from 'react-native';
 import {AppColors} from 'constants/AppColors';
 
 interface IPaginationProps {
+  data: any;
   scrollX: Animated.Value;
   index: number;
 }
 
-const {width} = Dimensions.get('screen');
+const {width, height} = Dimensions.get('screen');
 
 const Pagination: React.FunctionComponent<IPaginationProps> = ({
+  data,
   scrollX,
   index,
 }) => {
   return (
     <View style={styles.container}>
-      {SliderItems.map((_, idx) => {
+      {data.map((_: any, idx: number) => {
         const inputRange = [(idx - 1) * width, idx * width, (idx + 1) * width];
 
         const dotSize = scrollX.interpolate({
@@ -51,10 +53,10 @@ const Pagination: React.FunctionComponent<IPaginationProps> = ({
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 35,
     alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
+    bottom: 0,
   },
   dot: {
     width: 8,
