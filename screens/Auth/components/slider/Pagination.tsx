@@ -1,5 +1,4 @@
 import React from 'react';
-import {SliderItems} from './SliderData';
 import {StyleSheet, View, Animated, Dimensions} from 'react-native';
 import {AppColors} from 'constants/AppColors';
 

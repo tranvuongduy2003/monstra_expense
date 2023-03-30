@@ -5,12 +5,10 @@ import {
   Animated,
   NativeSyntheticEvent,
   NativeScrollEvent,
-  StyleSheet,
   ViewToken,
   ViewabilityConfig,
 } from 'react-native';
 import Pagination from './Pagination';
-import {SliderItems} from './SliderData';
 import SliderItem from './SliderItem';
 
 interface ISliderProps {

@@ -4,4 +4,5 @@ export const AppColors = {
   introDesc: '#91919F',
   lightPurple: '#EEE5FF',
   cultured: '#F6F6F6',
+  headerTitle: '#212325',
 };
