@@ -5,16 +5,18 @@ import {AppColors} from 'constants/AppColors';
 interface IQuestionProps {
   content: string;
   highlightedContent: string;
+  onPressHighlight: () => void;
 }
 
 const Question: React.FunctionComponent<IQuestionProps> = ({
   content,
   highlightedContent,
+  onPressHighlight,
 }) => {
   return (
     <View style={styles.questionContainer}>
       <Text style={styles.questionText}>{content} </Text>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={onPressHighlight}>
         <Text
           style={[
             styles.questionText,

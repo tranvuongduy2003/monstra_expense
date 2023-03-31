@@ -13,10 +13,13 @@ import AppButton from 'components/AppButton';
 import GoogleIcon from 'assets/svg/GoogleIcon';
 import Question from './components/question/Question';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useNavigation} from '@react-navigation/native';
 
 interface ISignUpScreenProps {}
 
 const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
+  const navigation = useNavigation();
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <ScrollView style={{backgroundColor: AppColors.screenColor}}>
@@ -47,6 +50,7 @@ const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
         <Question
           content="Already have an account?"
           highlightedContent="Login"
+          onPressHighlight={() => navigation.navigate('Login' as never)}
         />
       </ScrollView>
     </SafeAreaView>

@@ -11,10 +11,13 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import Input from 'components/Input';
 import AppButton from 'components/AppButton';
 import Question from './components/question/Question';
+import {useNavigation} from '@react-navigation/native';
 
 interface ILoginScreenProps {}
 
 const LoginScreen: React.FunctionComponent<ILoginScreenProps> = props => {
+  const navigation = useNavigation();
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <ScrollView style={{backgroundColor: AppColors.screenColor}}>
@@ -25,12 +28,15 @@ const LoginScreen: React.FunctionComponent<ILoginScreenProps> = props => {
         <View style={styles.buttonContainer}>
           <AppButton title="Login" backgroundColor={AppColors.primaryColor} />
         </View>
-        <TouchableOpacity style={styles.forgetPasswordContainer}>
+        <TouchableOpacity
+          style={styles.forgetPasswordContainer}
+          onPress={() => navigation.navigate('ForgotPassword' as never)}>
           <Text style={styles.forgetPasswordText}>Forgot Password?</Text>
         </TouchableOpacity>
         <Question
           content="Don't have an account yet?"
           highlightedContent="Sign Up"
+          onPressHighlight={() => navigation.navigate('SignUp' as never)}
         />
       </ScrollView>
     </SafeAreaView>
