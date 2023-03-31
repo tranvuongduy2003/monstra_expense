@@ -20,6 +20,13 @@ interface ISignUpScreenProps {}
 const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
   const navigation = useNavigation();
 
+  const handleSignUp = () => {
+    navigation.navigate('Verification' as never);
+  };
+  const handleSignUpWithGoogle = () => {
+    navigation.navigate('Verification' as never);
+  };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <ScrollView style={{backgroundColor: AppColors.screenColor}}>
@@ -38,9 +45,13 @@ const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
           </Text>
         </View>
         <View style={styles.buttonContainer}>
-          <AppButton title="Sign Up" backgroundColor={AppColors.primaryColor} />
+          <AppButton
+            title="Sign Up"
+            backgroundColor={AppColors.primaryColor}
+            onPress={handleSignUp}
+          />
           <Text style={styles.breakText}>Or with</Text>
-          <AppButton>
+          <AppButton onPress={handleSignUpWithGoogle}>
             <View style={styles.googleButtonContent}>
               <GoogleIcon />
               <Text style={styles.googleButtonText}>Sign Up with Google</Text>

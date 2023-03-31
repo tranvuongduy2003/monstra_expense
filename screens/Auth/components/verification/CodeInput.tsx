@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {
   CodeField,
-  Cursor,
   useBlurOnFulfill,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
@@ -30,7 +29,7 @@ const CodeInput: React.FunctionComponent<ICodeInputProps> = () => {
         cellCount={CELL_COUNT}
         keyboardType="number-pad"
         textContentType="oneTimeCode"
-        renderCell={({index, symbol, isFocused}) => (
+        renderCell={({index, symbol}) => (
           <View
             key={index}
             style={{justifyContent: 'center'}}

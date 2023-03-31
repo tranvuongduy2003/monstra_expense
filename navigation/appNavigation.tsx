@@ -19,13 +19,6 @@ export function AppNavigation(props: IAppNavigationProps) {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name="Verification"
-          component={VerificationScreen}
-          options={{
-            header: () => <HeaderBar name="Verification" />,
-          }}
-        />
-        <Stack.Screen
           name="Splash"
           component={SplashScreen}
           options={{headerShown: false}}
@@ -37,7 +30,13 @@ export function AppNavigation(props: IAppNavigationProps) {
             header: () => <HeaderBar name="Sign Up" />,
           }}
         />
-
+        <Stack.Screen
+          name="Verification"
+          component={VerificationScreen}
+          options={{
+            header: () => <HeaderBar name="Verification" />,
+          }}
+        />
         <Stack.Screen
           name="Login"
           component={LoginScreen}

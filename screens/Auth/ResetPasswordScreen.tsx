@@ -1,10 +1,9 @@
 import React from 'react';
-import {View, ScrollView, TouchableOpacity, Text} from 'react-native';
+import {View, ScrollView} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {AppColors} from 'constants/AppColors';
 import {useNavigation} from '@react-navigation/native';
 import Input from 'components/Input';
-import Question from './components/question/Question';
 import AppButton from 'components/AppButton';
 
 interface IResetPasswordScreenProps {}
