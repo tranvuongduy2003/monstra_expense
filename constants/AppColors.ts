@@ -5,4 +5,7 @@ export const AppColors = {
   lightPurple: '#EEE5FF',
   cultured: '#F6F6F6',
   headerTitle: '#212325',
+  white: '#FFFFFF',
+  lavender: '#EEE5FF',
+  mistyRose: '#FFE2E4',
 };

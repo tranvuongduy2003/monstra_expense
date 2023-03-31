@@ -5,6 +5,7 @@ import SplashScreen from 'screens/Auth/SplashScreen';
 import SignUpScreen from 'screens/Auth/SignupScreen';
 import LoginScreen from 'screens/Auth/LoginScreen';
 import HeaderBar from 'screens/layout/HeaderBar';
+import ProfileScreen from 'screens/Profile/ProfileScreen';
 
 export interface IAppNavigationProps {}
 
@@ -14,6 +15,13 @@ export function AppNavigation(props: IAppNavigationProps) {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            headerShown: false
+          }}
+        />
         <Stack.Screen
           name="Splash"
           component={SplashScreen}
