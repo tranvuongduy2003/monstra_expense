@@ -30,7 +30,7 @@ export function AppNavigation(props: IAppNavigationProps) {
           name="Login"
           component={LoginScreen}
           options={{
-            header: () => <HeaderBar name="Sign Up" />,
+            header: () => <HeaderBar name="Login" />,
           }}
         />
       </Stack.Navigator>
