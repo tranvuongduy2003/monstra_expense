@@ -12,38 +12,44 @@ import Checkbox from 'components/Checkbox';
 import AppButton from 'components/AppButton';
 import GoogleIcon from 'assets/svg/GoogleIcon';
 import Question from './components/question/Question';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 interface ISignUpScreenProps {}
 
 const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
   return (
-    <ScrollView style={{backgroundColor: AppColors.screenColor}}>
-      <View style={styles.inputContainer}>
-        <Input placeholder="Name" />
-        <Input placeholder="Email" />
-        <Input placeholder="Password" isPassword={true} />
-      </View>
-      <View style={styles.privacyContainer}>
-        <Checkbox />
-        <Text style={styles.privaryText}>
-          By signing up, you agree to the{' '}
-          <Text style={{color: AppColors.primaryColor}}>
-            Terms of Service and Privacy Policy
+    <SafeAreaView style={{flex: 1}}>
+      <ScrollView style={{backgroundColor: AppColors.screenColor}}>
+        <View style={styles.inputContainer}>
+          <Input placeholder="Name" />
+          <Input placeholder="Email" />
+          <Input placeholder="Password" isPassword={true} />
+        </View>
+        <View style={styles.privacyContainer}>
+          <Checkbox />
+          <Text style={styles.privaryText}>
+            By signing up, you agree to the{' '}
+            <Text style={{color: AppColors.primaryColor}}>
+              Terms of Service and Privacy Policy
+            </Text>
           </Text>
-        </Text>
-      </View>
-      <View style={styles.buttonContainer}>
-        <AppButton title="Sign Up" backgroundColor={AppColors.primaryColor} />
-        <Text style={styles.breakText}>Or with</Text>
-        <AppButton>
-          <View style={styles.googleButtonContent}>
-            <GoogleIcon />
-            <Text style={styles.googleButtonText}>Sign Up with Google</Text>
-          </View>
-        </AppButton>
-      </View>
-      <Question content="Already have an account?" highlightedContent="Login" />
-    </ScrollView>
+        </View>
+        <View style={styles.buttonContainer}>
+          <AppButton title="Sign Up" backgroundColor={AppColors.primaryColor} />
+          <Text style={styles.breakText}>Or with</Text>
+          <AppButton>
+            <View style={styles.googleButtonContent}>
+              <GoogleIcon />
+              <Text style={styles.googleButtonText}>Sign Up with Google</Text>
+            </View>
+          </AppButton>
+        </View>
+        <Question
+          content="Already have an account?"
+          highlightedContent="Login"
+        />
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

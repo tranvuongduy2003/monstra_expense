@@ -14,7 +14,7 @@ export function AppNavigation(props: IAppNavigationProps) {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen
+        {/* <Stack.Screen
           name="Splash"
           component={SplashScreen}
           options={{headerShown: false}}
@@ -25,7 +25,7 @@ export function AppNavigation(props: IAppNavigationProps) {
           options={{
             header: () => <HeaderBar name="Sign Up" />,
           }}
-        />
+        /> */}
         <Stack.Screen
           name="Login"
           component={LoginScreen}

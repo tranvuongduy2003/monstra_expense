@@ -13,14 +13,14 @@ const Question: React.FunctionComponent<IQuestionProps> = ({
 }) => {
   return (
     <View style={styles.questionContainer}>
-      <Text style={styles.questionText}>Already have an account? </Text>
+      <Text style={styles.questionText}>{content} </Text>
       <TouchableOpacity>
         <Text
           style={[
             styles.questionText,
             {color: AppColors.primaryColor, textDecorationLine: 'underline'},
           ]}>
-          Login
+          {highlightedContent}
         </Text>
       </TouchableOpacity>
     </View>
