@@ -1,11 +1,13 @@
-import React from 'react';
+import React, {ReactElement} from 'react';
 import {TouchableOpacity, Text, Dimensions, StyleSheet} from 'react-native';
+import {AppColors} from 'constants/AppColors';
 
 interface IAppButtonProps {
-  backgroundColor: string;
-  title: string;
+  backgroundColor?: string;
+  title?: string;
   color?: string;
   onPress?: () => void;
+  children?: ReactElement;
 }
 
 const {width} = Dimensions.get('screen');
@@ -15,12 +17,18 @@ const AppButton: React.FunctionComponent<IAppButtonProps> = ({
   title,
   color = '#FCFCFC',
   onPress = () => {},
+  children,
 }) => {
   return (
     <TouchableOpacity
-      style={[styles.container, {backgroundColor}]}
+      style={[
+        styles.container,
+        backgroundColor
+          ? {backgroundColor: backgroundColor}
+          : styles.whiteButton,
+      ]}
       onPress={onPress}>
-      <Text style={[styles.title, {color}]}>{title}</Text>
+      {title ? <Text style={[styles.title, {color}]}>{title}</Text> : children}
     </TouchableOpacity>
   );
 };
@@ -35,6 +43,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     textAlign: 'center',
+  },
+  whiteButton: {
+    borderWidth: 1,
+    borderColor: AppColors.borderColor,
   },
 });
 

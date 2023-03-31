@@ -14,7 +14,7 @@ const HeaderBar: React.FunctionComponent<IHeaderBarProps> = ({name}) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.goBack()}>
-        <ArrowLeftIconOutline color={AppColors.headerTitle} />
+        <ArrowLeftIconOutline color={AppColors.primaryTextColor} />
       </TouchableOpacity>
       <Text style={styles.title}>{name}</Text>
       <ArrowLeftIconOutline style={styles.psuedoBackIcon} />
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '600',
-    color: AppColors.headerTitle,
+    color: AppColors.primaryTextColor,
     lineHeight: 22,
   },
 });
