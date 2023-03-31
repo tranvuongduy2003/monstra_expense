@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     width: scale(80),
     height: scale(80),
     borderRadius: 40,
-    backgroundColor: AppColors.introDesc,
+    backgroundColor: AppColors.headerTitle,
   },
   userNameContainer: {
     width: 'auto',
