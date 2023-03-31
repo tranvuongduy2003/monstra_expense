@@ -3,6 +3,7 @@ import {StyleSheet, View, Text, Button, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {AppColors} from 'constants/AppColors';
 import scale from 'constants/Responsive';
+import BottomBar from 'components/BottomBar';
 
 interface IProfileScreenProps {}
 
@@ -47,7 +48,9 @@ const ProfileScreen: React.FunctionComponent<IProfileScreenProps> = props => {
           <View style={styles.blankSpace}></View>
         </View>
       </View>
-      <View style={styles.bottomContainer}></View>
+      <View style={styles.bottomContainer}>
+        <BottomBar></BottomBar>
+      </View>
     </SafeAreaView>
   );
 };
@@ -151,7 +154,8 @@ const styles = StyleSheet.create({
   },
   bottomContainer:{
     flex: 113,
-    backgroundColor: AppColors.mistyRose,
+    backgroundColor: "#F5D432",
+    flexDirection: 'column-reverse',
   }
 });
 
