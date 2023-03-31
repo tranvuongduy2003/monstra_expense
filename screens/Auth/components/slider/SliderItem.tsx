@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   title: {
-    color: AppColors.introTitle,
+    color: AppColors.primaryTextColor,
     fontWeight: '700',
     fontSize: 32,
     lineHeight: 39,
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   desc: {
-    color: AppColors.introDesc,
+    color: AppColors.secondaryTextColor,
     fontWeight: '500',
     fontSize: 16,
     lineHeight: 19,

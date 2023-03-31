@@ -24,21 +24,20 @@ const SplashScreen: React.FunctionComponent<ISplashScreenProps> = props => {
   const navigation = useNavigation();
 
   return (
-    <>
+    <SafeAreaView style={{flex: 1}}>
       {!isDisplayIntro ? (
-        <SafeAreaView>
-          <TouchableOpacity
-            style={styles.childContainer}
-            onPress={() => setIsDisplayIntro(true)}>
-            <Text style={styles.splashText}>monstra</Text>
-          </TouchableOpacity>
-        </SafeAreaView>
+        <TouchableOpacity
+          style={styles.childContainer}
+          onPress={() => setIsDisplayIntro(true)}>
+          <Text style={styles.splashText}>monstra</Text>
+        </TouchableOpacity>
       ) : (
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
             justifyContent: 'space-between',
-          }}>
+          }}
+          style={{backgroundColor: AppColors.screenColor}}>
           <View style={styles.slider}>
             <Slider data={SliderItems} />
           </View>
@@ -57,7 +56,7 @@ const SplashScreen: React.FunctionComponent<ISplashScreenProps> = props => {
           </View>
         </ScrollView>
       )}
-    </>
+    </SafeAreaView>
   );
 };
 
