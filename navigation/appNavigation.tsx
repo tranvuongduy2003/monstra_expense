@@ -3,6 +3,7 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import SplashScreen from 'screens/Auth/SplashScreen';
 import SignUpScreen from 'screens/Auth/SignupScreen';
+import VerificationScreen from 'screens/Auth/VerificationScreen';
 import LoginScreen from 'screens/Auth/LoginScreen';
 import HeaderBar from 'screens/layout/HeaderBar';
 import ForgotPasswordScreen from 'screens/Auth/ForgotPasswordScreen';
@@ -18,6 +19,13 @@ export function AppNavigation(props: IAppNavigationProps) {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
+          name="Verification"
+          component={VerificationScreen}
+          options={{
+            header: () => <HeaderBar name="Verification" />,
+          }}
+        />
+        <Stack.Screen
           name="Splash"
           component={SplashScreen}
           options={{headerShown: false}}
@@ -29,6 +37,7 @@ export function AppNavigation(props: IAppNavigationProps) {
             header: () => <HeaderBar name="Sign Up" />,
           }}
         />
+
         <Stack.Screen
           name="Login"
           component={LoginScreen}
