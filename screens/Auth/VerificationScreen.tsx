@@ -4,7 +4,7 @@ import {View, ScrollView, StyleSheet, Text} from 'react-native';
 import {AppColors} from 'constants/AppColors';
 import AppButton from 'components/AppButton';
 import {useNavigation} from '@react-navigation/native';
-import CodeInput from './components/verification/CodeInput';
+import CodeInput from './components/code/CodeInput';
 
 interface IVerificationScreenProps {}
 

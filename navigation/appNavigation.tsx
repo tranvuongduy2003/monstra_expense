@@ -9,6 +9,8 @@ import HeaderBar from 'screens/layout/HeaderBar';
 import ForgotPasswordScreen from 'screens/Auth/ForgotPasswordScreen';
 import SentEmailScreen from 'screens/Auth/SentEmailScreen';
 import ResetPasswordScreen from 'screens/Auth/ResetPasswordScreen';
+import SetupPINScreen from 'screens/Auth/SetupPINScreen';
+import RetypePINScreen from 'screens/Auth/RetypePINScreen';
 
 export interface IAppNavigationProps {}
 
@@ -18,6 +20,20 @@ export function AppNavigation(props: IAppNavigationProps) {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen
+          name="RetypePIN"
+          component={RetypePINScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="SetupPIN"
+          component={SetupPINScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
         <Stack.Screen
           name="Splash"
           component={SplashScreen}
@@ -37,6 +53,7 @@ export function AppNavigation(props: IAppNavigationProps) {
             header: () => <HeaderBar name="Verification" />,
           }}
         />
+
         <Stack.Screen
           name="Login"
           component={LoginScreen}
