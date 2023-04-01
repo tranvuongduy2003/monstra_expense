@@ -6,4 +6,5 @@ export const AppColors = {
   cultured: '#F6F6F6',
   screenColor: '#FFFFFF',
   borderColor: '#F1F1FA',
+  whiteText: '#FCFCFC',
 };

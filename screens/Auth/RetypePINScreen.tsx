@@ -5,12 +5,15 @@ import {AppColors} from 'constants/AppColors';
 import SecureCodeInput from './components/code/SecureCodeInput';
 import KeyboardCell from './components/custom/KeyboardCell';
 import CustomKeyboard from './components/custom/CustomKeyboard';
+import {useNavigation} from '@react-navigation/native';
 
 interface IRetypePINScreenProps {}
 
 const RetypePINScreen: React.FunctionComponent<
   IRetypePINScreenProps
 > = props => {
+  const navigation = useNavigation();
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <ScrollView
@@ -28,7 +31,9 @@ const RetypePINScreen: React.FunctionComponent<
           </View>
         </View>
         <View>
-          <CustomKeyboard />
+          <CustomKeyboard
+            onSubmit={() => navigation.navigate('SetupAccountScreen' as never)}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -6,17 +6,39 @@ import {useNavigation} from '@react-navigation/native';
 
 interface IHeaderBarProps {
   name: string;
+  backgroundColor?: string;
+  color?: string;
 }
 
-const HeaderBar: React.FunctionComponent<IHeaderBarProps> = ({name}) => {
+const HeaderBar: React.FunctionComponent<IHeaderBarProps> = ({
+  name,
+  backgroundColor,
+  color,
+}) => {
   const navigation = useNavigation();
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: backgroundColor
+            ? backgroundColor
+            : AppColors.screenColor,
+        },
+      ]}>
       <TouchableOpacity onPress={() => navigation.goBack()}>
-        <ArrowLeftIconOutline color={AppColors.primaryTextColor} />
+        <ArrowLeftIconOutline
+          color={color ? color : AppColors.primaryTextColor}
+        />
       </TouchableOpacity>
-      <Text style={styles.title}>{name}</Text>
+      <Text
+        style={[
+          styles.title,
+          {color: color ? color : AppColors.primaryTextColor},
+        ]}>
+        {name}
+      </Text>
       <ArrowLeftIconOutline style={styles.psuedoBackIcon} />
     </View>
   );
@@ -28,7 +50,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: AppColors.screenColor,
   },
   psuedoBackIcon: {
     opacity: 0,
@@ -36,7 +57,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '600',
-    color: AppColors.primaryTextColor,
     lineHeight: 22,
   },
 });
