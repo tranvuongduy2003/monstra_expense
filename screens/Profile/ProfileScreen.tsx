@@ -3,7 +3,11 @@ import {StyleSheet, View, Text, Button, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {AppColors} from 'constants/AppColors';
 import scale from 'constants/Responsive';
-import BottomBar from 'components/BottomBar';
+import AccountIcon from 'assets/svg/AccountIcon';
+import SettingsIcon from 'assets/svg/SettingsIcon';
+import ExportIcon from 'assets/svg/ExportIcon';
+import LogoutIcon from 'assets/svg/LogoutIcon';
+import EditIcon from 'assets/svg/EditIcon';
 
 interface IProfileScreenProps {}
 
@@ -16,32 +20,43 @@ const ProfileScreen: React.FunctionComponent<IProfileScreenProps> = props => {
           <View style={styles.userNameContainer}>
             <Text style={styles.label}>Username</Text>
             <Text style={styles.userName}>Nhat Vy</Text>
-          </View> 
+          </View>
+          <TouchableOpacity style={styles.edit}>
+            <EditIcon></EditIcon> 
+          </TouchableOpacity>
         </View>
         <View style={styles.bodyContainer}>
           <View style={styles.contentContainer}>
             <TouchableOpacity style={styles.contentButtonTop}>
               <View style={styles.content}>
-                <View style={styles.iconContainer}></View>
+                <View style={styles.icons}>
+                  <AccountIcon></AccountIcon>
+                </View>
                 <Text style={styles.contentTitle}>Account</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity style={styles.contentButtonMid}>
               <View style={styles.content}>
-                <View style={styles.iconContainer}></View>
-                <Text style={styles.contentTitle}>Account</Text>
+                <View style={styles.icons}>
+                  <SettingsIcon></SettingsIcon>
+                </View>
+                <Text style={styles.contentTitle}>Settings</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity style={styles.contentButtonMid}>
               <View style={styles.content}>
-                <View style={styles.iconContainer}></View>
-                <Text style={styles.contentTitle}>Account</Text>
+                <View style={styles.icons}>
+                  <ExportIcon></ExportIcon>
+                </View>
+                <Text style={styles.contentTitle}>Export Data</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity style={styles.contentButtonBot}>
               <View style={styles.content}>
-                <View style={styles.iconContainer}></View>
-                <Text style={styles.contentTitle}>Account</Text>
+                <View style={styles.logoutIC}>
+                  <LogoutIcon></LogoutIcon>
+                </View>
+                <Text style={styles.contentTitle}>Logout</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -49,7 +64,7 @@ const ProfileScreen: React.FunctionComponent<IProfileScreenProps> = props => {
         </View>
       </View>
       <View style={styles.bottomContainer}>
-        <BottomBar></BottomBar>
+        {/* <BottomBar></BottomBar> */}
       </View>
     </SafeAreaView>
   );
@@ -70,18 +85,19 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.cultured,
     alignSelf: 'center',
     flexDirection:'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   avatar: {
     width: scale(80),
     height: scale(80),
     borderRadius: 40,
-    backgroundColor: AppColors.headerTitle,
+    backgroundColor: AppColors.mistyRose,
   },
   userNameContainer: {
-    width: 'auto',
+    width: scale(186),
     marginTop: scale(13),
     marginLeft: scale(19),
+    backgroundColor: AppColors.cultured,
   },
   label: {
     fontSize: scale(14),
@@ -90,6 +106,13 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: scale(24),
     fontFamily: 'Inter-SemiBold'
+  },
+  edit:{
+    width: scale(40),
+    height: scale(40),
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: AppColors.cultured,
   },
   bodyContainer: {
     width: scale(336),
@@ -136,11 +159,22 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     flexDirection: 'row',
   },
-  iconContainer: {
+  icons: {
     width: scale(50),
     height: scale(50),
     alignItems: 'center',
     alignSelf: 'center',
+    justifyContent: 'center',
+    borderRadius: 15,
+    backgroundColor: AppColors.lavender,
+    padding: scale(10),
+  },
+  logoutIC: {
+    width: scale(50),
+    height: scale(50),
+    alignItems: 'center',
+    alignSelf: 'center',
+    justifyContent: 'center',
     borderRadius: 15,
     backgroundColor: AppColors.mistyRose,
     padding: scale(10),
@@ -154,8 +188,7 @@ const styles = StyleSheet.create({
   },
   bottomContainer:{
     flex: 113,
-    backgroundColor: "#F5D432",
-    flexDirection: 'column-reverse',
+    backgroundColor: AppColors.cultured,
   }
 });
 
