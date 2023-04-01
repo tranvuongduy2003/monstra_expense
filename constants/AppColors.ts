@@ -11,4 +11,5 @@ export const AppColors = {
   screenColor: '#FFFFFF',
   borderColor: '#F1F1FA',
   whiteText: '#FCFCFC',
+  titleColor: '#292B2D',
 };

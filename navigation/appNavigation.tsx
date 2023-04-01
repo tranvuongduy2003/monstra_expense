@@ -14,6 +14,7 @@ import SetupPINScreen from 'screens/Auth/SetupPINScreen';
 import RetypePINScreen from 'screens/Auth/RetypePINScreen';
 import SetupAccountScreen from 'screens/Auth/SetupAccountScreen';
 import AddNewAccountScreen from 'screens/Auth/AddNewAccountScreen';
+import SettingsScreen from 'screens/Auth/Settings/SettingScreen';
 import SetScreen from 'screens/Auth/SetScreen';
 import {AppColors} from 'constants/AppColors';
 
@@ -25,6 +26,13 @@ export function AppNavigation(props: IAppNavigationProps) {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+      <Stack.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{
+            header: () => <HeaderBar name="Settings" />,
+          }}
+        />
         <Stack.Screen
           name="Profile"
           component={ProfileScreen}
