@@ -8,20 +8,17 @@ import CheckedIcon from 'assets/svg/CheckedIcon';
 import { Currency, CurrencyDATA } from './indexCurrency';
 
 interface ICurrencyScreenProps {
-    item: Currency;
+    item?: Currency;
     onPress?: () => void;
     children?: ReactElement;
 }
 
-const CurrencyScreen: React.FunctionComponent<ICurrencyScreenProps> = ({
-}) => {
-    const [selectedId, setSelectedId] = useState<string>();
-
-    const renderItem = ({item}: {item: Currency}) => {
+const Option = (item: any, onPress: any, selectedId: any) => {
+    const OptionComponent = () => {
         return (
             <TouchableOpacity 
             style={styles.settingButton} 
-            onPress={() => {}}>
+            onPress={onPress}>
             <View style={styles.content}>
                 <Text style={styles.title}>{item?.title}</Text>
                 {selectedId === item.id ? 
@@ -31,15 +28,38 @@ const CurrencyScreen: React.FunctionComponent<ICurrencyScreenProps> = ({
           </View>
         </TouchableOpacity>
         );
+    }
+    return {OptionComponent};
+}
+
+const CurrencyScreen: React.FunctionComponent<ICurrencyScreenProps> = ({
+
+}) => {
+    const optionComponent = Option;
+    const [selectedId, setSelectedId] = useState(null);
+
+    const renderOption = (item: any) => {
+        const {OptionComponent} = optionComponent(item, ()=>toggleSelect(item), selectedId)
+        return {OptionComponent};
   };
+
+  function toggleSelect(item: any) {
+    if (item?.id === selectedId) {
+        setSelectedId(null)
+    }
+    else {
+        setSelectedId(item)
+    }
+}
 
   return (
     <SafeAreaView style={styles.container}>
         <View style={styles.settingContainer}>
             <FlatList
                 data={CurrencyDATA}
-                renderItem={renderItem}
-                keyExtractor={item => item.id}
+                //keyExtractor={item => item.id}
+                keyExtractor={(_, index) => String(index)}
+                renderItem={({item}) => renderOption(item)}
                 extraData={selectedId}
             ></FlatList>
         </View>
