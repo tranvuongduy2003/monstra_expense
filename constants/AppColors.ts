@@ -10,4 +10,5 @@ export const AppColors = {
   mistyRose: '#FFE2E4',
   screenColor: '#FFFFFF',
   borderColor: '#F1F1FA',
+  whiteText: '#FCFCFC',
 };
