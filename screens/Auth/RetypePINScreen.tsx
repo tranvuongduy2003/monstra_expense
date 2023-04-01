@@ -32,7 +32,7 @@ const RetypePINScreen: React.FunctionComponent<
         </View>
         <View>
           <CustomKeyboard
-            onSubmit={() => navigation.navigate('SetupAccountScreen' as never)}
+            onSubmit={() => navigation.navigate('SetupAccount' as never)}
           />
         </View>
       </ScrollView>

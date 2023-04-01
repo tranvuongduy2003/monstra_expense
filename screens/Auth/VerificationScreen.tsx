@@ -49,7 +49,11 @@ const VerificationScreen: React.FunctionComponent<
           </Text>
         </View>
         <View style={styles.buttonContainer}>
-          <AppButton title="Verify" backgroundColor={AppColors.primaryColor} />
+          <AppButton
+            title="Verify"
+            backgroundColor={AppColors.primaryColor}
+            onPress={() => navigation.navigate('SetupPIN' as never)}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
