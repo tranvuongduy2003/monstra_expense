@@ -9,6 +9,12 @@ import HeaderBar from 'screens/layout/HeaderBar';
 import ForgotPasswordScreen from 'screens/Auth/ForgotPasswordScreen';
 import SentEmailScreen from 'screens/Auth/SentEmailScreen';
 import ResetPasswordScreen from 'screens/Auth/ResetPasswordScreen';
+import SetupPINScreen from 'screens/Auth/SetupPINScreen';
+import RetypePINScreen from 'screens/Auth/RetypePINScreen';
+import SetupAccountScreen from 'screens/Auth/SetupAccountScreen';
+import AddNewAccountScreen from 'screens/Auth/AddNewAccountScreen';
+import SetScreen from 'screens/Auth/SetScreen';
+import {AppColors} from 'constants/AppColors';
 
 export interface IAppNavigationProps {}
 
@@ -36,6 +42,43 @@ export function AppNavigation(props: IAppNavigationProps) {
           options={{
             header: () => <HeaderBar name="Verification" />,
           }}
+        />
+        <Stack.Screen
+          name="RetypePIN"
+          component={RetypePINScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="SetupPIN"
+          component={SetupPINScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="SetupAccount"
+          component={SetupAccountScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="AddNewAccount"
+          component={AddNewAccountScreen}
+          options={{
+            header: () => (
+              <HeaderBar
+                name="Add New Account"
+                backgroundColor={AppColors.primaryColor}
+                color={AppColors.screenColor}
+              />
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="Set"
+          component={SetScreen}
+          options={{headerShown: false}}
         />
         <Stack.Screen
           name="Login"

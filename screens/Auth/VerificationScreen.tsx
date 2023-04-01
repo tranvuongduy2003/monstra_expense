@@ -4,7 +4,7 @@ import {View, ScrollView, StyleSheet, Text} from 'react-native';
 import {AppColors} from 'constants/AppColors';
 import AppButton from 'components/AppButton';
 import {useNavigation} from '@react-navigation/native';
-import CodeInput from './components/verification/CodeInput';
+import CodeInput from './components/code/CodeInput';
 
 interface IVerificationScreenProps {}
 
@@ -49,7 +49,11 @@ const VerificationScreen: React.FunctionComponent<
           </Text>
         </View>
         <View style={styles.buttonContainer}>
-          <AppButton title="Verify" backgroundColor={AppColors.primaryColor} />
+          <AppButton
+            title="Verify"
+            backgroundColor={AppColors.primaryColor}
+            onPress={() => navigation.navigate('SetupPIN' as never)}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
