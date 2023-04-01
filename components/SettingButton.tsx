@@ -5,22 +5,22 @@ import scale from 'constants/Responsive';
 import ArrowRIcon from 'assets/svg/ArrowRightIcon';
 
 interface ISettingButtonProps {
-//backgroundColor?: string;
   title?: string;
   detailTitle? :string;
-  //color?: string;
-  //onPress?: () => void;
-  //children?: ReactElement;
+  onPress?: () => void;
+  children?: ReactElement;
 }
 
 const SettingButton: React.FunctionComponent<ISettingButtonProps> = ({
   title,
   detailTitle,
-  //onPress = () => {},
-  //children,
+  onPress = () => {},
+  children,
 }) => {
   return (
-    <TouchableOpacity style={styles.settingButton}>
+    <TouchableOpacity 
+        style={styles.settingButton} 
+        onPress={onPress}>
                 <View style={styles.content}>
                     <Text style={styles.title}>{title}</Text>
                     <View style={styles.detailContainer}>
@@ -31,16 +31,6 @@ const SettingButton: React.FunctionComponent<ISettingButtonProps> = ({
                     </View>
                 </View>
     </TouchableOpacity>
-//<TouchableOpacity
-        //    style={[
-        //styles.container,
-        //backgroundColor
-       //   ? {backgroundColor: backgroundColor}
-        //  : styles.whiteButton,
-     // ]}
-     // onPress={onPress}>
-     // {title ? <Text style={[styles.title, {color}]}>{title}</Text> : children}
-    //</TouchableOpacity> */}
   );
 };
 

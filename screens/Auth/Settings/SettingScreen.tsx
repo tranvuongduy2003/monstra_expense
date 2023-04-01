@@ -1,36 +1,43 @@
 import React from 'react';
-import {StyleSheet, View, Text, Button, TouchableOpacity} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {AppColors} from 'constants/AppColors';
 import scale from 'constants/Responsive';
-import ArrowRIcon from 'assets/svg/ArrowRightIcon';
 import SettingButton from 'components/SettingButton';
+import {useNavigation} from '@react-navigation/native';
 
 interface ISettingsScreenProps {}
 
 const SettingsScreen: React.FunctionComponent<ISettingsScreenProps> = props => {
+    const navigation = useNavigation();
+
   return (
     <SafeAreaView style={styles.container}>
         <View style={styles.settingContainer}>
             <SettingButton 
                 title='Currency'
                 detailTitle='USD'
+                onPress={() => navigation.navigate('Currency' as never)}
             ></SettingButton>
             <SettingButton 
                 title='Language'
                 detailTitle='English'
+                onPress={() => navigation.navigate('Currency' as never)}
             ></SettingButton>
             <SettingButton 
                 title='Theme'
                 detailTitle='Dark'
+                onPress={() => navigation.navigate('Currency' as never)}
             ></SettingButton>
             <SettingButton 
                 title='Security'
                 detailTitle='Fingerprint'
+                onPress={() => navigation.navigate('Currency' as never)}
             ></SettingButton>
             <SettingButton 
                 title='Notification'
                 detailTitle=''
+                onPress={() => navigation.navigate('Currency' as never)}
             ></SettingButton>
         </View>
         <View style={styles.moreContainer}>
@@ -38,10 +45,12 @@ const SettingsScreen: React.FunctionComponent<ISettingsScreenProps> = props => {
             <SettingButton 
                 title='About'
                 detailTitle=''
+                onPress={() => navigation.navigate('Currency' as never)}
             ></SettingButton>
             <SettingButton 
                 title='Help'
                 detailTitle=''
+                onPress={() => navigation.navigate('Currency' as never)}
             ></SettingButton>
         </View>
         <View style={styles.blankSpace}></View>

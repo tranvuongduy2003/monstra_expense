@@ -14,8 +14,9 @@ import SetupPINScreen from 'screens/Auth/SetupPINScreen';
 import RetypePINScreen from 'screens/Auth/RetypePINScreen';
 import SetupAccountScreen from 'screens/Auth/SetupAccountScreen';
 import AddNewAccountScreen from 'screens/Auth/AddNewAccountScreen';
-import SettingsScreen from 'screens/Auth/Settings/SettingScreen';
 import SetScreen from 'screens/Auth/SetScreen';
+import SettingsScreen from 'screens/Auth/Settings/SettingScreen';
+import CurrencyScreen from 'screens/Auth/Settings/CurrencyScreen';
 import {AppColors} from 'constants/AppColors';
 
 export interface IAppNavigationProps {}
@@ -31,6 +32,13 @@ export function AppNavigation(props: IAppNavigationProps) {
           component={SettingsScreen}
           options={{
             header: () => <HeaderBar name="Settings" />,
+          }}
+        />
+        <Stack.Screen
+          name="Currency"
+          component={CurrencyScreen}
+          options={{
+            header: () => <HeaderBar name="Currency" />,
           }}
         />
         <Stack.Screen
