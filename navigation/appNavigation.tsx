@@ -15,12 +15,12 @@ import RetypePINScreen from 'screens/Auth/RetypePINScreen';
 import SetupAccountScreen from 'screens/Auth/SetupAccountScreen';
 import AddNewAccountScreen from 'screens/Auth/AddNewAccountScreen';
 import SetScreen from 'screens/Auth/SetScreen';
-import SettingsScreen from 'screens/Auth/Settings/SettingScreen';
-import CurrencyScreen from 'screens/Auth/Settings/CurrencyScreen';
-import LanguageScreen from 'screens/Auth/Settings/LanguageScreen';
-import ThemeScreen from 'screens/Auth/Settings/ThemeScreen';
-import SecurityScreen from 'screens/Auth/Settings/SecurityScreen';
-import NotificationScreen from 'screens/Auth/Settings/Notification';
+import SettingsScreen from 'screens/Settings/SettingScreen';
+import CurrencyScreen from 'screens/Settings/CurrencyScreen';
+import LanguageScreen from 'screens/Settings/LanguageScreen';
+import ThemeScreen from 'screens/Settings/ThemeScreen';
+import SecurityScreen from 'screens/Settings/SecurityScreen';
+import NotificationScreen from 'screens/Settings/Notification';
 
 import {AppColors} from 'constants/AppColors';
 
