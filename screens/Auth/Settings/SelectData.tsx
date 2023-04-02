@@ -11,7 +11,6 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {AppColors} from 'constants/AppColors';
 import scale from 'constants/Responsive';
 import CheckedIcon from 'assets/svg/CheckedIcon';
-import {CurrencyDATA} from './indexCurrency';
 
 interface ICurrencyScreenProps {
   optionComponent?: any;
@@ -47,7 +46,7 @@ const Option = (
   return {OptionComponent};
 };
 
-const CurrencyScreen: React.FunctionComponent<ICurrencyScreenProps> = ({
+const SelectData: React.FunctionComponent<ICurrencyScreenProps> = ({
   optionComponent = Option,
   objValue = 'title',
   objKey = 'id',
@@ -79,7 +78,7 @@ const CurrencyScreen: React.FunctionComponent<ICurrencyScreenProps> = ({
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={CurrencyDATA}
+        data={data}
         keyExtractor={(_, index) => String(index)}
         renderItem={({item}) => {
           return (
@@ -154,4 +153,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CurrencyScreen;
+export default SelectData;

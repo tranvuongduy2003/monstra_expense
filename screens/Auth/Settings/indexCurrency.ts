@@ -1,10 +1,10 @@
-// export type Currency = {
-//   id: string;
-//   title: string;
-//   currency: string;
-// };
+export type Currency = {
+  id: string;
+  title: string;
+  currency: string;
+};
 
-export const CurrencyDATA = [
+export const CurrencyDATA: Currency[] = [
     {
       id: 'US',
       title: 'United States (USD)',
