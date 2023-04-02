@@ -6,6 +6,7 @@ import SignUpScreen from 'screens/Auth/SignupScreen';
 import VerificationScreen from 'screens/Auth/VerificationScreen';
 import LoginScreen from 'screens/Auth/LoginScreen';
 import HeaderBar from 'screens/layout/HeaderBar';
+import ProfileScreen from 'screens/Profile/ProfileScreen';
 import ForgotPasswordScreen from 'screens/Auth/ForgotPasswordScreen';
 import SentEmailScreen from 'screens/Auth/SentEmailScreen';
 import ResetPasswordScreen from 'screens/Auth/ResetPasswordScreen';
@@ -14,6 +15,13 @@ import RetypePINScreen from 'screens/Auth/RetypePINScreen';
 import SetupAccountScreen from 'screens/Auth/SetupAccountScreen';
 import AddNewAccountScreen from 'screens/Auth/AddNewAccountScreen';
 import SetScreen from 'screens/Auth/SetScreen';
+import SettingsScreen from 'screens/Auth/Settings/SettingScreen';
+import CurrencyScreen from 'screens/Auth/Settings/CurrencyScreen';
+import LanguageScreen from 'screens/Auth/Settings/LanguageScreen';
+import ThemeScreen from 'screens/Auth/Settings/ThemeScreen';
+import SecurityScreen from 'screens/Auth/Settings/SecurityScreen';
+import NotificationScreen from 'screens/Auth/Settings/Notification';
+
 import {AppColors} from 'constants/AppColors';
 
 export interface IAppNavigationProps {}
@@ -24,6 +32,55 @@ export function AppNavigation(props: IAppNavigationProps) {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{
+            header: () => <HeaderBar name="Settings" />,
+          }}
+        />
+        <Stack.Screen
+          name="Currency"
+          component={CurrencyScreen}
+          options={{
+            header: () => <HeaderBar name="Currency" />,
+          }}
+        />
+        <Stack.Screen
+          name="Language"
+          component={LanguageScreen}
+          options={{
+            header: () => <HeaderBar name="Language" />,
+          }}
+        />
+        <Stack.Screen
+          name="Theme"
+          component={ThemeScreen}
+          options={{
+            header: () => <HeaderBar name="Theme" />,
+          }}
+        />
+        <Stack.Screen
+          name="Security"
+          component={SecurityScreen}
+          options={{
+            header: () => <HeaderBar name="Security" />,
+          }}
+        />
+        <Stack.Screen
+          name="Notification"
+          component={NotificationScreen}
+          options={{
+            header: () => <HeaderBar name="Notification" />,
+          }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
         <Stack.Screen
           name="Splash"
           component={SplashScreen}
