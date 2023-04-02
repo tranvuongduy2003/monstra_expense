@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import React from 'react';
 import Svg, {SvgProps, Path} from 'react-native-svg';
+=======
+import React from "react"
+import Svg, { SvgProps, Path } from "react-native-svg"
+>>>>>>> 8d76a6f617e6b83cdfb23713443d843f4efc1ad9
 
 const UserIcon = (props: SvgProps) => (
   <Svg
