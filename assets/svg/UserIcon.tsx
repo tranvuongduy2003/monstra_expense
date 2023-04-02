@@ -1,5 +1,5 @@
-import * as React from "react"
-import Svg, { SvgProps, Path } from "react-native-svg"
+import React from 'react';
+import Svg, {SvgProps, Path} from 'react-native-svg';
 
 const UserIcon = (props: SvgProps) => (
   <Svg
@@ -14,6 +14,6 @@ const UserIcon = (props: SvgProps) => (
       fill="#7F3DFF"
     />
   </Svg>
-)
+);
 
 export default UserIcon;
