@@ -109,7 +109,7 @@ const SelectData: React.FunctionComponent<ICurrencyScreenProps> = ({
           );
         }}
         extraData={selected}></FlatList>
-      <View style={styles.blankSpace}></View>
+      {/* <View style={styles.blankSpace}></View> */}
     </SafeAreaView>
   );
 };
@@ -117,7 +117,7 @@ const SelectData: React.FunctionComponent<ICurrencyScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: AppColors.cultured,
+    backgroundColor: AppColors.white,
   },
   //   settingContainer: {
   //     flex: 312,
@@ -148,9 +148,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  blankSpace: {
-    flex: 395,
-  },
+  // blankSpace: {
+  //   flex: 395,
+  // },
 });
 
 export default SelectData;

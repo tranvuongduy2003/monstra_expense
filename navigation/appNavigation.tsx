@@ -17,6 +17,11 @@ import AddNewAccountScreen from 'screens/Auth/AddNewAccountScreen';
 import SetScreen from 'screens/Auth/SetScreen';
 import SettingsScreen from 'screens/Auth/Settings/SettingScreen';
 import CurrencyScreen from 'screens/Auth/Settings/CurrencyScreen';
+import LanguageScreen from 'screens/Auth/Settings/LanguageScreen';
+import ThemeScreen from 'screens/Auth/Settings/ThemeScreen';
+import SecurityScreen from 'screens/Auth/Settings/SecurityScreen';
+import NotificationScreen from 'screens/Auth/Settings/Notification';
+
 import {AppColors} from 'constants/AppColors';
 
 export interface IAppNavigationProps {}
@@ -27,7 +32,7 @@ export function AppNavigation(props: IAppNavigationProps) {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-      <Stack.Screen
+        <Stack.Screen
           name="Settings"
           component={SettingsScreen}
           options={{
@@ -42,10 +47,38 @@ export function AppNavigation(props: IAppNavigationProps) {
           }}
         />
         <Stack.Screen
+          name="Language"
+          component={LanguageScreen}
+          options={{
+            header: () => <HeaderBar name="Language" />,
+          }}
+        />
+        <Stack.Screen
+          name="Theme"
+          component={ThemeScreen}
+          options={{
+            header: () => <HeaderBar name="Theme" />,
+          }}
+        />
+        <Stack.Screen
+          name="Security"
+          component={SecurityScreen}
+          options={{
+            header: () => <HeaderBar name="Security" />,
+          }}
+        />
+        <Stack.Screen
+          name="Notification"
+          component={NotificationScreen}
+          options={{
+            header: () => <HeaderBar name="Notification" />,
+          }}
+        />
+        <Stack.Screen
           name="Profile"
           component={ProfileScreen}
           options={{
-            headerShown: false
+            headerShown: false,
           }}
         />
         <Stack.Screen

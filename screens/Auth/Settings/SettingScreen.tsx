@@ -22,22 +22,22 @@ const SettingsScreen: React.FunctionComponent<ISettingsScreenProps> = props => {
             <SettingButton 
                 title='Language'
                 detailTitle='English'
-                onPress={() => navigation.navigate('Currency' as never)}
+                onPress={() => navigation.navigate('Language' as never)}
             ></SettingButton>
             <SettingButton 
                 title='Theme'
                 detailTitle='Dark'
-                onPress={() => navigation.navigate('Currency' as never)}
+                onPress={() => navigation.navigate('Theme' as never)}
             ></SettingButton>
             <SettingButton 
                 title='Security'
                 detailTitle='Fingerprint'
-                onPress={() => navigation.navigate('Currency' as never)}
+                onPress={() => navigation.navigate('Security' as never)}
             ></SettingButton>
             <SettingButton 
                 title='Notification'
                 detailTitle=''
-                onPress={() => navigation.navigate('Currency' as never)}
+                onPress={() => navigation.navigate('Notification' as never)}
             ></SettingButton>
         </View>
         <View style={styles.moreContainer}>
