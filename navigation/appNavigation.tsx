@@ -21,6 +21,7 @@ import LanguageScreen from 'screens/Settings/LanguageScreen';
 import ThemeScreen from 'screens/Settings/ThemeScreen';
 import SecurityScreen from 'screens/Settings/SecurityScreen';
 import NotificationScreen from 'screens/Settings/Notification';
+import ExportScreen from 'screens/Settings/ExportScreen';
 
 import {AppColors} from 'constants/AppColors';
 
@@ -32,6 +33,13 @@ export function AppNavigation(props: IAppNavigationProps) {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+      <Stack.Screen
+          name="Export"
+          component={ExportScreen}
+          options={{
+            header: () => <HeaderBar name="Export Data" />,
+          }}
+        />
         <Stack.Screen
           name="Settings"
           component={SettingsScreen}
