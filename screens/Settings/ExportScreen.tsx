@@ -11,10 +11,19 @@ const ExportScreen: React.FunctionComponent<IExportScreenProps> = ({}) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <CustomDropDown data={LanguageDATA}></CustomDropDown>
+        <CustomDropDown
+          data={LanguageDATA}
+          text="What data do your want to export?"></CustomDropDown>
       </View>
       <View style={styles.content}>
-        <CustomDropDown data={LanguageDATA}></CustomDropDown>
+        <CustomDropDown
+          data={LanguageDATA}
+          text="When date range?"></CustomDropDown>
+      </View>
+      <View style={styles.content}>
+        <CustomDropDown
+          data={LanguageDATA}
+          text="What format do you want to export?"></CustomDropDown>
       </View>
     </SafeAreaView>
   );
@@ -32,6 +41,7 @@ const styles = StyleSheet.create({
     marginTop: scale(40),
     marginBottom: scale(24),
     backgroundColor: AppColors.lavender,
+    padding: scale(24),
   },
 });
 

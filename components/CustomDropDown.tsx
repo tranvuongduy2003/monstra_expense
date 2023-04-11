@@ -7,11 +7,13 @@ import {AppColors} from 'constants/AppColors';
 import scale from 'constants/Responsive';
 
 interface ICustomDropDownProps {
+  text?: String;
   data?: any;
   onPress?: () => void;
 }
 
 const CustomDropDown: React.FunctionComponent<ICustomDropDownProps> = ({
+  text,
   data = [],
 }) => {
   const [clicked, setClicked] = useState(false);
@@ -19,7 +21,7 @@ const CustomDropDown: React.FunctionComponent<ICustomDropDownProps> = ({
 
   return (
     <View style={styles.block}>
-      <Text style={styles.text}>What data do your want to export?</Text>
+      <Text style={styles.text}>{text}</Text>
       <TouchableOpacity
         style={styles.selectBox}
         onPress={() => {
@@ -74,7 +76,7 @@ const CustomDropDown: React.FunctionComponent<ICustomDropDownProps> = ({
 const styles = StyleSheet.create({
   block: {
     flex: 1,
-    backgroundColor: AppColors.mistyRose,
+    backgroundColor: AppColors.white,
     marginBottom: scale(24),
     position: 'absolute',
   },
