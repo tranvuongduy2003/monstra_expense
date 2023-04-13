@@ -21,6 +21,7 @@ import LanguageScreen from 'screens/Settings/LanguageScreen';
 import ThemeScreen from 'screens/Settings/ThemeScreen';
 import SecurityScreen from 'screens/Settings/SecurityScreen';
 import NotificationScreen from 'screens/Settings/Notification';
+import Tabs from './Tabs';
 
 import {AppColors} from 'constants/AppColors';
 
@@ -32,6 +33,16 @@ export function AppNavigation(props: IAppNavigationProps) {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen
+          name="Home"
+          component={Tabs}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Splash"
+          component={SplashScreen}
+          options={{headerShown: false}}
+        />
         <Stack.Screen
           name="Settings"
           component={SettingsScreen}
@@ -80,11 +91,6 @@ export function AppNavigation(props: IAppNavigationProps) {
           options={{
             headerShown: false,
           }}
-        />
-        <Stack.Screen
-          name="Splash"
-          component={SplashScreen}
-          options={{headerShown: false}}
         />
         <Stack.Screen
           name="SignUp"
