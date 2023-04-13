@@ -1,6 +1,9 @@
 export const AppColors = {
   primaryColor: '#7F3DFF',
   primaryTextColor: '#212325',
+  primaryGreen: '#00A86B',
+  primaryBlue: '#0077FF',
+  red: '#FD3C4A',
   secondaryTextColor: '#91919F',
   lightPurple: '#EEE5FF',
   cultured: '#F6F6F6',
