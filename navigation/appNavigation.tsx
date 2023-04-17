@@ -23,6 +23,8 @@ import SecurityScreen from 'screens/Settings/SecurityScreen';
 import NotificationScreen from 'screens/Settings/Notification';
 import ExportScreen from 'screens/Settings/ExportScreen';
 
+import Tabs from './Tabs';
+
 import {AppColors} from 'constants/AppColors';
 
 export interface IAppNavigationProps {}
@@ -39,6 +41,16 @@ export function AppNavigation(props: IAppNavigationProps) {
           options={{
             header: () => <HeaderBar name="Export Data" />,
           }}
+        />
+        <Stack.Screen
+          name="Home"
+          component={Tabs}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Splash"
+          component={SplashScreen}
+          options={{headerShown: false}}
         />
         <Stack.Screen
           name="Settings"
@@ -88,11 +100,6 @@ export function AppNavigation(props: IAppNavigationProps) {
           options={{
             headerShown: false,
           }}
-        />
-        <Stack.Screen
-          name="Splash"
-          component={SplashScreen}
-          options={{headerShown: false}}
         />
         <Stack.Screen
           name="SignUp"
