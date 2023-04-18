@@ -6,6 +6,7 @@ import scale from 'constants/Responsive';
 import CustomDropDown from 'components/CustomDropDown';
 import {LanguageDATA} from './data/indexLanguage';
 import ExportDataIcon from 'assets/svg/ExportDataIcon';
+import {useNavigation} from '@react-navigation/native'
 
 interface IExportScreenProps {
   title?: string;
@@ -17,6 +18,8 @@ const ExportScreen: React.FunctionComponent<IExportScreenProps> = ({
   onPress = () => {},
   children,
 }) => {
+  const navigation = useNavigation();
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content1}>
@@ -35,7 +38,7 @@ const ExportScreen: React.FunctionComponent<IExportScreenProps> = ({
           text="What format do you want to export?"></CustomDropDown>
       </View>
       <View style={styles.bottomContainer}>
-        <TouchableOpacity style={styles.button} onPress={onPress}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ExportNoti' as never)}>
           <View style={styles.titleContainer}>
             <ExportDataIcon></ExportDataIcon>
             <Text style={styles.title}>Export</Text>

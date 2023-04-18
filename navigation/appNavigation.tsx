@@ -22,6 +22,7 @@ import ThemeScreen from 'screens/Settings/ThemeScreen';
 import SecurityScreen from 'screens/Settings/SecurityScreen';
 import NotificationScreen from 'screens/Settings/Notification';
 import ExportScreen from 'screens/Settings/ExportScreen';
+import ExporNotitScreen from 'screens/Settings/ExportNotiScreen';
 
 import Tabs from './Tabs';
 
@@ -35,6 +36,11 @@ export function AppNavigation(props: IAppNavigationProps) {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+      <Stack.Screen
+          name="ExportNoti"
+          component={ExporNotitScreen}
+          options={{headerShown: false}}
+        />
       <Stack.Screen
           name="Export"
           component={ExportScreen}
