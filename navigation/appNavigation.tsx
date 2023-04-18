@@ -21,6 +21,7 @@ import LanguageScreen from 'screens/Settings/LanguageScreen';
 import ThemeScreen from 'screens/Settings/ThemeScreen';
 import SecurityScreen from 'screens/Settings/SecurityScreen';
 import NotificationScreen from 'screens/Settings/Notification';
+import ExpenseScreen from 'screens/Expense/ExpenseSreen';
 import Tabs from './Tabs';
 
 import {AppColors} from 'constants/AppColors';
@@ -37,6 +38,19 @@ export function AppNavigation(props: IAppNavigationProps) {
           name="Home"
           component={Tabs}
           options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Expense"
+          component={ExpenseScreen}
+          options={{
+            header: () => (
+              <HeaderBar
+                name="Expense"
+                backgroundColor={AppColors.red}
+                color={AppColors.screenColor}
+              />
+            ),
+          }}
         />
         <Stack.Screen
           name="Splash"
