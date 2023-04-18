@@ -39,7 +39,8 @@ const CustomDropDown: React.FunctionComponent<ICustomDropDownProps> = ({
           style={{
             width: scale(343),
             height: scale(300),
-            elevation: 5,
+            elevation: 10,
+            zIndex: 999,
             marginTop: scale(90),
             position: 'absolute',
             alignSelf: 'center',
@@ -79,6 +80,7 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.white,
     marginBottom: scale(24),
     position: 'absolute',
+    zIndex: 0,
   },
   selectBox: {
     width: scale(343),
@@ -89,6 +91,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignContent: 'center',
     justifyContent: 'center',
+    position: 'relative',
     backgroundColor: AppColors.white,
   },
   select: {
@@ -104,7 +107,7 @@ const styles = StyleSheet.create({
     fontSize: scale(16),
     marginBottom: 12,
     color: AppColors.textColor,
-    fontWeight: scale(500),
+    fontWeight: '500',
   },
 });
 
