@@ -1,7 +1,7 @@
 import React from 'react';
 import {Provider} from 'react-redux';
 import {store} from 'app/store';
-import {AppNavigation} from 'navigation/AppNavigation';
+import { AppNavigation } from 'navigation/appNavigation';
 import {Path, Svg} from 'react-native-svg';
 import * as shape from 'd3-shape';
 import {Dimensions} from 'react-native';

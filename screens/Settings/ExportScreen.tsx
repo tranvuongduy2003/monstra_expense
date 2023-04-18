@@ -4,7 +4,7 @@ import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {AppColors} from 'constants/AppColors';
 import scale from 'constants/Responsive';
 import CustomDropDown from 'components/CustomDropDown';
-import {LanguageDATA} from './indexLanguage';
+import {LanguageDATA} from './data/indexLanguage';
 import ExportDataIcon from 'assets/svg/ExportDataIcon';
 
 interface IExportScreenProps {

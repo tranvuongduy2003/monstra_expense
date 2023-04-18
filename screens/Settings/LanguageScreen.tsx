@@ -1,5 +1,5 @@
 import React from 'react';
-import {LanguageDATA} from './indexLanguage';
+import {LanguageDATA} from './data/indexLanguage';
 import SelectData from './SelectData';
 
 interface ILanguageScreenProps {}

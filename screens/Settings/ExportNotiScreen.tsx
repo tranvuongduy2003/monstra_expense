@@ -2,10 +2,6 @@ import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {StyleSheet, View, Text} from 'react-native';
 import {AppColors} from 'constants/AppColors';
-import scale from 'constants/Responsive';
-import CustomDropDown from 'components/CustomDropDown';
-import {LanguageDATA} from './indexLanguage';
-import AppButton from 'components/AppButton';
 
 interface IExportNotiScreenProps {}
 const ExporNotitScreen: React.FunctionComponent<IExportNotiScreenProps> = ({}) => {

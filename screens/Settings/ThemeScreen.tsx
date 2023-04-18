@@ -1,5 +1,5 @@
 import React from 'react';
-import {ThemeDATA} from './indexTheme';
+import {ThemeDATA} from './data/indexTheme';
 import SelectData from './SelectData';
 
 interface IThemeScreenProps {}
