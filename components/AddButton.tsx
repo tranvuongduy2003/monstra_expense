@@ -5,10 +5,12 @@ import {Animated, StyleSheet, TouchableOpacity, View} from 'react-native';
 import IncomeIcon from 'assets/svg/IncomeIcon';
 import ExpenseIcon from 'assets/svg/ExpenseIcon';
 import MoneyExchangeIcon from 'assets/svg/MoneyExchangeIcon';
+import {useNavigation} from '@react-navigation/native';
 
 interface IAddButtonProps {}
 
 const AddButton: React.FunctionComponent<IAddButtonProps> = props => {
+  const {navigate} = useNavigation();
   const [opened, setOpened] = useState(false);
   const animation = useRef(new Animated.Value(0)).current;
 
@@ -67,7 +69,7 @@ const AddButton: React.FunctionComponent<IAddButtonProps> = props => {
           <MoneyExchangeIcon />
         </Animated.View>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigate('Expense' as never)}>
         <Animated.View
           style={[
             styles.item,
