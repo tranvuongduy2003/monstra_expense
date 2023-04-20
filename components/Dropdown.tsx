@@ -7,10 +7,12 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  ScrollView,
+  FlatList,
 } from 'react-native';
 import {ChevronDownIcon, ChevronUpIcon} from 'react-native-heroicons/outline';
 
-type OptionType = {
+export type OptionType = {
   title: string;
   value: string;
 };
@@ -46,7 +48,7 @@ const Dropdown: React.FunctionComponent<IDropdownProps> = ({
         )}
       </TouchableOpacity>
       {show && (
-        <View style={styles.optionList}>
+        <ScrollView style={styles.optionList}>
           {options.map((item, index) => (
             <Option
               key={index}
@@ -58,7 +60,7 @@ const Dropdown: React.FunctionComponent<IDropdownProps> = ({
               }}
             />
           ))}
-        </View>
+        </ScrollView>
       )}
     </View>
   );
@@ -86,7 +88,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#F1F1FA',
     borderRadius: 16,
-    color: AppColors.secondaryTextColor,
+    color: AppColors.primaryTextColor,
     fontWeight: '400',
     fontSize: 16,
     lineHeight: 18,

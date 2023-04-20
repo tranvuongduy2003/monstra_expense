@@ -35,7 +35,6 @@ const AppButton: React.FunctionComponent<IAppButtonProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 17,
     borderRadius: 16,
   },

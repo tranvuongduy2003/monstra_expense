@@ -1,16 +1,18 @@
 import React from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, Text, Pressable} from 'react-native';
 import {AppColors} from 'constants/AppColors';
 import {PaperClipIcon} from 'react-native-heroicons/outline';
 
-interface IAttachmentProps {}
+interface IAttachmentProps {
+  onPress: () => void;
+}
 
-const Attachment: React.FunctionComponent<IAttachmentProps> = ({}) => {
+const Attachment: React.FunctionComponent<IAttachmentProps> = ({onPress}) => {
   return (
-    <View style={styles.container}>
+    <Pressable onPress={onPress} style={styles.container}>
       <PaperClipIcon color={AppColors.secondaryTextColor} />
       <Text style={styles.text}>Add attachment</Text>
-    </View>
+    </Pressable>
   );
 };
 
