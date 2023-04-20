@@ -1,12 +1,6 @@
-import React, {useCallback, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {
-  ScrollView,
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
+import {ScrollView, StyleSheet, View, Text, Modal} from 'react-native';
 import BottomSheet from '@gorhom/bottom-sheet';
 import {AppColors} from 'constants/AppColors';
 import {useNavigation} from '@react-navigation/native';
@@ -14,18 +8,17 @@ import Input from 'components/Input';
 import AppButton from 'components/AppButton';
 import Attachment from 'components/Attachment';
 import Toggle from 'components/Toggle';
-import Dropdown from 'components/Dropdown';
+import Dropdown, {OptionType} from 'components/Dropdown';
 import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
 import AttachmentBottomSheet from './components/AttachmentBottomSheet';
+import RecurringBottomSheet from './components/RecurringBottomSheet';
+import Tag from './components/Tag';
+import RecurringInfo from './components/RecurringInfo';
+import {CheckCircleIcon} from 'react-native-heroicons/solid';
 
 interface IExpenseScreenProps {}
 
-interface ITagProps {
-  title: string;
-  desc: string;
-}
-
-const categoryOptions = [
+const categoryOptions: OptionType[] = [
   {
     title: 'Subscription',
     value: 'subscription',
@@ -40,7 +33,7 @@ const categoryOptions = [
   },
 ];
 
-const walletOptions = [
+const walletOptions: OptionType[] = [
   {
     title: 'Momo',
     value: 'momo',
@@ -57,17 +50,46 @@ const walletOptions = [
 
 const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
   const navigation = useNavigation();
-  const [show, setShow] = useState<boolean>(false);
+  const [showAttachment, setShowAttachment] = useState<boolean>(false);
+  const [showRecurring, setShowRecurring] = useState<boolean>(false);
+  const [showEditRecurring, setShowEditRecurring] = useState<boolean>(false);
+  const [showInform, setShowInform] = useState<boolean>(false);
 
-  const bottomSheetRef = useRef<BottomSheet>(null);
+  const attachmentRef = useRef<BottomSheet>(null);
+  const recurringRef = useRef<BottomSheet>(null);
 
-  const handleSheetChanges = useCallback((index: number) => {
-    bottomSheetRef.current?.snapToIndex(index);
-    setShow(true);
+  const handleAttachmentSheetChanges = useCallback((index: number) => {
+    attachmentRef.current?.snapToIndex(index);
+    setShowAttachment(true);
+  }, []);
+
+  useEffect(() => {
+    if (showEditRecurring) {
+      handleRecurringSheetChanges(0);
+    }
+  }, [showEditRecurring]);
+
+  const handleRecurringSheetChanges = useCallback((index: number) => {
+    recurringRef.current?.snapToIndex(index);
+    setShowRecurring(true);
   }, []);
 
   return (
     <SafeAreaView style={{flex: 1}}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showInform}
+        onRequestClose={() => setShowInform(!showInform)}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <CheckCircleIcon size={48} color={AppColors.primaryColor} />
+            <Text style={styles.modalTitle}>
+              Transaction has been successfully added
+            </Text>
+          </View>
+        </View>
+      </Modal>
       <ScrollView
         style={{backgroundColor: AppColors.red}}
         contentContainerStyle={{
@@ -75,7 +97,9 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
           justifyContent: 'flex-end',
           position: 'relative',
         }}>
-        {show && <View style={styles.overlay}></View>}
+        {(showInform || showAttachment || showRecurring) && (
+          <View style={styles.overlay}></View>
+        )}
         <ClickOutsideProvider>
           <View style={styles.balanceContainer}>
             <Text style={styles.title}>Balance</Text>
@@ -94,58 +118,74 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
                 placeholder="Wallet"
                 zIndex={40}
               />
-              <Attachment onPress={() => handleSheetChanges(0)} />
+              <Attachment onPress={() => handleAttachmentSheetChanges(0)} />
               <View style={styles.serviceContainer}>
                 <Tag title="Repeat" desc="Repeat transaction" />
                 <View>
-                  <Toggle />
+                  <Toggle
+                    on={showEditRecurring}
+                    setOn={() => setShowEditRecurring(!showEditRecurring)}
+                  />
                 </View>
               </View>
-              <View style={styles.serviceContainer}>
-                <Tag title="Frequency" desc="Yearly - December 29" />
-                <Tag title="End After" desc="29 December 2025" />
-                <TouchableOpacity style={styles.editButton}>
-                  <Text style={styles.editButtonText}>Edit</Text>
-                </TouchableOpacity>
-              </View>
+              {showEditRecurring && (
+                <RecurringInfo
+                  editable={true}
+                  onEdit={() => handleRecurringSheetChanges(0)}
+                />
+              )}
             </View>
             <View>
               <AppButton
                 title="Continue"
                 backgroundColor={AppColors.primaryColor}
-                onPress={() => navigation.navigate('Set' as never)}
+                onPress={() => setShowInform(true)}
               />
             </View>
           </View>
         </ClickOutsideProvider>
       </ScrollView>
-      {show && (
+      {showAttachment && (
         <AttachmentBottomSheet
-          bottomSheetRef={bottomSheetRef}
-          setShow={setShow}
+          bottomSheetRef={attachmentRef}
+          setShow={setShowAttachment}
+        />
+      )}
+      {showRecurring && (
+        <RecurringBottomSheet
+          bottomSheetRef={recurringRef}
+          setShow={setShowRecurring}
         />
       )}
     </SafeAreaView>
   );
 };
 
-const Tag: React.FunctionComponent<ITagProps> = ({title, desc}) => {
-  return (
-    <View style={styles.toggleTextContainer}>
-      <Text style={styles.toggleTitle}>{title}</Text>
-      <Text style={styles.toggleDesc}>{desc}</Text>
-    </View>
-  );
-};
-
 const styles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    backgroundColor: AppColors.screenColor,
+    margin: 20,
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontWeight: '500',
+    fontSize: 14,
+    lineHeight: 18,
+    color: AppColors.primaryTextColor,
+  },
   overlay: {
     backgroundColor: '#000000',
     opacity: 0.6,
     position: 'absolute',
     flex: 1,
-    top: -100,
-    paddingTop: -100,
+    top: 0,
     bottom: 0,
     left: 0,
     right: 0,
@@ -188,30 +228,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-  },
-  toggleTitle: {
-    color: AppColors.primaryTextColor,
-    lineHeight: 19,
-    fontSize: 16,
-    fontWeight: '500',
-  },
-  toggleDesc: {
-    color: AppColors.secondaryTextColor,
-    lineHeight: 16,
-    fontSize: 13,
-    fontWeight: '500',
-  },
-  editButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 7,
-    backgroundColor: AppColors.violet,
-    borderRadius: 99,
-  },
-  editButtonText: {
-    fontWeight: '500',
-    fontSize: 14,
-    lineHeight: 18,
-    color: AppColors.primaryColor,
   },
 });
 

@@ -2,10 +2,12 @@ import {AppColors} from 'constants/AppColors';
 import React, {useEffect, useRef, useState} from 'react';
 import {StyleSheet, View, Animated, Touchable} from 'react-native';
 
-interface IToggleProps {}
+interface IToggleProps {
+  on: boolean;
+  setOn: any;
+}
 
-const Toggle: React.FunctionComponent<IToggleProps> = props => {
-  const [on, setOn] = useState<boolean>(false);
+const Toggle: React.FunctionComponent<IToggleProps> = ({on, setOn}) => {
   const animation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -28,7 +30,7 @@ const Toggle: React.FunctionComponent<IToggleProps> = props => {
           }),
         },
       ]}
-      onTouchEnd={() => setOn(!on)}>
+      onTouchEnd={setOn}>
       <Animated.View
         style={[
           styles.child,
