@@ -1,5 +1,6 @@
 export const AppColors = {
   primaryColor: '#7F3DFF',
+  primaryColor100: '#EEE5FF',
   primaryTextColor: '#212325',
   primaryGreen: '#00A86B',
   primaryBlue: '#0077FF',
@@ -15,5 +16,6 @@ export const AppColors = {
   borderColor: '#F1F1FA',
   whiteText: '#FCFCFC',
   titleColor: '#292B2D',
+  violet: '#EEE5FF',
   textColor: '#161719',
 };
