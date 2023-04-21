@@ -17,4 +17,5 @@ export const AppColors = {
   whiteText: '#FCFCFC',
   titleColor: '#292B2D',
   violet: '#EEE5FF',
+  textColor: '#161719',
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import {CurrencyDATA} from './indexCurrency';
+import {CurrencyDATA} from './data/indexCurrency';
 import SelectData from './SelectData';
 
 interface ICurrencyScreenProps {}

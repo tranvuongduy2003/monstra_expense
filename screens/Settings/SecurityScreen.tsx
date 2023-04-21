@@ -1,5 +1,5 @@
 import React from 'react';
-import {SecurityDATA} from './indexSecurity';
+import {SecurityDATA} from './data/indexSecurity';
 import SelectData from './SelectData';
 
 interface ISecurityScreenProps {}
