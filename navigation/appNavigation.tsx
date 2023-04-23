@@ -24,6 +24,7 @@ import NotificationScreen from 'screens/Settings/Notification';
 import ExpenseScreen from 'screens/Expense/ExpenseSreen';
 import ExportScreen from 'screens/Settings/ExportScreen';
 import ExporNotitScreen from 'screens/Settings/ExportNotiScreen';
+import IncomeScreen from 'screens/Income/IncomeScreen';
 
 import Tabs from './Tabs';
 
@@ -37,22 +38,18 @@ export function AppNavigation(props: IAppNavigationProps) {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-      <Stack.Screen
-          name="ExportNoti"
-          component={ExporNotitScreen}
-          options={{headerShown: false}}
-        />
-      <Stack.Screen
-          name="Export"
-          component={ExportScreen}
-          options={{
-            header: () => <HeaderBar name="Export Data" />,
-          }}
-        />
         <Stack.Screen
-          name="Home"
-          component={Tabs}
-          options={{headerShown: false}}
+          name="Income"
+          component={IncomeScreen}
+          options={{
+            header: () => (
+              <HeaderBar
+                name="Income"
+                backgroundColor={AppColors.primaryGreen}
+                color={AppColors.screenColor}
+              />
+            ),
+          }}
         />
         <Stack.Screen
           name="Expense"
@@ -66,6 +63,23 @@ export function AppNavigation(props: IAppNavigationProps) {
               />
             ),
           }}
+        />
+        <Stack.Screen
+          name="Export"
+          component={ExportScreen}
+          options={{
+            header: () => <HeaderBar name="Export Data" />,
+          }}
+        />
+        <Stack.Screen
+          name="ExportNoti"
+          component={ExporNotitScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Home"
+          component={Tabs}
+          options={{headerShown: false}}
         />
         <Stack.Screen
           name="Splash"

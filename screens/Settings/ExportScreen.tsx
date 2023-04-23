@@ -1,44 +1,85 @@
-import React, {ReactElement} from 'react';
+import React from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {AppColors} from 'constants/AppColors';
 import scale from 'constants/Responsive';
-import CustomDropDown from 'components/CustomDropDown';
-import {LanguageDATA} from './data/indexLanguage';
 import ExportDataIcon from 'assets/svg/ExportDataIcon';
-import {useNavigation} from '@react-navigation/native'
+import Dropdown, {OptionType} from 'components/Dropdown';
+import {useNavigation} from '@react-navigation/native';
+import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
 
 interface IExportScreenProps {
   title?: string;
   onPress?: () => void;
-  children?: ReactElement;
 }
+
+const dataOptions: OptionType[] = [
+  {
+    title: 'All',
+    value: 'all',
+  },
+  {
+    title: 'One',
+    value: 'one',
+  },
+  {
+    title: 'Two',
+    value: 'two',
+  },
+];
+
+const dateOptions: OptionType[] = [
+  {
+    title: 'Last 30 days',
+    value: '30d',
+  },
+  {
+    title: 'Last 7 days',
+    value: '7d',
+  },
+  {
+    title: 'Last 1 day',
+    value: '1d',
+  },
+];
+
+const formatOptions: OptionType[] = [
+  {
+    title: 'CSV',
+    value: 'csv',
+  },
+  {
+    title: 'Excel',
+    value: 'excel',
+  },
+];
+
 const ExportScreen: React.FunctionComponent<IExportScreenProps> = ({
   title,
   onPress = () => {},
-  children,
 }) => {
   const navigation = useNavigation();
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content1}>
-        <CustomDropDown
-          data={LanguageDATA}
-          text="What data do your want to export?"></CustomDropDown>
-      </View>
-      <View style={styles.content2}>
-        <CustomDropDown
-          data={LanguageDATA}
-          text="When date range?"></CustomDropDown>
-      </View>
-      <View style={styles.content3}>
-        <CustomDropDown
-          data={LanguageDATA}
-          text="What format do you want to export?"></CustomDropDown>
+      <View style={styles.setupContainer}>
+        <ClickOutsideProvider>
+          <Text style={styles.text}>What data do your want to export?</Text>
+          <Dropdown options={dataOptions} placeholder="All" zIndex={50} />
+          <Text style={styles.text}>When date range?</Text>
+          <Dropdown
+            options={dateOptions}
+            placeholder="Last 30 days"
+            zIndex={40}
+          />
+          <Text style={styles.text}>What format do you want to export?</Text>
+          <Dropdown options={formatOptions} placeholder="CSV" zIndex={30} />
+        </ClickOutsideProvider>
       </View>
       <View style={styles.bottomContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ExportNoti' as never)}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('ExportNoti' as never)}>
           <View style={styles.titleContainer}>
             <ExportDataIcon></ExportDataIcon>
             <Text style={styles.title}>Export</Text>
@@ -55,37 +96,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: AppColors.white,
   },
-  content1: {
+  setupContainer: {
+    backgroundColor: AppColors.screenColor,
+    paddingTop: scale(20),
     width: scale(343),
-    height: 'auto',
-    marginTop: scale(40),
-    marginBottom: scale(24),
-    backgroundColor: AppColors.white,
-    padding: scale(24),
-    zIndex: 999,
+    zIndex: 60,
   },
-  content2: {
-    width: scale(343),
-    height: 'auto',
-    marginTop: scale(40),
-    marginBottom: scale(24),
-    backgroundColor: AppColors.white,
-    padding: scale(24),
-    zIndex: 990,
-  },
-  content3: {
-    width: scale(343),
-    height: 'auto',
-    marginTop: scale(40),
-    marginBottom: scale(24),
-    backgroundColor: AppColors.white,
-    padding: scale(24),
-    zIndex: 980,
+  text: {
+    fontSize: scale(16),
+    marginTop: scale(24),
+    marginBottom: scale(12),
+    color: AppColors.textColor,
+    fontWeight: '500',
   },
   bottomContainer: {
     flex: 355,
     flexDirection: 'column-reverse',
     marginBottom: scale(50),
+    zIndex: 20,
   },
   button: {
     width: scale(343),
