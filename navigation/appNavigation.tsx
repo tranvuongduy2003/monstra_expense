@@ -1,6 +1,7 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
+import NotiHeaderBar from 'screens/layout/NotiHeaderBar';
 import SplashScreen from 'screens/Auth/SplashScreen';
 import SignUpScreen from 'screens/Auth/SignupScreen';
 import VerificationScreen from 'screens/Auth/VerificationScreen';
@@ -25,6 +26,7 @@ import ExpenseScreen from 'screens/Expense/ExpenseSreen';
 import ExportScreen from 'screens/Settings/ExportScreen';
 import ExporNotitScreen from 'screens/Settings/ExportNotiScreen';
 import IncomeScreen from 'screens/Income/IncomeScreen';
+import NotiScreen from 'screens/Notification/NotiScreen';
 
 import Tabs from './Tabs';
 
@@ -38,8 +40,21 @@ export function AppNavigation(props: IAppNavigationProps) {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+      <Stack.Screen
+          name="Notification"
+          component={NotiScreen}
+          options={{
+            header: () => (
+              <NotiHeaderBar
+                name="Notification"
+                backgroundColor={AppColors.primaryGreen}
+                color={AppColors.screenColor}
+              />
+            ),
+          }}
+        />
         <Stack.Screen
-          name="Income"
+          name="IncomeNew"
           component={IncomeScreen}
           options={{
             header: () => (
@@ -94,35 +109,35 @@ export function AppNavigation(props: IAppNavigationProps) {
           }}
         />
         <Stack.Screen
-          name="Currency"
+          name="Set-Currency"
           component={CurrencyScreen}
           options={{
             header: () => <HeaderBar name="Currency" />,
           }}
         />
         <Stack.Screen
-          name="Language"
+          name="Set-Language"
           component={LanguageScreen}
           options={{
             header: () => <HeaderBar name="Language" />,
           }}
         />
         <Stack.Screen
-          name="Theme"
+          name="Set-Theme"
           component={ThemeScreen}
           options={{
             header: () => <HeaderBar name="Theme" />,
           }}
         />
         <Stack.Screen
-          name="Security"
+          name="Set-Security"
           component={SecurityScreen}
           options={{
             header: () => <HeaderBar name="Security" />,
           }}
         />
         <Stack.Screen
-          name="Notification"
+          name="Set-Notification"
           component={NotificationScreen}
           options={{
             header: () => <HeaderBar name="Notification" />,

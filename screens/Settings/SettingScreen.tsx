@@ -15,27 +15,27 @@ const SettingsScreen: React.FunctionComponent<ISettingsScreenProps> = props => {
     <SafeAreaView style={styles.container}>
         <View style={styles.settingContainer}>
             <SettingButton 
-                title='Currency'
+                title='Set-Currency'
                 detailTitle='USD'
                 onPress={() => navigation.navigate('Currency' as never)}
             ></SettingButton>
             <SettingButton 
-                title='Language'
+                title='Set-Language'
                 detailTitle='English'
                 onPress={() => navigation.navigate('Language' as never)}
             ></SettingButton>
             <SettingButton 
-                title='Theme'
+                title='Set-Theme'
                 detailTitle='Dark'
                 onPress={() => navigation.navigate('Theme' as never)}
             ></SettingButton>
             <SettingButton 
-                title='Security'
+                title='Set-Security'
                 detailTitle='Fingerprint'
                 onPress={() => navigation.navigate('Security' as never)}
             ></SettingButton>
             <SettingButton 
-                title='Notification'
+                title='Set-Notification'
                 detailTitle=''
                 onPress={() => navigation.navigate('Notification' as never)}
             ></SettingButton>
