@@ -1,7 +1,7 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
-import NotiHeaderBar from 'screens/layout/NotiHeaderBar';
+import NotiHeaderBar from 'screens/Notification/NotiHeaderBar';
 import SplashScreen from 'screens/Auth/SplashScreen';
 import SignUpScreen from 'screens/Auth/SignupScreen';
 import VerificationScreen from 'screens/Auth/VerificationScreen';
@@ -27,6 +27,7 @@ import ExportScreen from 'screens/Settings/ExportScreen';
 import ExporNotitScreen from 'screens/Settings/ExportNotiScreen';
 import IncomeScreen from 'screens/Income/IncomeScreen';
 import NotiScreen from 'screens/Notification/NotiScreen';
+import NotiEmptyScreen from 'screens/Notification/NotiEmptyScreen';
 
 import Tabs from './Tabs';
 
@@ -40,15 +41,24 @@ export function AppNavigation(props: IAppNavigationProps) {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen
+            name="Notification"
+            component={NotiScreen}
+            options={{
+              header: () => (
+                <NotiHeaderBar
+                  name="Notification"
+                />
+              ),
+            }}
+          />
       <Stack.Screen
-          name="Notification"
-          component={NotiScreen}
+          name="NotiEmpty"
+          component={NotiEmptyScreen}
           options={{
             header: () => (
               <NotiHeaderBar
                 name="Notification"
-                backgroundColor={AppColors.primaryGreen}
-                color={AppColors.screenColor}
               />
             ),
           }}

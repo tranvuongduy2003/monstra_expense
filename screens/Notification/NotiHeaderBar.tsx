@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {AppColors} from 'constants/AppColors';
 import {ArrowLeftIcon as ArrowLeftIconOutline} from 'react-native-heroicons/outline';
 import {useNavigation} from '@react-navigation/native';
+import MoreIcon from 'assets/svg/MoreIcon';
 
 interface INotiHeaderBarProps {
   name: string;
@@ -16,6 +17,7 @@ const NotiHeaderBar: React.FunctionComponent<INotiHeaderBarProps> = ({
   color,
 }) => {
   const navigation = useNavigation();
+  const [showOption, setShowOption] = useState<boolean>();
 
   return (
     <View
@@ -24,22 +26,26 @@ const NotiHeaderBar: React.FunctionComponent<INotiHeaderBarProps> = ({
         {
           backgroundColor: backgroundColor
             ? backgroundColor
-            : AppColors.screenColor,
+            : AppColors.white,
         },
       ]}>
       <TouchableOpacity onPress={() => navigation.goBack()}>
         <ArrowLeftIconOutline
-          color={color ? color : AppColors.primaryTextColor}
+          color={color ? color : AppColors.headerTitle}
         />
       </TouchableOpacity>
       <Text
         style={[
           styles.title,
-          {color: color ? color : AppColors.primaryTextColor},
+          {color: color ? color : AppColors.headerTitle},
         ]}>
         {name}
       </Text>
-      <ArrowLeftIconOutline style={styles.psuedoBackIcon} />
+      <TouchableOpacity onPress={() => {}}>
+        <MoreIcon
+          color={color ? color : AppColors.headerTitle}
+        />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -50,9 +56,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  psuedoBackIcon: {
-    opacity: 0,
   },
   title: {
     fontSize: 18,
