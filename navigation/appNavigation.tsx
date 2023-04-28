@@ -24,10 +24,14 @@ import NotificationScreen from 'screens/Settings/Notification';
 import ExpenseScreen from 'screens/Expense/ExpenseSreen';
 import ExportScreen from 'screens/Settings/ExportScreen';
 import ExporNotitScreen from 'screens/Settings/ExportNotiScreen';
+import DetailTransactionScreen from 'screens/Expense/DetailTransactionScreen';
 
 import Tabs from './Tabs';
 
 import {AppColors} from 'constants/AppColors';
+import {TrashIcon} from 'react-native-heroicons/solid';
+
+import {TouchableOpacity} from 'react-native';
 
 export interface IAppNavigationProps {}
 
@@ -37,22 +41,40 @@ export function AppNavigation(props: IAppNavigationProps) {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-      <Stack.Screen
-          name="ExportNoti"
-          component={ExporNotitScreen}
-          options={{headerShown: false}}
-        />
-      <Stack.Screen
-          name="Export"
-          component={ExportScreen}
+        <Stack.Screen
+          name="DetailTransaction"
+          component={DetailTransactionScreen}
           options={{
-            header: () => <HeaderBar name="Export Data" />,
+            header: () => (
+              <HeaderBar
+                name="Detail Transaction"
+                backgroundColor={AppColors.red}
+                color={AppColors.screenColor}
+                icon={
+                  <TouchableOpacity onPress={() => {}}>
+                    <TrashIcon color={AppColors.screenColor} />
+                  </TouchableOpacity>
+                }
+              />
+            ),
           }}
         />
         <Stack.Screen
           name="Home"
           component={Tabs}
           options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="ExportNoti"
+          component={ExporNotitScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="Export"
+          component={ExportScreen}
+          options={{
+            header: () => <HeaderBar name="Export Data" />,
+          }}
         />
         <Stack.Screen
           name="Expense"
