@@ -42,6 +42,11 @@ export function AppNavigation(props: IAppNavigationProps) {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
+          name="Home"
+          component={Tabs}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
           name="DetailTransaction"
           component={DetailTransactionScreen}
           options={{
@@ -58,11 +63,6 @@ export function AppNavigation(props: IAppNavigationProps) {
               />
             ),
           }}
-        />
-        <Stack.Screen
-          name="Home"
-          component={Tabs}
-          options={{headerShown: false}}
         />
         <Stack.Screen
           name="ExportNoti"

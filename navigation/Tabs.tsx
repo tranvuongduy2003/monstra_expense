@@ -68,55 +68,52 @@ const Tabs: React.FunctionComponent<ITabsProps> = props => {
       screenOptions={{
         tabBarStyle: {
           backgroundColor: 'transparent',
-          zIndex: 1000,
+          zIndex: 0,
           elevation: 0,
           height: 70,
           borderTopWidth: 0,
           position: 'absolute',
         },
         tabBarBackground: () => (
-          <>
-            <Svg
-              width={width * 2}
-              {...{height}}
-              style={{
-                transform: [{translateX: -(width / 2) - tabWidth / 2}],
-              }}>
-              <Path {...{d}} fill="white" />
-            </Svg>
-          </>
+          <Svg
+            width={width * 2}
+            {...{height}}
+            style={{
+              transform: [{translateX: -(width / 2) - tabWidth / 2}],
+              backgroundColor: 'transparent',
+            }}>
+            <Path {...{d}} fill="white" />
+          </Svg>
         ),
         tabBarActiveTintColor: AppColors.primaryColor,
         tabBarShowLabel: false,
       }}>
-      <Tab.Group>
-        <Tab.Screen
-          name="Home2"
-          component={HomeScreen}
-          options={{
-            headerShown: false,
-            tabBarIcon: ({color, size}) => (
-              <View style={styles.tab}>
-                <HomeIcon color={color} size={size} />
-                <Text style={[styles.text, {color: color}]}>Home</Text>
-              </View>
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Transaction"
-          component={TransactionScreen}
-          options={{
-            headerShown: false,
-            tabBarIcon: ({color, size}) => (
-              <View style={styles.tab}>
-                <ArrowsRightLeftIcon color={color} size={size} />
-                <Text style={[styles.text, {color: color}]}>Transaction</Text>
-              </View>
-            ),
-          }}
-        />
-      </Tab.Group>
+      <Tab.Screen
+        name="Home2"
+        component={HomeScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({color, size}) => (
+            <View style={styles.tab}>
+              <HomeIcon color={color} size={size} />
+              <Text style={[styles.text, {color: color}]}>Home</Text>
+            </View>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Transaction"
+        component={TransactionScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({color, size}) => (
+            <View style={styles.tab}>
+              <ArrowsRightLeftIcon color={color} size={size} />
+              <Text style={[styles.text, {color: color}]}>Transaction</Text>
+            </View>
+          ),
+        }}
+      />
       <Tab.Screen
         name="Add"
         component={HomeScreen}
@@ -127,34 +124,32 @@ const Tabs: React.FunctionComponent<ITabsProps> = props => {
           tabBarButton: () => <AddButton />,
         }}
       />
-      <Tab.Group>
-        <Tab.Screen
-          name="Budget"
-          component={BudgetScreen}
-          options={{
-            headerShown: false,
-            tabBarIcon: ({color, size}) => (
-              <View style={styles.tab}>
-                <ChartPieIcon color={color} size={size} />
-                <Text style={[styles.text, {color: color}]}>Budget</Text>
-              </View>
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Profile"
-          component={ProfileScreen}
-          options={{
-            headerShown: false,
-            tabBarIcon: ({color, size}) => (
-              <View style={styles.tab}>
-                <UserIcon color={color} size={size} />
-                <Text style={[styles.text, {color: color}]}>Profile</Text>
-              </View>
-            ),
-          }}
-        />
-      </Tab.Group>
+      <Tab.Screen
+        name="Budget"
+        component={BudgetScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({color, size}) => (
+            <View style={styles.tab}>
+              <ChartPieIcon color={color} size={size} />
+              <Text style={[styles.text, {color: color}]}>Budget</Text>
+            </View>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({color, size}) => (
+            <View style={styles.tab}>
+              <UserIcon color={color} size={size} />
+              <Text style={[styles.text, {color: color}]}>Profile</Text>
+            </View>
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 };
