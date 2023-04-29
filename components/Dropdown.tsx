@@ -19,7 +19,7 @@ export type OptionType = {
 
 interface IDropdownProps {
   options: OptionType[];
-  placeholder: string;
+  placeholder?: string;
   zIndex: number;
 }
 
@@ -29,7 +29,7 @@ const Dropdown: React.FunctionComponent<IDropdownProps> = ({
   zIndex,
 }) => {
   const [show, setShow] = useState<boolean>(false);
-  const [select, setSelect] = useState<OptionType>();
+  const [select, setSelect] = useState<OptionType>(options[0]);
   const dropdownRef = useClickOutside<Text>(() => setShow(false));
 
   return (
@@ -92,6 +92,7 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     fontSize: 16,
     lineHeight: 18,
+    paddingRight: 50,
   },
   icon: {
     position: 'absolute',
