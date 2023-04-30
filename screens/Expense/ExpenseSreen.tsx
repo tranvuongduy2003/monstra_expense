@@ -15,6 +15,7 @@ import RecurringBottomSheet from './components/RecurringBottomSheet';
 import Tag from './components/Tag';
 import RecurringInfo from './components/RecurringInfo';
 import {CheckCircleIcon} from 'react-native-heroicons/solid';
+import AddSuccessModal from './components/AddSuccessModal';
 
 interface IExpenseScreenProps {}
 
@@ -76,20 +77,6 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={showInform}
-        onRequestClose={() => setShowInform(!showInform)}>
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <CheckCircleIcon size={48} color={AppColors.primaryColor} />
-            <Text style={styles.modalTitle}>
-              Transaction has been successfully added
-            </Text>
-          </View>
-        </View>
-      </Modal>
       <ScrollView
         style={{backgroundColor: AppColors.red}}
         contentContainerStyle={{
@@ -157,29 +144,14 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
           setShow={setShowRecurring}
         />
       )}
+      {showInform && (
+        <AddSuccessModal show={showInform} setShow={setShowInform} />
+      )}
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalView: {
-    backgroundColor: AppColors.screenColor,
-    margin: 20,
-    borderRadius: 20,
-    padding: 35,
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontWeight: '500',
-    fontSize: 14,
-    lineHeight: 18,
-    color: AppColors.primaryTextColor,
-  },
   overlay: {
     backgroundColor: '#000000',
     opacity: 0.6,

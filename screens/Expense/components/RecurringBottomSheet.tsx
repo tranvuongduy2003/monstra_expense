@@ -39,7 +39,12 @@ const RecurringBottomSheet: React.FunctionComponent<
       enablePanDownToClose={true}
       onClose={() => setShow(false)}>
       <ClickOutsideProvider>
-        <BottomSheetView>
+        <BottomSheetView
+          style={{
+            justifyContent: 'space-between',
+            height: '100%',
+            flexDirection: 'column',
+          }}>
           <View style={styles.container}>
             <Dropdown
               options={frequencyOptions}
@@ -54,6 +59,8 @@ const RecurringBottomSheet: React.FunctionComponent<
             <View style={{paddingHorizontal: 16, paddingVertical: 16}}>
               <RecurringInfo editable={false} />
             </View>
+          </View>
+          <View style={styles.buttonContainer}>
             <AppButton
               title="Next"
               backgroundColor={AppColors.primaryColor}
@@ -71,7 +78,11 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 16,
     alignItems: 'stretch',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
+  },
+  buttonContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 40,
   },
 });
 

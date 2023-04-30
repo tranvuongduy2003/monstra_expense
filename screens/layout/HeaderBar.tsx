@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactElement, ReactNode} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {AppColors} from 'constants/AppColors';
 import {ArrowLeftIcon as ArrowLeftIconOutline} from 'react-native-heroicons/outline';
@@ -8,12 +8,14 @@ interface IHeaderBarProps {
   name: string;
   backgroundColor?: string;
   color?: string;
+  icon?: ReactElement;
 }
 
 const HeaderBar: React.FunctionComponent<IHeaderBarProps> = ({
   name,
   backgroundColor,
   color,
+  icon,
 }) => {
   const navigation = useNavigation();
 
@@ -39,7 +41,7 @@ const HeaderBar: React.FunctionComponent<IHeaderBarProps> = ({
         ]}>
         {name}
       </Text>
-      <ArrowLeftIconOutline style={styles.psuedoBackIcon} />
+      {icon ? icon : <ArrowLeftIconOutline style={styles.psuedoBackIcon} />}
     </View>
   );
 };
