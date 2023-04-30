@@ -46,6 +46,27 @@ export function AppNavigation(props: IAppNavigationProps) {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
+          name="Notification"
+          component={NotiScreen}
+          options={{
+            header: () => <NotiHeaderBar name="Notification" />,
+          }}
+        />
+        <Stack.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{
+            header: () => <HeaderBar name="Settings" />,
+          }}
+        />
+        <Stack.Screen
+          name="NotiEmpty"
+          component={NotiEmptyScreen}
+          options={{
+            header: () => <NotiHeaderBar name="Notification" />,
+          }}
+        />
+        <Stack.Screen
           name="Home"
           component={Tabs}
           options={{headerShown: false}}
@@ -72,31 +93,6 @@ export function AppNavigation(props: IAppNavigationProps) {
           name="ExportNoti"
           component={ExporNotitScreen}
           options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Export"
-          component={ExportScreen}
-        <Stack.Screen
-            name="Notification"
-            component={NotiScreen}
-            options={{
-              header: () => (
-                <NotiHeaderBar
-                  name="Notification"
-                />
-              ),
-            }}
-          />
-      <Stack.Screen
-          name="NotiEmpty"
-          component={NotiEmptyScreen}
-          options={{
-            header: () => (
-              <NotiHeaderBar
-                name="Notification"
-              />
-            ),
-          }}
         />
         <Stack.Screen
           name="IncomeNew"
@@ -132,26 +128,9 @@ export function AppNavigation(props: IAppNavigationProps) {
           }}
         />
         <Stack.Screen
-          name="ExportNoti"
-          component={ExporNotitScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Home"
-          component={Tabs}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
           name="Splash"
           component={SplashScreen}
           options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Settings"
-          component={SettingsScreen}
-          options={{
-            header: () => <HeaderBar name="Settings" />,
-          }}
         />
         <Stack.Screen
           name="Set-Currency"

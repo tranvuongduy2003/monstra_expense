@@ -1,51 +1,29 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import React from 'react';
+import {View, Text, StyleSheet, TouchableOpacity, Modal} from 'react-native';
 import {AppColors} from 'constants/AppColors';
 import {ArrowLeftIcon as ArrowLeftIconOutline} from 'react-native-heroicons/outline';
 import {useNavigation} from '@react-navigation/native';
-import MoreIcon from 'assets/svg/MoreIcon';
+import PopUpMenu from './PopUpMenu';
 
 interface INotiHeaderBarProps {
   name: string;
-  backgroundColor?: string;
-  color?: string;
 }
 
 const NotiHeaderBar: React.FunctionComponent<INotiHeaderBarProps> = ({
   name,
-  backgroundColor,
-  color,
 }) => {
   const navigation = useNavigation();
-  const [showOption, setShowOption] = useState<boolean>();
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor: backgroundColor
-            ? backgroundColor
-            : AppColors.white,
-        },
-      ]}>
+    <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.goBack()}>
-        <ArrowLeftIconOutline
-          color={color ? color : AppColors.headerTitle}
-        />
+        <ArrowLeftIconOutline color={AppColors.headerTitle} />
       </TouchableOpacity>
       <Text
-        style={[
-          styles.title,
-          {color: color ? color : AppColors.headerTitle},
-        ]}>
+        style={[styles.title, {color: AppColors.headerTitle}]}>
         {name}
       </Text>
-      <TouchableOpacity onPress={() => {}}>
-        <MoreIcon
-          color={color ? color : AppColors.headerTitle}
-        />
-      </TouchableOpacity>
+      <PopUpMenu></PopUpMenu>
     </View>
   );
 };
@@ -56,6 +34,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
+    backgroundColor: AppColors.white,
   },
   title: {
     fontSize: 18,
