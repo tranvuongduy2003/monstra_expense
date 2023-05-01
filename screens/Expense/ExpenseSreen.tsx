@@ -89,7 +89,7 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
         )}
         <ClickOutsideProvider>
           <View style={styles.balanceContainer}>
-            <Text style={styles.title}>Balance</Text>
+            <Text style={styles.title}>How much?</Text>
             <Text style={styles.amount}>$00.0</Text>
           </View>
           <View style={styles.setupContainer}>

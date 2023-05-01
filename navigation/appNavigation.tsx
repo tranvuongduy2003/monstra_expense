@@ -25,6 +25,9 @@ import ExpenseScreen from 'screens/Expense/ExpenseSreen';
 import ExportScreen from 'screens/Settings/ExportScreen';
 import ExporNotitScreen from 'screens/Settings/ExportNotiScreen';
 import DetailTransactionScreen from 'screens/Expense/DetailTransactionScreen';
+import CreateBudgetScreen from 'screens/Budget/CreateBudgetScreen';
+import EditBudgetScreen from 'screens/Budget/EditBudgetScreen';
+import DetailBudgetScreen from 'screens/Budget/DetailBudgetScreen';
 
 import Tabs from './Tabs';
 
@@ -45,6 +48,37 @@ export function AppNavigation(props: IAppNavigationProps) {
           name="Home"
           component={Tabs}
           options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="DetailBudget"
+          component={DetailBudgetScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="EditBudget"
+          component={EditBudgetScreen}
+          options={{
+            header: () => (
+              <HeaderBar
+                name="Edit Budget"
+                backgroundColor={AppColors.primaryColor}
+                color={AppColors.screenColor}
+              />
+            ),
+          }}
+        />
+        <Stack.Screen
+          name="CreateBudget"
+          component={CreateBudgetScreen}
+          options={{
+            header: () => (
+              <HeaderBar
+                name="Create Budget"
+                backgroundColor={AppColors.primaryColor}
+                color={AppColors.screenColor}
+              />
+            ),
+          }}
         />
         <Stack.Screen
           name="DetailTransaction"
