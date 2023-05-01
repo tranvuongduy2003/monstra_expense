@@ -29,6 +29,7 @@ import DetailTransactionScreen from 'screens/Expense/DetailTransactionScreen';
 import IncomeScreen from 'screens/Income/IncomeScreen';
 import NotiScreen from 'screens/Notification/NotiScreen';
 import NotiEmptyScreen from 'screens/Notification/NotiEmptyScreen';
+import AccountScreen from 'screens/Account/AccountScreen';
 
 import Tabs from './Tabs';
 
@@ -45,6 +46,13 @@ export function AppNavigation(props: IAppNavigationProps) {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+      <Stack.Screen
+          name="Account"
+          component={AccountScreen}
+          options={{
+            header: () => <HeaderBar name="Account" />,
+          }}
+        />
         <Stack.Screen
           name="Notification"
           component={NotiScreen}
