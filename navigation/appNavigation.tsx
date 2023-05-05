@@ -30,6 +30,7 @@ import IncomeScreen from 'screens/Income/IncomeScreen';
 import NotiScreen from 'screens/Notification/NotiScreen';
 import NotiEmptyScreen from 'screens/Notification/NotiEmptyScreen';
 import AccountScreen from 'screens/Account/AccountScreen';
+import AccountDetailScreen from 'screens/Account/AccountDetailScreen';
 
 import Tabs from './Tabs';
 
@@ -46,7 +47,23 @@ export function AppNavigation(props: IAppNavigationProps) {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-      <Stack.Screen
+        <Stack.Screen
+          name="AccountDetail"
+          component={AccountDetailScreen}
+          options={{
+            header: () => (
+              <HeaderBar
+                name="Detail account"
+                icon={
+                  <TouchableOpacity onPress={() => {}}>
+                    <TrashIcon color={AppColors.titleColor} />
+                  </TouchableOpacity>
+                }
+              />
+            ),
+          }}
+        />
+        <Stack.Screen
           name="Account"
           component={AccountScreen}
           options={{

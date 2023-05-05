@@ -30,49 +30,57 @@ const AccountScreen: React.FunctionComponent<IAccountScreenProps> = props => {
         </ImageBackground>
       </View>
       <View style={styles.categoryContainer}>
-        <View style={styles.content}>
-          <View style={styles.category}>
-            <View style={styles.icons}>
-              <AccountIcon></AccountIcon>
+        <TouchableOpacity onPress={() => {}}>
+          <View style={styles.content}>
+            <View style={styles.category}>
+              <View style={styles.icons}>
+                <AccountIcon></AccountIcon>
+              </View>
+              <Text style={styles.contentTitle}>Wallet</Text>
             </View>
-            <Text style={styles.contentTitle}>Wallet</Text>
-          </View>
-          <Text style={styles.cash}>$400</Text>
-        </View>
-        <View style={styles.content}>
-          <View style={styles.category}>
-            <View style={styles.icons}>
-              <AccountIcon></AccountIcon>
-            </View>
-            <Text style={styles.contentTitle}>Chase</Text>
-          </View>
-          <Text style={styles.cash}>$1000</Text>
-        </View>
-        <View style={styles.content}>
-          <View style={styles.category}>
-            <View style={styles.icons}>
-              <AccountIcon></AccountIcon>
-            </View>
-            <Text style={styles.contentTitle}>Citi</Text>
-          </View>
-          <Text style={styles.cash}>$6000</Text>
-        </View>
-        <View style={styles.content}>
-          <View style={styles.category}>
-            <View style={styles.icons}>
-              <AccountIcon></AccountIcon>
-            </View>
-            <Text style={styles.contentTitle}>Paypal</Text>
-          </View>
-          <Text style={styles.cash}>$2000</Text>
-        </View>
-        <View style={styles.bottomContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => {}}>
-          <View style={styles.titleButtonContainer}>
-            <Text style={styles.titleButton}>+ Add new wallet</Text>
+            <Text style={styles.cash}>$400</Text>
           </View>
         </TouchableOpacity>
-      </View>
+        <TouchableOpacity>
+          <View style={styles.content}>
+            <View style={styles.category}>
+              <View style={styles.icons}>
+                <AccountIcon></AccountIcon>
+              </View>
+              <Text style={styles.contentTitle}>Chase</Text>
+            </View>
+            <Text style={styles.cash}>$1000</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <View style={styles.content}>
+            <View style={styles.category}>
+              <View style={styles.icons}>
+                <AccountIcon></AccountIcon>
+              </View>
+              <Text style={styles.contentTitle}>Citi</Text>
+            </View>
+            <Text style={styles.cash}>$6000</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <View style={styles.content}>
+            <View style={styles.category}>
+              <View style={styles.icons}>
+                <AccountIcon></AccountIcon>
+              </View>
+              <Text style={styles.contentTitle}>Paypal</Text>
+            </View>
+            <Text style={styles.cash}>$2000</Text>
+          </View>
+        </TouchableOpacity>
+        <View style={styles.bottomContainer}>
+          <TouchableOpacity style={styles.button} onPress={() => {}}>
+            <View style={styles.titleButtonContainer}>
+              <Text style={styles.titleButton}>+ Add new wallet</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
