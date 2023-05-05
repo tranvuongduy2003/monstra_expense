@@ -38,6 +38,7 @@ import {AppColors} from 'constants/AppColors';
 import {TrashIcon} from 'react-native-heroicons/solid';
 
 import {TouchableOpacity} from 'react-native';
+import ChangeIcon from 'assets/svg/ChangeIcon';
 
 export interface IAppNavigationProps {}
 
@@ -47,6 +48,11 @@ export function AppNavigation(props: IAppNavigationProps) {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+      <Stack.Screen
+          name="Home"
+          component={Tabs}
+          options={{headerShown: false}}
+        />
         <Stack.Screen
           name="AccountDetail"
           component={AccountDetailScreen}
@@ -56,7 +62,7 @@ export function AppNavigation(props: IAppNavigationProps) {
                 name="Detail account"
                 icon={
                   <TouchableOpacity onPress={() => {}}>
-                    <TrashIcon color={AppColors.titleColor} />
+                    <ChangeIcon/>
                   </TouchableOpacity>
                 }
               />
@@ -90,11 +96,6 @@ export function AppNavigation(props: IAppNavigationProps) {
           options={{
             header: () => <NotiHeaderBar name="Notification" />,
           }}
-        />
-        <Stack.Screen
-          name="Home"
-          component={Tabs}
-          options={{headerShown: false}}
         />
         <Stack.Screen
           name="DetailTransaction"
