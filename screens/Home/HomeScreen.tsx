@@ -11,21 +11,58 @@ import {useNavigation} from '@react-navigation/native';
 import scale from 'constants/Responsive';
 import BellIcon from 'assets/svg/BellIcon';
 import {LinearGradient} from 'expo-linear-gradient';
+import CustomDropDown from 'components/CustomDropList';
 
 interface IHomeScreenProps {}
 
 const options: OptionType[] = [
   {
-    title: 'Week',
-    value: 'week',
+    title: 'January',
+    value: 'jan',
   },
   {
-    title: 'Month',
-    value: 'month',
+    title: 'February',
+    value: 'feb',
   },
   {
-    title: 'Year',
-    value: 'Year',
+    title: 'March',
+    value: 'mar',
+  },
+  {
+    title: 'April',
+    value: 'apr',
+  },
+  {
+    title: 'May',
+    value: 'may',
+  },
+  {
+    title: 'June',
+    value: 'jun',
+  },
+  {
+    title: 'July',
+    value: 'jul',
+  },
+  {
+    title: 'August',
+    value: 'aug',
+  },
+  {
+    title: 'September',
+    value: 'sep',
+  },
+  {
+    title: 'October',
+    value: 'oct',
+  },
+  {
+    title: 'November',
+    value: 'nov',
+  },
+  {
+    title: 'December',
+    value: 'dec',
   },
 ];
 const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
@@ -53,22 +90,16 @@ const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
         }}>
         {/* Header */}
         <View style={styles.topContainer}>
-          <LinearGradient
-            colors={['red', 'yellow']}
-            start={{
-              x: 0,
-              y: 0,
-            }}
-            end={{
-              x: 1,
-              y: 1,
-            }}></LinearGradient>
           <View style={styles.headerContainer}>
             <View style={styles.avatar}></View>
-            <Dropdown options={options} zIndex={80} />
+            <CustomDropDown options={options} zIndex={80} />
             <TouchableOpacity onPress={() => {}}>
               <BellIcon></BellIcon>
             </TouchableOpacity>
+          </View>
+          <View style={styles.titleContainer}>
+            <Text style={styles.title}>Account Balance</Text>
+            <Text style={styles.number}>$9400</Text>
           </View>
         </View>
       </ScrollView>
@@ -83,17 +114,9 @@ const styles = StyleSheet.create({
   topContainer: {
     width: scale(375),
     height: scale(312),
-  },
-  overlay: {
-    backgroundColor: '#000000',
-    opacity: 0.6,
-    position: 'absolute',
-    flex: 1,
-    top: 0,
-    bottom: 0,
-    left: 0,
-    right: 0,
-    zIndex: 10,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    backgroundColor: '#FFF6E5',
   },
   avatar: {
     width: scale(40),
@@ -108,22 +131,19 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginVertical: 12,
   },
-  reportNavigator: {
-    marginHorizontal: 16,
-    marginVertical: 8,
-    backgroundColor: AppColors.primaryColor100,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    justifyContent: 'space-between',
-    borderRadius: 8,
+  titleContainer: {
+    textAlign: 'center',
     alignItems: 'center',
-    flexDirection: 'row',
+    alignContent: 'center',
   },
-  navigatorText: {
-    fontWeight: '400',
-    fontSize: 16,
-    lineHeight: 19,
-    color: AppColors.primaryColor,
+  title: {
+    fontSize: scale(14),
+    color: AppColors.secondaryTextColor,
+  },
+  number: {
+    fontSize: scale(40),
+    fontFamily: 'Inter-SemiBold',
+    color: AppColors.textColor,
   },
 });
 
