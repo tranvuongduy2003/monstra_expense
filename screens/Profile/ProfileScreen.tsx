@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {StyleSheet, View, Text, Button, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {AppColors} from 'constants/AppColors';
@@ -8,10 +8,13 @@ import SettingsIcon from 'assets/svg/SettingsIcon';
 import ExportIcon from 'assets/svg/ExportIcon';
 import LogoutIcon from 'assets/svg/LogoutIcon';
 import EditIcon from 'assets/svg/EditIcon';
+import {AuthContext} from 'providers/AuthProvider';
 
 interface IProfileScreenProps {}
 
 const ProfileScreen: React.FunctionComponent<IProfileScreenProps> = props => {
+  const {logOut} = useContext(AuthContext) as any;
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topContainer}>
@@ -22,7 +25,7 @@ const ProfileScreen: React.FunctionComponent<IProfileScreenProps> = props => {
             <Text style={styles.userName}>Nhat Vy</Text>
           </View>
           <TouchableOpacity style={styles.edit}>
-            <EditIcon></EditIcon> 
+            <EditIcon></EditIcon>
           </TouchableOpacity>
         </View>
         <View style={styles.bodyContainer}>
@@ -51,7 +54,7 @@ const ProfileScreen: React.FunctionComponent<IProfileScreenProps> = props => {
                 <Text style={styles.contentTitle}>Export Data</Text>
               </View>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.contentButtonBot}>
+            <TouchableOpacity style={styles.contentButtonBot} onPress={logOut}>
               <View style={styles.content}>
                 <View style={styles.logoutIC}>
                   <LogoutIcon></LogoutIcon>
@@ -75,7 +78,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: AppColors.cultured,
   },
-  topContainer:{
+  topContainer: {
     flex: 707,
     backgroundColor: AppColors.cultured,
   },
@@ -84,7 +87,7 @@ const styles = StyleSheet.create({
     flex: 194,
     backgroundColor: AppColors.cultured,
     alignSelf: 'center',
-    flexDirection:'row',
+    flexDirection: 'row',
     alignItems: 'center',
   },
   avatar: {
@@ -105,9 +108,9 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontSize: scale(24),
-    fontFamily: 'Inter-SemiBold'
+    fontFamily: 'Inter-SemiBold',
   },
-  edit:{
+  edit: {
     width: scale(40),
     height: scale(40),
     justifyContent: 'center',
@@ -186,10 +189,10 @@ const styles = StyleSheet.create({
     fontSize: scale(16),
     textAlignVertical: 'center',
   },
-  bottomContainer:{
+  bottomContainer: {
     flex: 113,
     backgroundColor: AppColors.cultured,
-  }
+  },
 });
 
 export default ProfileScreen;
