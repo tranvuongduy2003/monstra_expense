@@ -1,262 +1,34 @@
-import React from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
-import SplashScreen from 'screens/Auth/SplashScreen';
-import SignUpScreen from 'screens/Auth/SignupScreen';
-import VerificationScreen from 'screens/Auth/VerificationScreen';
-import LoginScreen from 'screens/Auth/LoginScreen';
-import HeaderBar from 'screens/layout/HeaderBar';
-import ProfileScreen from 'screens/Profile/ProfileScreen';
-import ForgotPasswordScreen from 'screens/Auth/ForgotPasswordScreen';
-import SentEmailScreen from 'screens/Auth/SentEmailScreen';
-import ResetPasswordScreen from 'screens/Auth/ResetPasswordScreen';
-import SetupPINScreen from 'screens/Auth/SetupPINScreen';
-import RetypePINScreen from 'screens/Auth/RetypePINScreen';
-import SetupAccountScreen from 'screens/Auth/SetupAccountScreen';
-import AddNewAccountScreen from 'screens/Auth/AddNewAccountScreen';
-import SetScreen from 'screens/Auth/SetScreen';
-import SettingsScreen from 'screens/Settings/SettingScreen';
-import CurrencyScreen from 'screens/Settings/CurrencyScreen';
-import LanguageScreen from 'screens/Settings/LanguageScreen';
-import ThemeScreen from 'screens/Settings/ThemeScreen';
-import SecurityScreen from 'screens/Settings/SecurityScreen';
-import NotificationScreen from 'screens/Settings/Notification';
-import ExpenseScreen from 'screens/Expense/ExpenseSreen';
-import ExportScreen from 'screens/Settings/ExportScreen';
-import ExporNotitScreen from 'screens/Settings/ExportNotiScreen';
-import DetailTransactionScreen from 'screens/Expense/DetailTransactionScreen';
-import CreateBudgetScreen from 'screens/Budget/CreateBudgetScreen';
-import EditBudgetScreen from 'screens/Budget/EditBudgetScreen';
-import DetailBudgetScreen from 'screens/Budget/DetailBudgetScreen';
-
-import Tabs from './Tabs';
-
-import {AppColors} from 'constants/AppColors';
-import {TrashIcon} from 'react-native-heroicons/solid';
-
-import {TouchableOpacity} from 'react-native';
+import AppStack from './AppStack';
+import AuthStack from './AuthStack';
+import {AuthContext} from 'providers/AuthProvider';
+import auth from '@react-native-firebase/auth';
 
 export interface IAppNavigationProps {}
 
 export function AppNavigation(props: IAppNavigationProps) {
   const Stack = createNativeStackNavigator();
 
+  const {user, setUser} = useContext(AuthContext) as any;
+  const [initializing, setInitializing] = useState<boolean>(true);
+
+  const onAuthStateChanged = user => {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  };
+
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber;
+  }, []);
+
+  if (initializing) return null;
+
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Home"
-          component={Tabs}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="DetailBudget"
-          component={DetailBudgetScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="EditBudget"
-          component={EditBudgetScreen}
-          options={{
-            header: () => (
-              <HeaderBar
-                name="Edit Budget"
-                backgroundColor={AppColors.primaryColor}
-                color={AppColors.screenColor}
-              />
-            ),
-          }}
-        />
-        <Stack.Screen
-          name="CreateBudget"
-          component={CreateBudgetScreen}
-          options={{
-            header: () => (
-              <HeaderBar
-                name="Create Budget"
-                backgroundColor={AppColors.primaryColor}
-                color={AppColors.screenColor}
-              />
-            ),
-          }}
-        />
-        <Stack.Screen
-          name="DetailTransaction"
-          component={DetailTransactionScreen}
-          options={{
-            header: () => (
-              <HeaderBar
-                name="Detail Transaction"
-                backgroundColor={AppColors.red}
-                color={AppColors.screenColor}
-                icon={
-                  <TouchableOpacity onPress={() => {}}>
-                    <TrashIcon color={AppColors.screenColor} />
-                  </TouchableOpacity>
-                }
-              />
-            ),
-          }}
-        />
-        <Stack.Screen
-          name="ExportNoti"
-          component={ExporNotitScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Export"
-          component={ExportScreen}
-          options={{
-            header: () => <HeaderBar name="Export Data" />,
-          }}
-        />
-        <Stack.Screen
-          name="Expense"
-          component={ExpenseScreen}
-          options={{
-            header: () => (
-              <HeaderBar
-                name="Expense"
-                backgroundColor={AppColors.red}
-                color={AppColors.screenColor}
-              />
-            ),
-          }}
-        />
-        <Stack.Screen
-          name="Splash"
-          component={SplashScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Settings"
-          component={SettingsScreen}
-          options={{
-            header: () => <HeaderBar name="Settings" />,
-          }}
-        />
-        <Stack.Screen
-          name="Currency"
-          component={CurrencyScreen}
-          options={{
-            header: () => <HeaderBar name="Currency" />,
-          }}
-        />
-        <Stack.Screen
-          name="Language"
-          component={LanguageScreen}
-          options={{
-            header: () => <HeaderBar name="Language" />,
-          }}
-        />
-        <Stack.Screen
-          name="Theme"
-          component={ThemeScreen}
-          options={{
-            header: () => <HeaderBar name="Theme" />,
-          }}
-        />
-        <Stack.Screen
-          name="Security"
-          component={SecurityScreen}
-          options={{
-            header: () => <HeaderBar name="Security" />,
-          }}
-        />
-        <Stack.Screen
-          name="Notification"
-          component={NotificationScreen}
-          options={{
-            header: () => <HeaderBar name="Notification" />,
-          }}
-        />
-        <Stack.Screen
-          name="Profile"
-          component={ProfileScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="SignUp"
-          component={SignUpScreen}
-          options={{
-            header: () => <HeaderBar name="Sign Up" />,
-          }}
-        />
-        <Stack.Screen
-          name="Verification"
-          component={VerificationScreen}
-          options={{
-            header: () => <HeaderBar name="Verification" />,
-          }}
-        />
-        <Stack.Screen
-          name="RetypePIN"
-          component={RetypePINScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="SetupPIN"
-          component={SetupPINScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="SetupAccount"
-          component={SetupAccountScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="AddNewAccount"
-          component={AddNewAccountScreen}
-          options={{
-            header: () => (
-              <HeaderBar
-                name="Add New Account"
-                backgroundColor={AppColors.primaryColor}
-                color={AppColors.screenColor}
-              />
-            ),
-          }}
-        />
-        <Stack.Screen
-          name="Set"
-          component={SetScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{
-            header: () => <HeaderBar name="Login" />,
-          }}
-        />
-        <Stack.Screen
-          name="ForgotPassword"
-          component={ForgotPasswordScreen}
-          options={{
-            header: () => <HeaderBar name="Forgot Password" />,
-          }}
-        />
-        <Stack.Screen
-          name="SentEmail"
-          component={SentEmailScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="ResetPassword"
-          component={ResetPasswordScreen}
-          options={{
-            header: () => <HeaderBar name="Reset Password" />,
-          }}
-        />
-      </Stack.Navigator>
+      {user ? <AppStack /> : <AuthStack />}
     </NavigationContainer>
   );
 }

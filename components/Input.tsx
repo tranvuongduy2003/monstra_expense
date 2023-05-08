@@ -4,11 +4,13 @@ import {AppColors} from 'constants/AppColors';
 import {EyeIcon, EyeSlashIcon} from 'react-native-heroicons/outline';
 
 interface IInputProps {
+  onChangeText?: any;
   placeholder: string;
   isPassword?: boolean;
 }
 
 const Input: React.FunctionComponent<IInputProps> = ({
+  onChangeText,
   placeholder,
   isPassword = false,
 }) => {
@@ -19,6 +21,7 @@ const Input: React.FunctionComponent<IInputProps> = ({
       {isPassword ? (
         <View style={styles.passwordContainer}>
           <TextInput
+            onChangeText={onChangeText}
             style={[styles.input, {paddingRight: 50}]}
             placeholder={placeholder}
             placeholderTextColor={AppColors.secondaryTextColor}
@@ -37,6 +40,7 @@ const Input: React.FunctionComponent<IInputProps> = ({
         </View>
       ) : (
         <TextInput
+          onChangeText={onChangeText}
           style={styles.input}
           placeholder={placeholder}
           placeholderTextColor={AppColors.secondaryTextColor}

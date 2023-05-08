@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import {
   View,
   Text,
@@ -14,14 +14,25 @@ import GoogleIcon from 'assets/svg/GoogleIcon';
 import Question from './components/question/Question';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
+import {AuthPayload} from 'types/auth.type';
+import {AuthContext} from 'providers/AuthProvider';
 
 interface ISignUpScreenProps {}
 
 const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
   const navigation = useNavigation();
+  const [signUpPayload, setSignUpPayload] = useState<AuthPayload>({
+    email: '',
+    password: '',
+  });
 
-  const handleSignUp = () => {
-    navigation.navigate('Verification' as never);
+  const {signUp} = useContext(AuthContext) as any;
+
+  const handleSignUp = async () => {
+    try {
+      await signUp(signUpPayload);
+      navigation.navigate('Verification' as never);
+    } catch (error) {}
   };
   const handleSignUpWithGoogle = () => {
     navigation.navigate('Verification' as never);
@@ -31,9 +42,25 @@ const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
     <SafeAreaView style={{flex: 1}}>
       <ScrollView style={{backgroundColor: AppColors.screenColor}}>
         <View style={styles.inputContainer}>
-          <Input placeholder="Name" />
-          <Input placeholder="Email" />
-          <Input placeholder="Password" isPassword={true} />
+          <Input
+            onChangeText={val =>
+              setSignUpPayload(prev => ({...prev, name: val}))
+            }
+            placeholder="Name"
+          />
+          <Input
+            onChangeText={val =>
+              setSignUpPayload(prev => ({...prev, email: val}))
+            }
+            placeholder="Email"
+          />
+          <Input
+            onChangeText={val =>
+              setSignUpPayload(prev => ({...prev, password: val}))
+            }
+            placeholder="Password"
+            isPassword={true}
+          />
         </View>
         <View style={styles.privacyContainer}>
           <Checkbox />

@@ -9,7 +9,8 @@
       "@features/*": ["features/*"],
       "@screens/*": ["screens/*"],
       "@assets/*": ["assets/*"],
-      "@app/*": ["app/*"]
+      "@types/*": ["types/*"],
+      "@app/*": ["app/*"],
     }
   }
 }
