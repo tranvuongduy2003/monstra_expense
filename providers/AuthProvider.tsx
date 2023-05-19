@@ -1,6 +1,8 @@
 import {createContext, useEffect, useState} from 'react';
 import {AuthPayload} from 'types/auth.type';
 import auth from '@react-native-firebase/auth';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import firestore from '@react-native-firebase/firestore';
 
 export const AuthContext = createContext({});
 
@@ -29,10 +31,25 @@ export const AuthProvider = ({children}) => {
 
   const signUp = async (payload: AuthPayload) => {
     try {
-      await auth().createUserWithEmailAndPassword(
-        payload.email,
-        payload.password,
-      );
+      await auth()
+        .createUserWithEmailAndPassword(payload.email, payload.password)
+        .then(() => {
+          firestore()
+            .collection('users')
+            .doc(auth()?.currentUser?.uid)
+            .set({
+              name: payload.name,
+              email: payload.email,
+              createdAt: firestore.Timestamp.fromDate(new Date()),
+              avatar: null,
+            })
+            .catch((error: any) => {
+              console.log(
+                'Something went wrong with added user to firestore: ',
+                error,
+              );
+            });
+        });
     } catch (error: any) {
       if (error.code === 'auth/email-already-in-use') {
         console.log('That email address is already in use!');
@@ -46,8 +63,22 @@ export const AuthProvider = ({children}) => {
     }
   };
 
+  const signInWithGoogle = async () => {
+    try {
+      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+      const {idToken} = await GoogleSignin.signIn();
+
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+      return auth().signInWithCredential(googleCredential);
+    } catch (error) {
+      console.log('Something went wrong with sign up: ', error);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{logIn, logOut, signUp, user, setUser}}>
+    <AuthContext.Provider
+      value={{logIn, logOut, signUp, user, setUser, signInWithGoogle}}>
       {children}
     </AuthContext.Provider>
   );

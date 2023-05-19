@@ -1,11 +1,5 @@
 import React, {useContext, useState} from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import {View, Text, ScrollView, StyleSheet} from 'react-native';
 import Input from 'components/Input';
 import {AppColors} from 'constants/AppColors';
 import Checkbox from 'components/Checkbox';
@@ -16,26 +10,41 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
 import {AuthPayload} from 'types/auth.type';
 import {AuthContext} from 'providers/AuthProvider';
+import ErrorMessage from 'components/ErrorMessage';
 
 interface ISignUpScreenProps {}
 
 const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
   const navigation = useNavigation();
+  const [isAcceptPolicy, setIsAcceptPolicy] = useState<boolean>(false);
+  const [isPolicyError, setIsPolicyError] = useState<boolean>(false);
   const [signUpPayload, setSignUpPayload] = useState<AuthPayload>({
+    name: '',
     email: '',
     password: '',
   });
 
-  const {signUp} = useContext(AuthContext) as any;
+  const {signInWithGoogle, signUp} = useContext(AuthContext) as any;
 
   const handleSignUp = async () => {
     try {
-      await signUp(signUpPayload);
+      if (isAcceptPolicy) {
+        setIsPolicyError(false);
+        await signUp(signUpPayload);
+        navigation.navigate('Verification' as never);
+      } else {
+        setIsPolicyError(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSignUpWithGoogle = async () => {
+    try {
+      await signInWithGoogle();
       navigation.navigate('Verification' as never);
     } catch (error) {}
-  };
-  const handleSignUpWithGoogle = () => {
-    navigation.navigate('Verification' as never);
   };
 
   return (
@@ -43,33 +52,45 @@ const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
       <ScrollView style={{backgroundColor: AppColors.screenColor}}>
         <View style={styles.inputContainer}>
           <Input
+            name="Name"
+            required={true}
+            placeholder="Name"
             onChangeText={val =>
               setSignUpPayload(prev => ({...prev, name: val}))
             }
-            placeholder="Name"
           />
           <Input
+            name="Email"
+            required={true}
+            isEmail={true}
+            placeholder="Email"
             onChangeText={val =>
               setSignUpPayload(prev => ({...prev, email: val}))
             }
-            placeholder="Email"
           />
           <Input
+            name="Password"
+            required={true}
+            isPassword={true}
+            placeholder="Password"
             onChangeText={val =>
               setSignUpPayload(prev => ({...prev, password: val}))
             }
-            placeholder="Password"
-            isPassword={true}
           />
         </View>
         <View style={styles.privacyContainer}>
-          <Checkbox />
-          <Text style={styles.privaryText}>
-            By signing up, you agree to the{' '}
-            <Text style={{color: AppColors.primaryColor}}>
-              Terms of Service and Privacy Policy
+          <View style={styles.privacyCheck}>
+            <Checkbox checked={isAcceptPolicy} setChecked={setIsAcceptPolicy} />
+            <Text style={styles.privaryText}>
+              By signing up, you agree to the{' '}
+              <Text style={{color: AppColors.primaryColor}}>
+                Terms of Service and Privacy Policy
+              </Text>
             </Text>
-          </Text>
+          </View>
+          {isPolicyError && (
+            <ErrorMessage title="You must agree with our policy before signing up" />
+          )}
         </View>
         <View style={styles.buttonContainer}>
           <AppButton
@@ -102,12 +123,14 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   privacyContainer: {
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    gap: 14,
     alignItems: 'center',
     marginTop: 17,
     marginBottom: 27,
+  },
+  privacyCheck: {
+    flexDirection: 'row',
+    gap: 14,
+    paddingHorizontal: 40,
   },
   privaryText: {
     fontWeight: '500',

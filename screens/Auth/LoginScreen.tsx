@@ -30,7 +30,6 @@ const LoginScreen: React.FunctionComponent<ILoginScreenProps> = props => {
   const handleLogin = async () => {
     try {
       await logIn(loginPayload);
-      // navigation.navigate('Home' as never);
       console.log('Login successfully!');
     } catch (error) {}
   };

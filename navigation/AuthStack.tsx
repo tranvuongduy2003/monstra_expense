@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import ForgotPasswordScreen from 'screens/Auth/ForgotPasswordScreen';
 import SentEmailScreen from 'screens/Auth/SentEmailScreen';
@@ -17,10 +17,40 @@ import HeaderBar from 'screens/layout/HeaderBar';
 
 import {AppColors} from 'constants/AppColors';
 
+import AsyncStorage from '@react-native-community/async-storage';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+
 interface IAuthStackProps {}
 
 const AuthStack: React.FunctionComponent<IAuthStackProps> = props => {
   const Stack = createNativeStackNavigator();
+
+  const [isFirstLaunch, setIsFirstLaunch] = useState<boolean>(true);
+
+  let routeName: string = '';
+
+  useEffect(() => {
+    AsyncStorage.getItem('alreadyLaunched').then(value => {
+      if (value == null) {
+        AsyncStorage.setItem('alreadyLaunched', 'true');
+      } else {
+        setIsFirstLaunch(false);
+      }
+    });
+
+    GoogleSignin.configure({
+      webClientId:
+        '519891393566-e1qnm5re5mphlfsrbosr05v3bdph1t6h.apps.googleusercontent.com',
+    });
+  }, []);
+
+  if (isFirstLaunch === null) {
+    return null;
+  } else if (isFirstLaunch == true) {
+    routeName = 'Splash';
+  } else {
+    routeName = 'Login';
+  }
 
   return (
     <Stack.Navigator>
