@@ -1,12 +1,20 @@
-import React from 'react';
+import React, {useContext, useEffect} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ScrollView, Image, Text, StyleSheet} from 'react-native';
 import {AppColors} from 'constants/AppColors';
 import {ImagesAssets} from 'assets/images/ImagesAssets';
+import {AuthContext} from 'providers/AuthProvider';
 
 interface ISetScreenProps {}
 
 const SetScreen: React.FunctionComponent<ISetScreenProps> = props => {
+  const {setLoggedIn} = useContext(AuthContext) as any;
+
+  useEffect(() => {
+    const timer = setInterval(() => setLoggedIn(true), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <ScrollView

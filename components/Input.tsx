@@ -17,6 +17,7 @@ interface IInputProps {
   isPassword?: boolean;
   required?: boolean;
   isEmail?: boolean;
+  setValid?: Function;
 }
 
 const Input: React.FunctionComponent<IInputProps> = ({
@@ -26,6 +27,7 @@ const Input: React.FunctionComponent<IInputProps> = ({
   isPassword = false,
   isEmail = false,
   required = false,
+  setValid,
 }) => {
   const [hidePassword, setHidePassword] = useState<boolean>(true);
   const [isRequiredError, setIsRequiredError] = useState<boolean>(false);
@@ -48,6 +50,14 @@ const Input: React.FunctionComponent<IInputProps> = ({
       }
     }
   };
+
+  useEffect(() => {
+    if (isEmailError || isRequiredError) {
+      setValid && setValid(false);
+    } else {
+      setValid && setValid(true);
+    }
+  }, [isEmailError, isRequiredError]);
 
   return (
     <View>

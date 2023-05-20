@@ -3,7 +3,7 @@ import {Text, StyleSheet, TouchableOpacity} from 'react-native';
 
 interface IKeyboardCellProps {
   value?: number;
-  onPress?: () => void;
+  onPress?: Function;
   children?: ReactElement;
 }
 
@@ -13,7 +13,7 @@ const KeyboardCell: React.FunctionComponent<IKeyboardCellProps> = ({
   children,
 }) => {
   return (
-    <TouchableOpacity onPress={onPress}>
+    <TouchableOpacity onPress={() => onPress && onPress(value)}>
       {children ? (
         children
       ) : (

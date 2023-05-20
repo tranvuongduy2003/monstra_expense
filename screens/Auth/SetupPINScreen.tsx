@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ScrollView, View, Text, StyleSheet} from 'react-native';
 import {AppColors} from 'constants/AppColors';
@@ -10,7 +10,8 @@ import {useNavigation} from '@react-navigation/native';
 interface ISetupPINScreenProps {}
 
 const SetupPINScreen: React.FunctionComponent<ISetupPINScreenProps> = props => {
-  const navigation = useNavigation();
+  const navigation: any = useNavigation();
+  const [pin, setPin] = useState<string>('');
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -25,12 +26,15 @@ const SetupPINScreen: React.FunctionComponent<ISetupPINScreenProps> = props => {
             <Text style={styles.headingText}>Let's setup your PIN</Text>
           </View>
           <View style={styles.codeContainer}>
-            <SecureCodeInput />
+            <SecureCodeInput pin={pin} />
           </View>
         </View>
         <View>
           <CustomKeyboard
-            onSubmit={() => navigation.navigate('RetypePIN' as never)}
+            onSelectNumber={(number: number) =>
+              pin.length < 4 && setPin(cur => cur + JSON.stringify(number))
+            }
+            onSubmit={() => navigation.navigate('RetypePIN', {pin: pin})}
           />
         </View>
       </ScrollView>

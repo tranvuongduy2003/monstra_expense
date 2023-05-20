@@ -8,15 +8,17 @@ export const AuthContext = createContext({});
 
 export const AuthProvider = ({children}) => {
   const [user, setUser] = useState<any>(null);
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   const logIn = async (payload: AuthPayload) => {
     try {
       await auth().signInWithEmailAndPassword(payload.email, payload.password);
+      setLoggedIn(true);
     } catch (error: any) {
       if (error.code === 'auth/operation-not-allowed') {
         console.log('Enable anonymous in your firebase console.');
       }
-      console.error(error);
+      throw error;
     }
   };
 
@@ -26,6 +28,7 @@ export const AuthProvider = ({children}) => {
       console.log('User signed out!');
     } catch (error) {
       console.log(error);
+      throw error;
     }
   };
 
@@ -42,12 +45,10 @@ export const AuthProvider = ({children}) => {
               email: payload.email,
               createdAt: firestore.Timestamp.fromDate(new Date()),
               avatar: null,
+              pin: null,
             })
             .catch((error: any) => {
-              console.log(
-                'Something went wrong with added user to firestore: ',
-                error,
-              );
+              throw error;
             });
         });
     } catch (error: any) {
@@ -59,7 +60,7 @@ export const AuthProvider = ({children}) => {
         console.log('That email address is invalid!');
       }
 
-      console.error(error);
+      throw error;
     }
   };
 
@@ -72,13 +73,31 @@ export const AuthProvider = ({children}) => {
 
       return auth().signInWithCredential(googleCredential);
     } catch (error) {
-      console.log('Something went wrong with sign up: ', error);
+      throw error;
+    }
+  };
+
+  const sendPasswordResetEmail = async (email: string) => {
+    try {
+      await auth().sendPasswordResetEmail(email);
+    } catch (error) {
+      throw error;
     }
   };
 
   return (
     <AuthContext.Provider
-      value={{logIn, logOut, signUp, user, setUser, signInWithGoogle}}>
+      value={{
+        logIn,
+        logOut,
+        signUp,
+        user,
+        setUser,
+        signInWithGoogle,
+        sendPasswordResetEmail,
+        loggedIn,
+        setLoggedIn,
+      }}>
       {children}
     </AuthContext.Provider>
   );

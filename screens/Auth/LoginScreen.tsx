@@ -31,7 +31,9 @@ const LoginScreen: React.FunctionComponent<ILoginScreenProps> = props => {
     try {
       await logIn(loginPayload);
       console.log('Login successfully!');
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

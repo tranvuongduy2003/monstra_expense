@@ -21,15 +21,18 @@ interface IDropdownProps {
   options: OptionType[];
   placeholder?: string;
   zIndex: number;
+  select?: OptionType;
+  setSelect?: Function;
 }
 
 const Dropdown: React.FunctionComponent<IDropdownProps> = ({
   options,
   placeholder,
   zIndex,
+  select,
+  setSelect,
 }) => {
   const [show, setShow] = useState<boolean>(false);
-  const [select, setSelect] = useState<OptionType>(options[0]);
   const dropdownRef = useClickOutside<Text>(() => setShow(false));
 
   return (
@@ -55,7 +58,7 @@ const Dropdown: React.FunctionComponent<IDropdownProps> = ({
               title={item.title}
               value={item.value}
               onPress={() => {
-                setSelect(item);
+                setSelect && setSelect(item);
                 setShow(false);
               }}
             />

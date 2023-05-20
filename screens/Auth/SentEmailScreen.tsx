@@ -4,14 +4,15 @@ import {Image, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {AppColors} from 'constants/AppColors';
 import {ImagesAssets} from 'assets/images/ImagesAssets';
 import AppButton from 'components/AppButton';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 
 interface ISentEmailScreenProps {}
 
-const SentEmailScreen: React.FunctionComponent<
-  ISentEmailScreenProps
-> = props => {
+const SentEmailScreen: React.FunctionComponent<ISentEmailScreenProps> = () => {
   const navigation = useNavigation();
+  const route: any = useRoute();
+
+  const {email} = route.params;
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -28,8 +29,7 @@ const SentEmailScreen: React.FunctionComponent<
           <View style={styles.contentContainer}>
             <Text style={styles.title}>Your email is on the way</Text>
             <Text style={styles.description}>
-              Check your email test@test.com and follow the instructions to
-              reset your password
+              {`Check your email ${email} and follow the instructions to reset your password`}
             </Text>
           </View>
         </View>
@@ -37,7 +37,7 @@ const SentEmailScreen: React.FunctionComponent<
           <AppButton
             title="Back to Login"
             backgroundColor={AppColors.primaryColor}
-            onPress={() => navigation.navigate('ResetPassword' as never)}
+            onPress={() => navigation.navigate('Login' as never)}
           />
         </View>
       </ScrollView>

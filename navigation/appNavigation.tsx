@@ -9,9 +9,7 @@ import auth from '@react-native-firebase/auth';
 export interface IAppNavigationProps {}
 
 export function AppNavigation(props: IAppNavigationProps) {
-  const Stack = createNativeStackNavigator();
-
-  const {user, setUser} = useContext(AuthContext) as any;
+  const {loggedIn, user, setUser} = useContext(AuthContext) as any;
   const [initializing, setInitializing] = useState<boolean>(true);
 
   const onAuthStateChanged = user => {
@@ -28,7 +26,7 @@ export function AppNavigation(props: IAppNavigationProps) {
 
   return (
     <NavigationContainer>
-      {user ? <AppStack /> : <AuthStack />}
+      {user && loggedIn ? <AppStack /> : <AuthStack />}
     </NavigationContainer>
   );
 }

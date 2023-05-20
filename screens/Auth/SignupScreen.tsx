@@ -15,8 +15,9 @@ import ErrorMessage from 'components/ErrorMessage';
 interface ISignUpScreenProps {}
 
 const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
-  const navigation = useNavigation();
+  const navigation: any = useNavigation();
   const [isAcceptPolicy, setIsAcceptPolicy] = useState<boolean>(false);
+  const [isValid, setIsValid] = useState<boolean>(false);
   const [isPolicyError, setIsPolicyError] = useState<boolean>(false);
   const [signUpPayload, setSignUpPayload] = useState<AuthPayload>({
     name: '',
@@ -28,10 +29,10 @@ const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
 
   const handleSignUp = async () => {
     try {
-      if (isAcceptPolicy) {
+      if (isAcceptPolicy && isValid) {
         setIsPolicyError(false);
         await signUp(signUpPayload);
-        navigation.navigate('Verification' as never);
+        navigation.navigate('SetupPIN');
       } else {
         setIsPolicyError(true);
       }
@@ -43,7 +44,6 @@ const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
   const handleSignUpWithGoogle = async () => {
     try {
       await signInWithGoogle();
-      navigation.navigate('Verification' as never);
     } catch (error) {}
   };
 
@@ -55,6 +55,7 @@ const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
             name="Name"
             required={true}
             placeholder="Name"
+            setValid={setIsValid}
             onChangeText={val =>
               setSignUpPayload(prev => ({...prev, name: val}))
             }
@@ -64,6 +65,7 @@ const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
             required={true}
             isEmail={true}
             placeholder="Email"
+            setValid={setIsValid}
             onChangeText={val =>
               setSignUpPayload(prev => ({...prev, email: val}))
             }
@@ -73,6 +75,7 @@ const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
             required={true}
             isPassword={true}
             placeholder="Password"
+            setValid={setIsValid}
             onChangeText={val =>
               setSignUpPayload(prev => ({...prev, password: val}))
             }
@@ -98,13 +101,13 @@ const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
             backgroundColor={AppColors.primaryColor}
             onPress={handleSignUp}
           />
-          <Text style={styles.breakText}>Or with</Text>
+          {/* <Text style={styles.breakText}>Or with</Text>
           <AppButton onPress={handleSignUpWithGoogle}>
             <View style={styles.googleButtonContent}>
               <GoogleIcon />
               <Text style={styles.googleButtonText}>Sign Up with Google</Text>
             </View>
-          </AppButton>
+          </AppButton> */}
         </View>
         <Question
           content="Already have an account?"
