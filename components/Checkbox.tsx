@@ -4,12 +4,14 @@ import {StyleSheet, TouchableOpacity} from 'react-native';
 import {CheckIcon} from 'react-native-heroicons/outline';
 
 interface ICheckboxProps {
-  onPress?: () => void;
+  checked: boolean;
+  setChecked: Function;
 }
 
-const Checkbox: React.FunctionComponent<ICheckboxProps> = ({}) => {
-  const [checked, setChecked] = useState<boolean>(false);
-
+const Checkbox: React.FunctionComponent<ICheckboxProps> = ({
+  checked,
+  setChecked,
+}) => {
   return (
     <TouchableOpacity
       style={[

@@ -6,27 +6,29 @@ import {AppColors} from 'constants/AppColors';
 
 interface ICustomKeyboardProps {
   onSubmit?: () => void;
+  onSelectNumber: Function;
 }
 
 const CustomKeyboard: React.FunctionComponent<ICustomKeyboardProps> = ({
+  onSelectNumber,
   onSubmit,
 }) => {
   return (
     <View style={styles.container}>
       <View style={styles.row}>
-        <KeyboardCell value={1} />
-        <KeyboardCell value={2} />
-        <KeyboardCell value={3} />
+        <KeyboardCell value={1} onPress={onSelectNumber} />
+        <KeyboardCell value={2} onPress={onSelectNumber} />
+        <KeyboardCell value={3} onPress={onSelectNumber} />
       </View>
       <View style={styles.row}>
-        <KeyboardCell value={4} />
-        <KeyboardCell value={5} />
-        <KeyboardCell value={6} />
+        <KeyboardCell value={4} onPress={onSelectNumber} />
+        <KeyboardCell value={5} onPress={onSelectNumber} />
+        <KeyboardCell value={6} onPress={onSelectNumber} />
       </View>
       <View style={styles.row}>
-        <KeyboardCell value={7} />
-        <KeyboardCell value={8} />
-        <KeyboardCell value={9} />
+        <KeyboardCell value={7} onPress={onSelectNumber} />
+        <KeyboardCell value={8} onPress={onSelectNumber} />
+        <KeyboardCell value={9} onPress={onSelectNumber} />
       </View>
       <View style={styles.row}>
         <KeyboardCell>
@@ -36,7 +38,7 @@ const CustomKeyboard: React.FunctionComponent<ICustomKeyboardProps> = ({
             style={{alignItems: 'center', justifyContent: 'center', opacity: 0}}
           />
         </KeyboardCell>
-        <KeyboardCell value={0} />
+        <KeyboardCell value={0} onPress={onSelectNumber} />
         <KeyboardCell onPress={onSubmit}>
           <ArrowRightIcon
             color={AppColors.screenColor}

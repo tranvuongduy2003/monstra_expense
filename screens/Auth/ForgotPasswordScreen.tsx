@@ -1,20 +1,32 @@
-import React from 'react';
+import React, {useContext, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ScrollView, Text, View, StyleSheet} from 'react-native';
 import {AppColors} from 'constants/AppColors';
 import Input from 'components/Input';
 import AppButton from 'components/AppButton';
 import {useNavigation} from '@react-navigation/native';
+import {AuthContext} from 'providers/AuthProvider';
 
 interface IForgotPasswordScreenProps {}
 
 const ForgotPasswordScreen: React.FunctionComponent<
   IForgotPasswordScreenProps
 > = props => {
-  const navigation = useNavigation();
+  const navigation: any = useNavigation();
+  const [email, setEmail] = useState<string>('');
+  const [isValid, setIsValid] = useState<boolean>(false);
 
-  const handleForgetPassword = () => {
-    navigation.navigate('SentEmail' as never);
+  const {sendPasswordResetEmail} = useContext(AuthContext) as any;
+
+  const handleForgetPassword = async () => {
+    try {
+      if (isValid) {
+        await sendPasswordResetEmail(email);
+        navigation.navigate('SentEmail', {email: email});
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -27,7 +39,14 @@ const ForgotPasswordScreen: React.FunctionComponent<
           </Text>
         </View>
         <View style={styles.inputContainer}>
-          <Input placeholder="Email" />
+          <Input
+            name="Email"
+            required={true}
+            isEmail={true}
+            placeholder="Email"
+            setValid={setIsValid}
+            onChangeText={val => setEmail(val)}
+          />
         </View>
         <View style={styles.buttonContainer}>
           <AppButton

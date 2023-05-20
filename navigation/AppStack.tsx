@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import HeaderBar from 'screens/layout/HeaderBar';
 import ProfileScreen from 'screens/Profile/ProfileScreen';
@@ -24,6 +24,7 @@ import {AppColors} from 'constants/AppColors';
 import {TrashIcon} from 'react-native-heroicons/solid';
 
 import {TouchableOpacity} from 'react-native';
+import {AuthContext} from 'providers/AuthProvider';
 
 interface IAppStackProps {}
 
@@ -111,7 +112,6 @@ const AppStack: React.FunctionComponent<IAppStackProps> = props => {
           ),
         }}
       />
-
       <Stack.Screen
         name="Settings"
         component={SettingsScreen}
