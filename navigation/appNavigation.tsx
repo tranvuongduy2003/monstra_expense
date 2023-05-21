@@ -5,6 +5,7 @@ import AppStack from './AppStack';
 import AuthStack from './AuthStack';
 import {AuthContext} from 'providers/AuthProvider';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 export interface IAppNavigationProps {}
 
@@ -13,7 +14,12 @@ export function AppNavigation(props: IAppNavigationProps) {
   const [initializing, setInitializing] = useState<boolean>(true);
 
   const onAuthStateChanged = user => {
-    setUser(user);
+    firestore()
+      .collection('users')
+      .doc(user.uid)
+      .onSnapshot(documentSnapshot => {
+        setUser({uid: user.uid, ...documentSnapshot.data()});
+      });
     if (initializing) setInitializing(false);
   };
 
