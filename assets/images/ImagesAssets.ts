@@ -5,4 +5,5 @@ export const ImagesAssets = {
   bg: require('./BG.png'),
   SentEmail: require('./sent-email.png'),
   Success: require('./success.png'),
+  chart: require('./Graph.png'),
 };

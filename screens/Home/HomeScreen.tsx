@@ -1,17 +1,16 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {AppColors} from 'constants/AppColors';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {ScrollView, Text, View, StyleSheet} from 'react-native';
-import Dropdown, {OptionType} from 'components/Dropdown';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {AdjustmentsHorizontalIcon} from 'react-native-heroicons/outline';
-import BottomSheet from '@gorhom/bottom-sheet';
-import FilterBottomSheet from 'screens/Transaction/components/FilterBottomSheet';
+import {ScrollView, Text, View, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import {OptionType} from 'components/Dropdown';
 import {useNavigation} from '@react-navigation/native';
 import scale from 'constants/Responsive';
 import BellIcon from 'assets/svg/BellIcon';
-import {LinearGradient} from 'expo-linear-gradient';
 import CustomDropDown from 'components/CustomDropList';
+import IncomeStatus from 'assets/svg/IncomeStatus';
+import ExpenseStatus from 'assets/svg/ExpenseStatus';
+import { ImagesAssets } from 'assets/images/ImagesAssets';
+import DateCateButton from 'components/DateCateButton';
 
 interface IHomeScreenProps {}
 
@@ -67,17 +66,6 @@ const options: OptionType[] = [
 ];
 const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
   const navigation = useNavigation();
-
-  const [showFilter, setShowFilter] = useState<boolean>(false);
-
-  const filterRef = useRef<BottomSheet>(null);
-
-  const handleFilterSheetChanges = useCallback((index: number) => {
-    filterRef.current?.snapToIndex(index);
-    setShowFilter(true);
-    navigation.setOptions({tabBarStyle: {display: 'none'}});
-  }, []);
-
   return (
     <SafeAreaView
       style={{
@@ -92,7 +80,7 @@ const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
         <View style={styles.topContainer}>
           <View style={styles.headerContainer}>
             <View style={styles.avatar}></View>
-            <CustomDropDown options={options} zIndex={80} />
+            <CustomDropDown options={options} zIndex={100} />
             <TouchableOpacity onPress={() => {}}>
               <BellIcon></BellIcon>
             </TouchableOpacity>
@@ -101,11 +89,32 @@ const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
             <Text style={styles.title}>Account Balance</Text>
             <Text style={styles.number}>$9400</Text>
           </View>
+          <View style={styles.moneyStatusContainer}>
+            <View style={styles.incomeStatus}>
+              <IncomeStatus style={styles.iconContainer}></IncomeStatus>
+              <View style={styles.statusTitleContainer}>
+                <Text style={styles.statusTitle}>Income</Text>
+                <Text style={styles.moneyTitle}>5000$</Text>
+              </View>
+            </View>
+            <View style={styles.expenseStatus}>
+              <ExpenseStatus></ExpenseStatus>
+              <View style={styles.statusTitleContainer}>
+                <Text style={styles.statusTitle}>Expense</Text>
+                <Text style={styles.moneyTitle}>1200$</Text>
+              </View>
+            </View>
+          </View>
         </View>
+        <Text style={styles.statusSpend}>Spend Frequency</Text>
+        <View style={styles.chartContainer}>
+          <Image source={ImagesAssets.chart}></Image>
+        </View>
+        <View style={styles.buttonContainer}>
+        <DateCateButton></DateCateButton>
+        </View>
+        
       </ScrollView>
-      {showFilter && (
-        <FilterBottomSheet bottomSheetRef={filterRef} setShow={setShowFilter} />
-      )}
     </SafeAreaView>
   );
 };
@@ -130,8 +139,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 16,
     marginVertical: 12,
+    zIndex: 100,
   },
   titleContainer: {
+    zIndex: 70,
     textAlign: 'center',
     alignItems: 'center',
     alignContent: 'center',
@@ -145,6 +156,67 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-SemiBold',
     color: AppColors.textColor,
   },
+  moneyStatusContainer: {
+    width: scale(334),
+    height: scale(80),
+    marginTop: scale(27),
+    alignSelf: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  incomeStatus: {
+    width: scale(164),
+    height: '100%',
+    borderRadius: 28,
+    backgroundColor: AppColors.primaryGreen,
+    alignItems: 'center',
+    alignContent: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  expenseStatus: {
+    width: scale(164),
+    height: '100%',
+    borderRadius: 28,
+    backgroundColor: AppColors.red,
+    alignItems: 'center',
+    alignContent: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
+  iconContainer: {
+    marginRight: scale(5),
+  },
+  statusTitleContainer: {
+    marginLeft: scale(5),
+    height: scale(48),
+    justifyContent: 'space-between',
+  },
+  statusTitle: {
+    fontSize: scale(14),
+    fontFamily: 'Inter-Medium',
+    color: AppColors.white,
+  },
+  moneyTitle: {
+    fontSize: scale(22),
+    fontFamily: 'Inter-SemiBold',
+    color: AppColors.white,
+  },
+  statusSpend: {
+    fontSize: scale(18),
+    fontWeight: 'bold',
+    color: AppColors.black,
+    marginLeft: scale(8),
+    padding: scale(8),
+  },
+  chartContainer: {
+    width: '100%',
+    height: scale(186),
+  },
+  buttonContainer:{
+    alignSelf: 'center',
+    marginTop: scale(9),
+  }
 });
 
 export default HomeScreen;
