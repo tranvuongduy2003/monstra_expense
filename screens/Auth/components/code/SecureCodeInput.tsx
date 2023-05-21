@@ -1,44 +1,25 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import {
-  CodeField,
-  useBlurOnFulfill,
-  useClearByFocusCell,
-} from 'react-native-confirmation-code-field';
+import React from 'react';
+import {View, StyleSheet} from 'react-native';
 import {AppColors} from 'constants/AppColors';
 
-interface ISecureCodeInputProps {}
+interface ISecureCodeInputProps {
+  pin: string;
+}
 
-const CELL_COUNT = 4;
-
-const SecureCodeInput: React.FunctionComponent<ISecureCodeInputProps> = () => {
-  const [value, setValue] = useState('');
-  const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
-  const [props, getCellOnLayoutHandler] = useClearByFocusCell({
-    value,
-    setValue,
-  });
-
+const SecureCodeInput: React.FunctionComponent<ISecureCodeInputProps> = ({
+  pin,
+}) => {
   return (
     <View style={styles.container}>
-      <CodeField
-        ref={ref}
-        {...props}
-        value={value}
-        onChangeText={setValue}
-        cellCount={CELL_COUNT}
-        keyboardType="number-pad"
-        textContentType="oneTimeCode"
-        renderCell={({index, symbol}) => (
+      {[1, 2, 3, 4].map(value => (
+        <View key={value} style={{justifyContent: 'center'}}>
           <View
-            key={index}
-            style={{justifyContent: 'center'}}
-            onLayout={getCellOnLayoutHandler(index)}>
-            <View
-              style={[styles.cell, symbol ? styles.markSymbol : null]}></View>
-          </View>
-        )}
-      />
+            style={[
+              styles.cell,
+              value <= pin.length && styles.markSymbol,
+            ]}></View>
+        </View>
+      ))}
     </View>
   );
 };

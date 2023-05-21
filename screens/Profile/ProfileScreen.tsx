@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {StyleSheet, View, Text, Button, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {AppColors} from 'constants/AppColors';
@@ -8,63 +8,46 @@ import SettingsIcon from 'assets/svg/SettingsIcon';
 import ExportIcon from 'assets/svg/ExportIcon';
 import LogoutIcon from 'assets/svg/LogoutIcon';
 import EditIcon from 'assets/svg/EditIcon';
+import {AuthContext} from 'providers/AuthProvider';
+import ProfileOption from './components/ProfileOption';
 
 interface IProfileScreenProps {}
 
 const ProfileScreen: React.FunctionComponent<IProfileScreenProps> = props => {
+  const {user, logOut} = useContext(AuthContext) as any;
+
+  const splittedName = user.name.split(' ');
+  const name =
+    (splittedName[splittedName.length - 2] || '') +
+    ' ' +
+    (splittedName[splittedName.length - 1] || '');
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.topContainer}>
-        <View style={styles.headerContainer}>
+      <View style={styles.headerContainer}>
+        <View style={styles.avatarContainer}>
           <View style={styles.avatar}></View>
-          <View style={styles.userNameContainer}>
-            <Text style={styles.label}>Username</Text>
-            <Text style={styles.userName}>Nhat Vy</Text>
-          </View>
-          <TouchableOpacity style={styles.edit}>
-            <EditIcon></EditIcon> 
-          </TouchableOpacity>
         </View>
-        <View style={styles.bodyContainer}>
-          <View style={styles.contentContainer}>
-            <TouchableOpacity style={styles.contentButtonTop}>
-              <View style={styles.content}>
-                <View style={styles.icons}>
-                  <AccountIcon></AccountIcon>
-                </View>
-                <Text style={styles.contentTitle}>Account</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.contentButtonMid}>
-              <View style={styles.content}>
-                <View style={styles.icons}>
-                  <SettingsIcon></SettingsIcon>
-                </View>
-                <Text style={styles.contentTitle}>Settings</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.contentButtonMid}>
-              <View style={styles.content}>
-                <View style={styles.icons}>
-                  <ExportIcon></ExportIcon>
-                </View>
-                <Text style={styles.contentTitle}>Export Data</Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.contentButtonBot}>
-              <View style={styles.content}>
-                <View style={styles.logoutIC}>
-                  <LogoutIcon></LogoutIcon>
-                </View>
-                <Text style={styles.contentTitle}>Logout</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.blankSpace}></View>
+        <View style={styles.userNameContainer}>
+          <Text style={styles.label}>Username</Text>
+          <Text numberOfLines={1} style={styles.userName}>
+            {name}
+          </Text>
         </View>
+        <TouchableOpacity style={styles.edit}>
+          <EditIcon></EditIcon>
+        </TouchableOpacity>
       </View>
-      <View style={styles.bottomContainer}>
-        {/* <BottomBar></BottomBar> */}
+      <View style={styles.bodyContainer}>
+        <View style={styles.contentContainer}>
+          <ProfileOption icon={<AccountIcon />} title="Account" />
+          <ProfileOption icon={<SettingsIcon />} title="Settings" />
+          <ProfileOption
+            icon={<LogoutIcon />}
+            title="Logout"
+            onPress={logOut}
+          />
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -74,23 +57,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: AppColors.cultured,
-  },
-  topContainer:{
-    flex: 707,
-    backgroundColor: AppColors.cultured,
+    paddingHorizontal: 20,
   },
   headerContainer: {
-    width: scale(325),
-    flex: 194,
     backgroundColor: AppColors.cultured,
     alignSelf: 'center',
-    flexDirection:'row',
+    flexDirection: 'row',
     alignItems: 'center',
+    paddingTop: 75,
+    paddingBottom: 40,
+  },
+  avatarContainer: {
+    width: scale(84),
+    height: scale(84),
+    padding: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 82,
+    borderWidth: 2,
+    borderColor: '#AD00FF',
   },
   avatar: {
-    width: scale(80),
-    height: scale(80),
-    borderRadius: 40,
+    width: '100%',
+    height: '100%',
+    borderRadius: 84,
     backgroundColor: AppColors.mistyRose,
   },
   userNameContainer: {
@@ -105,9 +96,9 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontSize: scale(24),
-    fontFamily: 'Inter-SemiBold'
+    fontFamily: 'Inter-SemiBold',
   },
-  edit:{
+  edit: {
     width: scale(40),
     height: scale(40),
     justifyContent: 'center',
@@ -116,80 +107,14 @@ const styles = StyleSheet.create({
   },
   bodyContainer: {
     width: scale(336),
-    flex: 513,
     backgroundColor: AppColors.cultured,
     alignSelf: 'center',
   },
   contentContainer: {
-    flex: 356,
     borderRadius: 24,
+    overflow: 'hidden',
     backgroundColor: AppColors.white,
   },
-  blankSpace: {
-    flex: 157,
-    backgroundColor: AppColors.cultured,
-  },
-  contentButtonTop: {
-    width: 'auto',
-    borderTopStartRadius: 24,
-    borderTopEndRadius: 24,
-    borderColor: AppColors.cultured,
-    borderBottomWidth: 0.25,
-    flex: 1,
-    backgroundColor: AppColors.white,
-  },
-  contentButtonMid: {
-    width: 'auto',
-    borderColor: AppColors.cultured,
-    borderBottomWidth: 0.25,
-    flex: 1,
-    backgroundColor: AppColors.white,
-  },
-  contentButtonBot: {
-    width: 'auto',
-    borderBottomStartRadius: 24,
-    borderBottomEndRadius: 24,
-    flex: 1,
-    backgroundColor: AppColors.white,
-  },
-  content: {
-    width: scale(303),
-    marginTop: scale(5),
-    alignSelf: 'center',
-    justifyContent: 'flex-start',
-    flexDirection: 'row',
-  },
-  icons: {
-    width: scale(50),
-    height: scale(50),
-    alignItems: 'center',
-    alignSelf: 'center',
-    justifyContent: 'center',
-    borderRadius: 15,
-    backgroundColor: AppColors.lavender,
-    padding: scale(10),
-  },
-  logoutIC: {
-    width: scale(50),
-    height: scale(50),
-    alignItems: 'center',
-    alignSelf: 'center',
-    justifyContent: 'center',
-    borderRadius: 15,
-    backgroundColor: AppColors.mistyRose,
-    padding: scale(10),
-  },
-  contentTitle: {
-    width: 'auto',
-    height: scale(60),
-    marginLeft: scale(9),
-    fontSize: scale(16),
-    textAlignVertical: 'center',
-  },
-  bottomContainer:{
-    flex: 113,
-    backgroundColor: AppColors.cultured,
-  }
 });
 
 export default ProfileScreen;

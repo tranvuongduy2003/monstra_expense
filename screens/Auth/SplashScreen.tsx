@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   TouchableOpacity,
   Text,
@@ -13,6 +13,7 @@ import Slider from './components/slider/Slider';
 import {SliderItems} from './components/slider/SliderData';
 import AppButton from 'components/AppButton';
 import {useNavigation} from '@react-navigation/native';
+import AsyncStorage from '@react-native-community/async-storage';
 
 interface ISplashScreenProps {}
 
@@ -20,6 +21,16 @@ const {width, height} = Dimensions.get('screen');
 
 const SplashScreen: React.FunctionComponent<ISplashScreenProps> = props => {
   const [isDisplayIntro, setIsDisplayIntro] = useState<boolean>(false);
+
+  useEffect(() => {
+    AsyncStorage.getItem('alreadyLaunched').then(value => {
+      if (!value) {
+        AsyncStorage.setItem('alreadyLaunched', 'true');
+      } else {
+        setIsDisplayIntro(true);
+      }
+    });
+  }, []);
 
   const navigation = useNavigation();
 

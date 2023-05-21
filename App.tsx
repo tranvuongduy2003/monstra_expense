@@ -4,16 +4,19 @@ import {store} from 'app/store';
 
 import { AppNavigation } from 'navigation/appNavigation';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {AuthProvider} from 'providers/AuthProvider';
 
 interface IAppProps {}
 
 const App: React.FunctionComponent<IAppProps> = props => {
   return (
-    <GestureHandlerRootView style={{flex: 1}}>
-      <Provider store={store}>
-        <AppNavigation />
-      </Provider>
-    </GestureHandlerRootView>
+    <AuthProvider>
+      <GestureHandlerRootView style={{flex: 1}}>
+        <Provider store={store}>
+          <AppNavigation />
+        </Provider>
+      </GestureHandlerRootView>
+    </AuthProvider>
   );
 };
 

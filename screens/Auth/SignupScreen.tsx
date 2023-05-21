@@ -1,11 +1,5 @@
-import React from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import React, {useContext, useState} from 'react';
+import {View, Text, ScrollView, StyleSheet} from 'react-native';
 import Input from 'components/Input';
 import {AppColors} from 'constants/AppColors';
 import Checkbox from 'components/Checkbox';
@@ -14,35 +8,92 @@ import GoogleIcon from 'assets/svg/GoogleIcon';
 import Question from './components/question/Question';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
+import {AuthPayload} from 'types/auth.type';
+import {AuthContext} from 'providers/AuthProvider';
+import ErrorMessage from 'components/ErrorMessage';
 
 interface ISignUpScreenProps {}
 
 const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
-  const navigation = useNavigation();
+  const navigation: any = useNavigation();
+  const [isAcceptPolicy, setIsAcceptPolicy] = useState<boolean>(false);
+  const [isValid, setIsValid] = useState<boolean>(false);
+  const [isPolicyError, setIsPolicyError] = useState<boolean>(false);
+  const [signUpPayload, setSignUpPayload] = useState<AuthPayload>({
+    name: '',
+    email: '',
+    password: '',
+  });
 
-  const handleSignUp = () => {
-    navigation.navigate('Verification' as never);
+  const {signInWithGoogle, signUp} = useContext(AuthContext) as any;
+
+  const handleSignUp = async () => {
+    try {
+      if (isAcceptPolicy && isValid) {
+        setIsPolicyError(false);
+        await signUp(signUpPayload);
+        navigation.navigate('SetupPIN');
+      } else {
+        setIsPolicyError(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
-  const handleSignUpWithGoogle = () => {
-    navigation.navigate('Verification' as never);
+
+  const handleSignUpWithGoogle = async () => {
+    try {
+      await signInWithGoogle();
+    } catch (error) {}
   };
 
   return (
     <SafeAreaView style={{flex: 1}}>
       <ScrollView style={{backgroundColor: AppColors.screenColor}}>
         <View style={styles.inputContainer}>
-          <Input placeholder="Name" />
-          <Input placeholder="Email" />
-          <Input placeholder="Password" isPassword={true} />
+          <Input
+            name="Name"
+            required={true}
+            placeholder="Name"
+            setValid={setIsValid}
+            onChangeText={val =>
+              setSignUpPayload(prev => ({...prev, name: val}))
+            }
+          />
+          <Input
+            name="Email"
+            required={true}
+            isEmail={true}
+            placeholder="Email"
+            setValid={setIsValid}
+            onChangeText={val =>
+              setSignUpPayload(prev => ({...prev, email: val}))
+            }
+          />
+          <Input
+            name="Password"
+            required={true}
+            isPassword={true}
+            placeholder="Password"
+            setValid={setIsValid}
+            onChangeText={val =>
+              setSignUpPayload(prev => ({...prev, password: val}))
+            }
+          />
         </View>
         <View style={styles.privacyContainer}>
-          <Checkbox />
-          <Text style={styles.privaryText}>
-            By signing up, you agree to the{' '}
-            <Text style={{color: AppColors.primaryColor}}>
-              Terms of Service and Privacy Policy
+          <View style={styles.privacyCheck}>
+            <Checkbox checked={isAcceptPolicy} setChecked={setIsAcceptPolicy} />
+            <Text style={styles.privaryText}>
+              By signing up, you agree to the{' '}
+              <Text style={{color: AppColors.primaryColor}}>
+                Terms of Service and Privacy Policy
+              </Text>
             </Text>
-          </Text>
+          </View>
+          {isPolicyError && (
+            <ErrorMessage title="You must agree with our policy before signing up" />
+          )}
         </View>
         <View style={styles.buttonContainer}>
           <AppButton
@@ -50,13 +101,13 @@ const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
             backgroundColor={AppColors.primaryColor}
             onPress={handleSignUp}
           />
-          <Text style={styles.breakText}>Or with</Text>
+          {/* <Text style={styles.breakText}>Or with</Text>
           <AppButton onPress={handleSignUpWithGoogle}>
             <View style={styles.googleButtonContent}>
               <GoogleIcon />
               <Text style={styles.googleButtonText}>Sign Up with Google</Text>
             </View>
-          </AppButton>
+          </AppButton> */}
         </View>
         <Question
           content="Already have an account?"
@@ -75,12 +126,14 @@ const styles = StyleSheet.create({
     gap: 24,
   },
   privacyContainer: {
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    gap: 14,
     alignItems: 'center',
     marginTop: 17,
     marginBottom: 27,
+  },
+  privacyCheck: {
+    flexDirection: 'row',
+    gap: 14,
+    paddingHorizontal: 40,
   },
   privaryText: {
     fontWeight: '500',

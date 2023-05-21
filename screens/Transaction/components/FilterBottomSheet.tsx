@@ -1,4 +1,4 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, useState} from 'react';
 import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
 import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
 import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
@@ -31,6 +31,9 @@ const FilterBottomSheet: React.FunctionComponent<IFilterBottomSheetProps> = ({
   bottomSheetRef,
 }) => {
   const navigation = useNavigation();
+  const [filterBy, setFilterBy] = useState<OptionType | null>();
+  const [orderBy, setOrderBy] = useState<OptionType | null>();
+
   const snapPoints = useMemo(() => ['65%'], []);
 
   return (
@@ -53,7 +56,12 @@ const FilterBottomSheet: React.FunctionComponent<IFilterBottomSheetProps> = ({
             {/* RESET */}
             <View style={styles.filterHeader}>
               <Text style={styles.title}>Filter transaction</Text>
-              <TouchableOpacity style={styles.resetButton}>
+              <TouchableOpacity
+                style={styles.resetButton}
+                onPress={() => {
+                  setFilterBy(null);
+                  setOrderBy(null);
+                }}>
                 <Text style={styles.resetButtonText}>Reset</Text>
               </TouchableOpacity>
             </View>
@@ -62,9 +70,23 @@ const FilterBottomSheet: React.FunctionComponent<IFilterBottomSheetProps> = ({
               <Text style={styles.title}>Filter By</Text>
               <View style={styles.optionContainer}>
                 {filterOptions.map((option, index) => (
-                  <View key={index} style={styles.optionItem}>
-                    <Text style={styles.optionText}>{option.title}</Text>
-                  </View>
+                  <TouchableOpacity
+                    onPress={() => setFilterBy(option)}
+                    key={index}
+                    style={[
+                      styles.optionItem,
+                      filterBy?.value === option.value &&
+                        styles.seletedOptionItem,
+                    ]}>
+                    <Text
+                      style={[
+                        styles.optionText,
+                        filterBy?.value === option.value &&
+                          styles.seletedOptionText,
+                      ]}>
+                      {option.title}
+                    </Text>
+                  </TouchableOpacity>
                 ))}
               </View>
             </View>
@@ -73,9 +95,23 @@ const FilterBottomSheet: React.FunctionComponent<IFilterBottomSheetProps> = ({
               <Text style={styles.title}>Sort By</Text>
               <View style={styles.optionContainer}>
                 {sortOptions.map((option, index) => (
-                  <View key={index} style={styles.optionItem}>
-                    <Text style={styles.optionText}>{option.title}</Text>
-                  </View>
+                  <TouchableOpacity
+                    onPress={() => setOrderBy(option)}
+                    key={index}
+                    style={[
+                      styles.optionItem,
+                      orderBy?.value === option.value &&
+                        styles.seletedOptionItem,
+                    ]}>
+                    <Text
+                      style={[
+                        styles.optionText,
+                        orderBy?.value === option.value &&
+                          styles.seletedOptionText,
+                      ]}>
+                      {option.title}
+                    </Text>
+                  </TouchableOpacity>
                 ))}
               </View>
             </View>
@@ -134,11 +170,18 @@ const styles = StyleSheet.create({
     borderColor: AppColors.borderColor,
     borderRadius: 100,
   },
+  seletedOptionItem: {
+    borderColor: 'none',
+    backgroundColor: AppColors.primaryColor100,
+  },
   optionText: {
     fontWeight: '500',
     fontSize: 14,
     lineHeight: 18,
     color: AppColors.primaryTextColor,
+  },
+  seletedOptionText: {
+    color: AppColors.primaryColor,
   },
   resetButton: {
     paddingHorizontal: 16,

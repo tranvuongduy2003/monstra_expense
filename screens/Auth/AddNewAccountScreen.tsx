@@ -1,17 +1,76 @@
-import React from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ScrollView, View, StyleSheet, Text} from 'react-native';
 import {AppColors} from 'constants/AppColors';
 import Input from 'components/Input';
 import AppButton from 'components/AppButton';
 import {useNavigation} from '@react-navigation/native';
+import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
+import Dropdown, {OptionType} from 'components/Dropdown';
+import {AccountListType} from 'types/account.type';
+import {Banks} from 'constants/Banks';
+import {Wallets} from 'constants/Wallets';
+import AccountTypeItem from './components/AccountTypeItem';
+import ErrorMessage from 'components/ErrorMessage';
+import {TextInput} from 'react-native-gesture-handler';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 interface IAddNewAccountScreenProps {}
+
+const accountTypeOptions: OptionType[] = [
+  {
+    title: 'Bank',
+    value: 'bank',
+  },
+  {
+    title: 'Wallet',
+    value: 'wallet',
+  },
+];
 
 const AddNewAccountScreen: React.FunctionComponent<
   IAddNewAccountScreenProps
 > = props => {
   const navigation = useNavigation();
+  const [balance, setBalance] = useState<number | null>();
+  const [name, setName] = useState<string>();
+  const [select, setSelect] = useState<OptionType>();
+  const [typeList, setTypeList] = useState<AccountListType[]>();
+  const [typeItem, setTypeItem] = useState<AccountListType>();
+  const [error, setError] = useState<string>();
+
+  const handleAccountTypeChange = useRef<any>(null);
+
+  useEffect(() => {
+    handleAccountTypeChange.current = () => {
+      if (select?.value === 'bank') {
+        setTypeList(Banks);
+      } else if (select?.value === 'wallet') {
+        setTypeList(Wallets);
+      }
+    };
+    handleAccountTypeChange.current();
+  }, [select]);
+
+  const handleAddNewAccount = async () => {
+    try {
+      if (!name || !typeItem || !balance) {
+        setError('You are missing something');
+      } else {
+        await firestore().collection('accounts').add({
+          userId: auth().currentUser?.uid,
+          balance: balance,
+          name: name,
+          type: select?.value,
+          type_item: typeItem,
+        });
+        navigation.navigate('Set' as never);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -20,24 +79,59 @@ const AddNewAccountScreen: React.FunctionComponent<
         contentContainerStyle={{
           flexGrow: 1,
           justifyContent: 'flex-end',
+          position: 'relative',
         }}>
-        <View style={styles.balanceContainer}>
-          <Text style={styles.title}>Balance</Text>
-          <Text style={styles.amount}>$00.0</Text>
-        </View>
-        <View style={styles.setupContainer}>
-          <View style={styles.inputContainer}>
-            <Input placeholder="Name" />
-            <Input placeholder="Account Type" />
+        <ClickOutsideProvider>
+          <View style={styles.balanceContainer}>
+            <Text style={styles.title}>Balance</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={styles.amount}>$</Text>
+              <TextInput
+                style={styles.amount}
+                keyboardType="numeric"
+                onChangeText={val =>
+                  val ? setBalance(parseInt(val)) : setBalance(null)
+                }
+              />
+            </View>
           </View>
-          <View>
-            <AppButton
-              title="Continue"
-              backgroundColor={AppColors.primaryColor}
-              onPress={() => navigation.navigate('Set' as never)}
-            />
+          <View style={styles.setupContainer}>
+            <View style={styles.inputContainer}>
+              <Input placeholder="Name" onChangeText={val => setName(val)} />
+              <Dropdown
+                select={select}
+                setSelect={setSelect}
+                options={accountTypeOptions}
+                placeholder="Account Type"
+                zIndex={50}
+              />
+              {select && (
+                <>
+                  <Text style={styles.typeTitle}>{select?.title}</Text>
+                  <View style={styles.typeItems}>
+                    {typeList?.map(item => {
+                      return (
+                        <AccountTypeItem
+                          onPress={() => setTypeItem(item)}
+                          key={item.id}
+                          imageSource={item.image}
+                        />
+                      );
+                    })}
+                  </View>
+                </>
+              )}
+              {error && <ErrorMessage title={error} />}
+            </View>
+            <View style={{zIndex: 0}}>
+              <AppButton
+                title="Continue"
+                backgroundColor={AppColors.primaryColor}
+                onPress={handleAddNewAccount}
+              />
+            </View>
           </View>
-        </View>
+        </ClickOutsideProvider>
       </ScrollView>
     </SafeAreaView>
   );
@@ -73,6 +167,18 @@ const styles = StyleSheet.create({
   inputContainer: {
     gap: 16,
     marginBottom: 40,
+    zIndex: 50,
+  },
+  typeTitle: {
+    fontWeight: '500',
+    fontSize: 16,
+    lineHeight: 19,
+    color: '#000000',
+  },
+  typeItems: {
+    gap: 8,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
 });
 
