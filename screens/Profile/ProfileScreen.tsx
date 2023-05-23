@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {StyleSheet, View, Text, Button, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {AppColors} from 'constants/AppColors';
@@ -15,12 +15,16 @@ interface IProfileScreenProps {}
 
 const ProfileScreen: React.FunctionComponent<IProfileScreenProps> = props => {
   const {user, logOut} = useContext(AuthContext) as any;
+  const [name, setName] = useState<string>('');
 
-  const splittedName = user.name.split(' ');
-  const name =
-    (splittedName[splittedName.length - 2] || '') +
-    ' ' +
-    (splittedName[splittedName.length - 1] || '');
+  useEffect(() => {
+    const splittedName = user?.name.split(' ') || '';
+    setName(
+      (splittedName[splittedName.length - 2] || '') +
+        ' ' +
+        (splittedName[splittedName.length - 1] || ''),
+    );
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
