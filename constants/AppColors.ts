@@ -23,4 +23,5 @@ export const AppColors = {
   textColor: '#161719',
   yellow: '#FCAC12',
   yellow100: '#FCEED4',
+  black: '#0D0E0F',
 };
