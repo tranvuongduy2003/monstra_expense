@@ -1,5 +1,4 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {NavigationContainer} from '@react-navigation/native';
 import AppStack from './AppStack';
 import AuthStack from './AuthStack';
@@ -16,9 +15,9 @@ export function AppNavigation(props: IAppNavigationProps) {
   const onAuthStateChanged = user => {
     firestore()
       .collection('users')
-      .doc(user.uid)
+      .doc(user?.uid)
       .onSnapshot(documentSnapshot => {
-        setUser({uid: user.uid, ...documentSnapshot.data()});
+        setUser({uid: user?.uid, ...documentSnapshot.data()});
       });
     if (initializing) setInitializing(false);
   };
