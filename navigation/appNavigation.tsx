@@ -9,7 +9,7 @@ import firestore from '@react-native-firebase/firestore';
 import NotiHeaderBar from 'screens/Notification/NotiHeaderBar';
 import SplashScreen from 'screens/Auth/SplashScreen';
 import SignUpScreen from 'screens/Auth/SignupScreen';
-import VerificationScreen from 'screens/Auth/VerificationScreen';
+//import VerificationScreen from 'screens/Auth/VerificationScreen';
 import LoginScreen from 'screens/Auth/LoginScreen';
 import HeaderBar from 'screens/layout/HeaderBar';
 import ProfileScreen from 'screens/Profile/ProfileScreen';
