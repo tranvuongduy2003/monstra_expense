@@ -1,3 +1,4 @@
+import {OptionType} from 'types/option.type';
 import {AppColors} from 'constants/AppColors';
 import {useClickOutside} from 'hooks/useClickOutside';
 import React, {useState} from 'react';
@@ -11,11 +12,6 @@ import {
   FlatList,
 } from 'react-native';
 import {ChevronDownIcon, ChevronUpIcon} from 'react-native-heroicons/outline';
-
-export type OptionType = {
-  title: string;
-  value: string;
-};
 
 interface IDropdownProps {
   options: OptionType[];
@@ -36,7 +32,9 @@ const Dropdown: React.FunctionComponent<IDropdownProps> = ({
   const dropdownRef = useClickOutside<Text>(() => setShow(false));
 
   return (
-    <View ref={dropdownRef} style={{position: 'relative', zIndex: zIndex}}>
+    <View
+      ref={dropdownRef}
+      style={{position: 'relative', zIndex: zIndex, flex: 1}}>
       <TouchableOpacity style={styles.container} onPress={() => setShow(!show)}>
         <TextInput
           editable={false}

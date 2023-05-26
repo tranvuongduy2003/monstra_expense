@@ -1,5 +1,11 @@
 import React, {ReactElement} from 'react';
-import {TouchableOpacity, Text, Dimensions, StyleSheet} from 'react-native';
+import {
+  TouchableOpacity,
+  Text,
+  Dimensions,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 import {AppColors} from 'constants/AppColors';
 
 interface IAppButtonProps {
@@ -8,6 +14,7 @@ interface IAppButtonProps {
   color?: string;
   onPress?: () => void;
   children?: ReactElement;
+  loading?: boolean;
 }
 
 const {width} = Dimensions.get('screen');
@@ -18,6 +25,7 @@ const AppButton: React.FunctionComponent<IAppButtonProps> = ({
   color = '#FCFCFC',
   onPress = () => {},
   children,
+  loading,
 }) => {
   return (
     <TouchableOpacity
@@ -26,9 +34,20 @@ const AppButton: React.FunctionComponent<IAppButtonProps> = ({
         backgroundColor
           ? {backgroundColor: backgroundColor}
           : styles.whiteButton,
+        {opacity: loading ? 0.6 : 1},
       ]}
       onPress={onPress}>
-      {title ? <Text style={[styles.title, {color}]}>{title}</Text> : children}
+      {loading ? (
+        <ActivityIndicator
+          size="large"
+          style={{padding: 0, margin: 0}}
+          color={AppColors.primaryColor}
+        />
+      ) : title ? (
+        <Text style={[styles.title, {color}]}>{title}</Text>
+      ) : (
+        children
+      )}
     </TouchableOpacity>
   );
 };

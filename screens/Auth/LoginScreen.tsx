@@ -14,6 +14,7 @@ import Question from './components/question/Question';
 import {useNavigation} from '@react-navigation/native';
 import {AuthPayload} from 'types/auth.type';
 import {AuthContext} from 'providers/AuthProvider';
+import StatusModal from 'components/StatusModal';
 
 interface ILoginScreenProps {}
 
@@ -22,17 +23,32 @@ const LoginScreen: React.FunctionComponent<ILoginScreenProps> = props => {
     email: '',
     password: '',
   });
+  const [loading, setLoading] = useState<boolean>(false);
+  const [showStatus, setShowStatus] = useState<boolean>(false);
+  const [statusInfo, setStatusInfo] = useState<any>();
 
   const {logIn} = useContext(AuthContext) as any;
 
   const navigation = useNavigation();
 
   const handleLogin = async () => {
+    setLoading(true);
     try {
       await logIn(loginPayload);
-      console.log('Login successfully!');
+      setStatusInfo({
+        status: 'success',
+        title: 'Login succesfully!',
+      });
+      setLoading(false);
+      setShowStatus(true);
     } catch (error) {
       console.log(error);
+      setStatusInfo({
+        status: 'error',
+        title: 'Login failed!',
+      });
+      setLoading(false);
+      setShowStatus(true);
     }
   };
 
@@ -56,6 +72,7 @@ const LoginScreen: React.FunctionComponent<ILoginScreenProps> = props => {
         </View>
         <View style={styles.buttonContainer}>
           <AppButton
+            loading={loading}
             title="Login"
             backgroundColor={AppColors.primaryColor}
             onPress={handleLogin}
@@ -72,6 +89,14 @@ const LoginScreen: React.FunctionComponent<ILoginScreenProps> = props => {
           onPressHighlight={() => navigation.navigate('SignUp' as never)}
         />
       </ScrollView>
+      {showStatus && (
+        <StatusModal
+          status={statusInfo.status}
+          show={showStatus}
+          setShow={setShowStatus}
+          title={statusInfo.title}
+        />
+      )}
     </SafeAreaView>
   );
 };

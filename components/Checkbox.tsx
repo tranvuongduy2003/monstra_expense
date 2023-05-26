@@ -5,7 +5,7 @@ import {CheckIcon} from 'react-native-heroicons/outline';
 
 interface ICheckboxProps {
   checked: boolean;
-  setChecked: Function;
+  setChecked: any;
 }
 
 const Checkbox: React.FunctionComponent<ICheckboxProps> = ({
@@ -18,7 +18,7 @@ const Checkbox: React.FunctionComponent<ICheckboxProps> = ({
         styles.container,
         {backgroundColor: !checked ? '#FFFFFF' : AppColors.primaryColor},
       ]}
-      onPress={() => setChecked(!checked)}>
+      onPress={setChecked}>
       {checked && <CheckIcon color={AppColors.screenColor} />}
     </TouchableOpacity>
   );
