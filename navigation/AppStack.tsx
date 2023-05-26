@@ -29,6 +29,7 @@ import {TrashIcon} from 'react-native-heroicons/solid';
 
 import {TouchableOpacity} from 'react-native';
 import {AuthContext} from 'providers/AuthProvider';
+import EditIcon from 'assets/svg/EditIcon';
 
 interface IAppStackProps {}
 
@@ -50,7 +51,18 @@ const AppStack: React.FunctionComponent<IAppStackProps> = props => {
       <Stack.Screen
         name="DetailAccount"
         component={AccountDetailScreen}
-        options={{headerShown: false}}
+        options={{
+          header: () => (
+            <HeaderBar
+              name="Detail account"
+              icon={
+                <TouchableOpacity onPress={() => {}}>
+                  <EditIcon color={AppColors.black} />
+                </TouchableOpacity>
+              }
+            />
+          ),
+        }}
       />
       <Stack.Screen
         name="DetailBudget"

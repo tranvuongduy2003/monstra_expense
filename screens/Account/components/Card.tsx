@@ -21,8 +21,9 @@ const Card: React.FunctionComponent<ICardProps> = ({
   title,
   price,
 }) => {
+  const navigation = useNavigation();
   return (
-    <TouchableOpacity onPress={() => {}}>
+    <TouchableOpacity onPress={() => navigation.navigate('DetailAccount' as never)}>
           <View style={styles.content}>
             <View style={styles.category}>
               <View style={styles.icons}>
