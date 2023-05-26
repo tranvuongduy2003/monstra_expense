@@ -15,6 +15,7 @@ import ErrorMessage from 'components/ErrorMessage';
 import {TextInput} from 'react-native-gesture-handler';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import StatusModal from 'components/StatusModal';
 
 interface IAddNewAccountScreenProps {}
 
@@ -39,6 +40,8 @@ const AddNewAccountScreen: React.FunctionComponent<
   const [typeList, setTypeList] = useState<AccountListType[]>();
   const [typeItem, setTypeItem] = useState<AccountListType>();
   const [error, setError] = useState<string>();
+  const [showStatus, setShowStaus] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleAccountTypeChange = useRef<any>(null);
 
@@ -54,21 +57,29 @@ const AddNewAccountScreen: React.FunctionComponent<
   }, [select]);
 
   const handleAddNewAccount = async () => {
+    setLoading(true);
     try {
       if (!name || !typeItem || !balance) {
-        setError('You are missing something');
+        setError('You are missing something!');
       } else {
-        await firestore().collection('accounts').add({
-          userId: auth().currentUser?.uid,
-          balance: balance,
-          name: name,
-          type: select?.value,
-          type_item: typeItem,
-        });
+        await firestore()
+          .collection('accounts')
+          .add({
+            userId: auth().currentUser?.uid,
+            balance: balance,
+            name: name,
+            type: select?.value,
+            type_item: typeItem,
+            createdAt: firestore.Timestamp.fromDate(new Date()),
+          });
+        setLoading(false);
         navigation.navigate('Set' as never);
       }
     } catch (error) {
       console.log(error);
+      setError('Failed to add new account!');
+      setShowStaus(true);
+      setLoading(false);
     }
   };
 
@@ -125,6 +136,7 @@ const AddNewAccountScreen: React.FunctionComponent<
             </View>
             <View style={{zIndex: 0}}>
               <AppButton
+                loading={loading}
                 title="Continue"
                 backgroundColor={AppColors.primaryColor}
                 onPress={handleAddNewAccount}
@@ -133,6 +145,14 @@ const AddNewAccountScreen: React.FunctionComponent<
           </View>
         </ClickOutsideProvider>
       </ScrollView>
+      {showStatus && error && (
+        <StatusModal
+          status={'error'}
+          show={showStatus}
+          setShow={setShowStaus}
+          title={error}
+        />
+      )}
     </SafeAreaView>
   );
 };

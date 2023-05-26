@@ -11,16 +11,17 @@ import LogoutIcon from 'assets/svg/LogoutIcon';
 import EditIcon from 'assets/svg/EditIcon';
 import {AuthContext} from 'providers/AuthProvider';
 import ProfileOption from './components/ProfileOption';
+import {useNavigation} from '@react-navigation/native';
 
 interface IProfileScreenProps {}
 
 const ProfileScreen: React.FunctionComponent<IProfileScreenProps> = props => {
-  const navigation = useNavigation();
+  const navigation: any = useNavigation();
   const {user, logOut} = useContext(AuthContext) as any;
   const [name, setName] = useState<string>('');
 
   useEffect(() => {
-    const splittedName = user?.name.split(' ') || '';
+    const splittedName = user?.name?.split(' ') || '';
     setName(
       (splittedName[splittedName.length - 2] || '') +
         ' ' +

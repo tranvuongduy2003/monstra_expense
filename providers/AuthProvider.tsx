@@ -3,6 +3,7 @@ import {AuthPayload} from 'types/auth.type';
 import auth from '@react-native-firebase/auth';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import firestore from '@react-native-firebase/firestore';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export const AuthContext = createContext({});
 
@@ -13,6 +14,7 @@ export const AuthProvider = ({children}) => {
   const logIn = async (payload: AuthPayload) => {
     try {
       await auth().signInWithEmailAndPassword(payload.email, payload.password);
+      await AsyncStorage.setItem('user', JSON.stringify(auth()?.currentUser));
       setLoggedIn(true);
     } catch (error: any) {
       if (error.code === 'auth/operation-not-allowed') {
@@ -25,7 +27,7 @@ export const AuthProvider = ({children}) => {
   const logOut = async () => {
     try {
       await auth().signOut();
-      console.log('User signed out!');
+      setLoggedIn(false);
     } catch (error) {
       console.log(error);
       throw error;

@@ -25,7 +25,11 @@ const AddButton: React.FunctionComponent<IAddButtonProps> = props => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          navigate('Income' as never);
+          setOpened(false);
+        }}>
         <Animated.View
           style={[
             styles.item,
@@ -50,7 +54,11 @@ const AddButton: React.FunctionComponent<IAddButtonProps> = props => {
           <IncomeIcon />
         </Animated.View>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          navigate('Transfer' as never);
+          setOpened(false);
+        }}>
         <Animated.View
           style={[
             styles.item,
@@ -69,7 +77,11 @@ const AddButton: React.FunctionComponent<IAddButtonProps> = props => {
           <MoneyExchangeIcon />
         </Animated.View>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => navigate('Expense' as never)}>
+      <TouchableOpacity
+        onPress={() => {
+          navigate('Expense' as never);
+          setOpened(false);
+        }}>
         <Animated.View
           style={[
             styles.item,

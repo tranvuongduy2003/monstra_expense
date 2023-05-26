@@ -22,7 +22,7 @@ import Input from 'components/Input';
 import AppButton from 'components/AppButton';
 import Attachment from 'components/Attachment';
 import Toggle from 'components/Toggle';
-import Dropdown from 'components/Dropdown';
+import Dropdown, {OptionType} from 'components/Dropdown';
 import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
 import AttachmentBottomSheet from './components/AttachmentBottomSheet';
 import RecurringBottomSheet from './components/RecurringBottomSheet';
@@ -33,59 +33,69 @@ import firestore from '@react-native-firebase/firestore';
 import {AuthContext} from 'providers/AuthProvider';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
-import {OptionType} from 'types/option.type';
-import {expenseCategoryOptions} from 'constants/Category';
+import auth from '@react-native-firebase/auth';
 
-interface IExpenseScreenProps {}
+interface ITransferScreenProps {}
 
-const walletOptions: OptionType[] = [
-  {
-    title: 'Momo',
-    value: 'momo',
-  },
-  {
-    title: 'Banking',
-    value: 'banking',
-  },
-  {
-    title: 'Cash',
-    value: 'cash',
-  },
-];
-
-const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
+const TransferScreen: React.FunctionComponent<ITransferScreenProps> = props => {
   const navigation = useNavigation();
   const {user} = useContext(AuthContext) as any;
   const [showAttachment, setShowAttachment] = useState<boolean>(false);
-  // const [showRecurring, setShowRecurring] = useState<boolean>(false);
-  // const [showEditRecurring, setShowEditRecurring] = useState<boolean>(false);
   const [showInform, setShowInform] = useState<boolean>(false);
   const [statusInfo, setStatusInfo] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [options, setOptions] = useState<any>();
 
   const [balance, setBalance] = useState<number | null>();
   const [title, setTitle] = useState<string>();
-  const [category, setCatogory] = useState<OptionType>();
-  const [wallet, setWallet] = useState<OptionType>();
+  const [from, setFrom] = useState<any>();
+  const [to, setTo] = useState<any>();
   const [desc, setDesc] = useState<string>();
   const [attachment, setAttachment] = useState<any>();
 
   const attachmentRef = useRef<BottomSheet>(null);
-  // const recurringRef = useRef<BottomSheet>(null);
+  const fetchAccountData = useRef<any>(null);
 
   const handleAttachmentSheetChanges = useCallback((index: number) => {
     attachmentRef.current?.snapToIndex(index);
     setShowAttachment(true);
   }, []);
 
+  useEffect(() => {
+    fetchAccountData.current = async () => {
+      try {
+        await firestore()
+          .collection('accounts')
+          .where('userId', '==', auth().currentUser?.uid)
+          .get()
+          .then(querySnapshot => {
+            let results: any = [];
+
+            querySnapshot.forEach(documentSnapshot => {
+              results.push({
+                id: documentSnapshot.id,
+                value: documentSnapshot.data().name.toLowerCase(),
+                title: documentSnapshot.data().name,
+              });
+            });
+
+            setOptions(results);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchAccountData.current();
+  }, []);
+
   const handleAddExpense = async () => {
     setLoading(true);
     try {
-      if (!balance || !title || !category || !wallet || !attachment) {
+      if (!balance || !title || !attachment) {
         throw new Error();
       }
 
-      const reference = storage().ref('expense/' + attachment.fileName);
+      const reference = storage().ref('transfer/' + attachment.fileName);
       await reference.putFile(attachment.uri);
       const attachmentURL = await reference.getDownloadURL();
 
@@ -95,16 +105,16 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
           userId: user?.uid,
           balance: balance,
           title: title,
-          category: category,
           desc: desc,
-          wallet: wallet,
+          from: from,
+          to: to,
           attachment: attachmentURL,
-          type: 'expense',
+          type: 'transfer',
           createdAt: firestore.Timestamp.fromDate(new Date()),
         });
       setStatusInfo({
         status: 'success',
-        title: 'Expense has been successfully added!',
+        title: 'Transfer has been successfully added!',
       });
       setLoading(false);
       setShowInform(true);
@@ -112,23 +122,12 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
       console.log(error);
       setStatusInfo({
         status: 'error',
-        title: 'Add new expense unsuccessfully!',
+        title: 'Add new transfer unsuccessfully!',
       });
       setLoading(false);
       setShowInform(true);
     }
   };
-
-  // useEffect(() => {
-  //   if (showEditRecurring) {
-  //     handleRecurringSheetChanges(0);
-  //   }
-  // }, [showEditRecurring]);
-
-  // const handleRecurringSheetChanges = useCallback((index: number) => {
-  //   recurringRef.current?.snapToIndex(index);
-  //   setShowRecurring(true);
-  // }, []);
 
   const handleTakePhoto = async () => {
     try {
@@ -160,15 +159,16 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <ScrollView
-        style={{backgroundColor: AppColors.red}}
-        contentContainerStyle={{
-          flexGrow: 1,
-          justifyContent: 'flex-end',
-          position: 'relative',
-        }}>
-        {/* {(showInform || showAttachment || showRecurring) && ( */}
-        {(showInform || showAttachment) && <View style={styles.overlay}></View>}
+      <View
+        style={[
+          {
+            backgroundColor: AppColors.primaryBlue,
+            flexGrow: 1,
+            justifyContent: 'flex-end',
+            position: 'relative',
+          },
+        ]}>
+        {showAttachment && <View style={styles.overlay}></View>}
         <ClickOutsideProvider>
           <View style={styles.balanceContainer}>
             <Text style={styles.title}>How much?</Text>
@@ -185,45 +185,36 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
           </View>
           <View style={styles.setupContainer}>
             <View style={styles.inputContainer}>
-              <Input placeholder="Title" name="Title" onChangeText={setTitle} />
-              <Dropdown
-                options={expenseCategoryOptions}
-                placeholder="Category"
-                zIndex={50}
-                select={category}
-                setSelect={setCatogory}
-              />
+              <View style={styles.transfer}>
+                <Input
+                  placeholder="Title"
+                  name="Title"
+                  onChangeText={setTitle}
+                />
+                <Dropdown
+                  options={options}
+                  placeholder="From"
+                  zIndex={40}
+                  select={from}
+                  setSelect={setFrom}
+                />
+                <Dropdown
+                  options={options}
+                  placeholder="To"
+                  zIndex={40}
+                  select={to}
+                  setSelect={setTo}
+                />
+              </View>
               <Input
                 placeholder="Description"
                 name="Description"
                 onChangeText={setDesc}
               />
-              <Dropdown
-                options={walletOptions}
-                placeholder="Wallet"
-                zIndex={40}
-                select={wallet}
-                setSelect={setWallet}
-              />
               <Attachment
                 onPress={() => handleAttachmentSheetChanges(0)}
                 attachment={attachment}
               />
-              {/* <View style={styles.serviceContainer}>
-                <Tag title="Repeat" desc="Repeat transaction" />
-                <View>
-                  <Toggle
-                    on={showEditRecurring}
-                    setOn={() => setShowEditRecurring(!showEditRecurring)}
-                  />
-                </View>
-              </View>
-              {showEditRecurring && (
-                <RecurringInfo
-                  editable={true}
-                  onEdit={() => handleRecurringSheetChanges(0)}
-                />
-              )} */}
             </View>
             <View>
               <AppButton
@@ -235,7 +226,7 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
             </View>
           </View>
         </ClickOutsideProvider>
-      </ScrollView>
+      </View>
       {showAttachment && (
         <AttachmentBottomSheet
           bottomSheetRef={attachmentRef}
@@ -244,12 +235,6 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
           handleTakePhoto={handleTakePhoto}
         />
       )}
-      {/* {showRecurring && (
-        <RecurringBottomSheet
-          bottomSheetRef={recurringRef}
-          setShow={setShowRecurring}
-        />
-      )} */}
       {showInform && (
         <StatusModal
           status={statusInfo.status}
@@ -264,6 +249,12 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
 };
 
 const styles = StyleSheet.create({
+  transfer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 16,
+    zIndex: 100,
+  },
   overlay: {
     backgroundColor: '#000000',
     opacity: 0.6,
@@ -316,4 +307,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ExpenseScreen;
+export default TransferScreen;

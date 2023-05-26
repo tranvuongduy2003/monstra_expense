@@ -34,9 +34,9 @@ import {AuthContext} from 'providers/AuthProvider';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import {OptionType} from 'types/option.type';
-import {expenseCategoryOptions} from 'constants/Category';
+import {incomeCategoryOptions} from 'constants/Category';
 
-interface IExpenseScreenProps {}
+interface IIncomeScreenProps {}
 
 const walletOptions: OptionType[] = [
   {
@@ -53,8 +53,8 @@ const walletOptions: OptionType[] = [
   },
 ];
 
-const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
-  const navigation = useNavigation();
+const IncomeScreen: React.FunctionComponent<IIncomeScreenProps> = props => {
+  const navigation: any = useNavigation();
   const {user} = useContext(AuthContext) as any;
   const [showAttachment, setShowAttachment] = useState<boolean>(false);
   // const [showRecurring, setShowRecurring] = useState<boolean>(false);
@@ -78,14 +78,14 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
     setShowAttachment(true);
   }, []);
 
-  const handleAddExpense = async () => {
+  const handleAddNewIncome = async () => {
     setLoading(true);
     try {
       if (!balance || !title || !category || !wallet || !attachment) {
         throw new Error();
       }
 
-      const reference = storage().ref('expense/' + attachment.fileName);
+      const reference = storage().ref('income/' + attachment.fileName);
       await reference.putFile(attachment.uri);
       const attachmentURL = await reference.getDownloadURL();
 
@@ -99,12 +99,12 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
           desc: desc,
           wallet: wallet,
           attachment: attachmentURL,
-          type: 'expense',
+          type: 'income',
           createdAt: firestore.Timestamp.fromDate(new Date()),
         });
       setStatusInfo({
         status: 'success',
-        title: 'Expense has been successfully added!',
+        title: 'Income has been successfully added!',
       });
       setLoading(false);
       setShowInform(true);
@@ -112,7 +112,7 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
       console.log(error);
       setStatusInfo({
         status: 'error',
-        title: 'Add new expense unsuccessfully!',
+        title: 'Add new income unsuccessfully!',
       });
       setLoading(false);
       setShowInform(true);
@@ -161,7 +161,7 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
   return (
     <SafeAreaView style={{flex: 1}}>
       <ScrollView
-        style={{backgroundColor: AppColors.red}}
+        style={{backgroundColor: AppColors.primaryGreen}}
         contentContainerStyle={{
           flexGrow: 1,
           justifyContent: 'flex-end',
@@ -187,7 +187,7 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
             <View style={styles.inputContainer}>
               <Input placeholder="Title" name="Title" onChangeText={setTitle} />
               <Dropdown
-                options={expenseCategoryOptions}
+                options={incomeCategoryOptions}
                 placeholder="Category"
                 zIndex={50}
                 select={category}
@@ -229,7 +229,7 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
               <AppButton
                 title="Continue"
                 backgroundColor={AppColors.primaryColor}
-                onPress={handleAddExpense}
+                onPress={handleAddNewIncome}
                 loading={loading}
               />
             </View>
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     gap: 16,
     marginBottom: 40,
-    zIndex: 100,
+    zIndex: 50,
   },
   toggleTextContainer: {
     gap: 4,
@@ -316,4 +316,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ExpenseScreen;
+export default IncomeScreen;
