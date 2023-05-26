@@ -135,8 +135,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: scale(14),
-    // borderBottomWidth: 0.75,
-    // borderBottomColor: AppColors.borderColor,
   },
   category: {
     flexDirection: 'row',
