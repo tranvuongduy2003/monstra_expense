@@ -5,7 +5,6 @@ import {store} from 'app/store';
 import {AppNavigation} from 'navigation/AppNavigation';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {AuthProvider} from 'providers/AuthProvider';
-import { AppNavigation } from 'navigation/AppNavigation';
 
 interface IAppProps {}
 
