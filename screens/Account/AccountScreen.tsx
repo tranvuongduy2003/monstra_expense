@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   StyleSheet,
@@ -11,11 +11,24 @@ import {AppColors} from 'constants/AppColors';
 import {ImagesAssets} from 'assets/images/ImagesAssets';
 import scale from 'constants/Responsive';
 import AccountIcon from 'assets/svg/AccountIcon';
-import AppButton from 'components/AppButton';
+import firestore from '@react-native-firebase/firestore';
 
 interface IAccountScreenProps {}
 
 const AccountScreen: React.FunctionComponent<IAccountScreenProps> = props => {
+  firestore()
+    .collection('accounts')
+    .get()
+    .then(querySnapshot => {
+      console.log('Total users: ', querySnapshot.size);
+
+      querySnapshot.forEach(documentSnapshot => {
+        console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
+      });
+    });
+
+  const [data, setData] = useState(null);
+
   return (
     <SafeAreaView style={styles.container}>
       <View>
@@ -52,7 +65,7 @@ const AccountScreen: React.FunctionComponent<IAccountScreenProps> = props => {
             <Text style={styles.cash}>$1000</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity>
+        {/* <TouchableOpacity>
           <View style={styles.content}>
             <View style={styles.category}>
               <View style={styles.icons}>
@@ -73,7 +86,7 @@ const AccountScreen: React.FunctionComponent<IAccountScreenProps> = props => {
             </View>
             <Text style={styles.cash}>$2000</Text>
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <View style={styles.bottomContainer}>
           <TouchableOpacity style={styles.button} onPress={() => {}}>
             <View style={styles.titleButtonContainer}>

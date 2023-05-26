@@ -16,6 +16,8 @@ import DetailTransactionScreen from 'screens/Expense/DetailTransactionScreen';
 import CreateBudgetScreen from 'screens/Budget/CreateBudgetScreen';
 import EditBudgetScreen from 'screens/Budget/EditBudgetScreen';
 import DetailBudgetScreen from 'screens/Budget/DetailBudgetScreen';
+import AccountScreen from 'screens/Account/AccountScreen';
+import AccountDetailScreen from 'screens/Account/AccountDetailScreen';
 
 import Tabs from './Tabs';
 
@@ -36,6 +38,16 @@ const AppStack: React.FunctionComponent<IAppStackProps> = props => {
       <Stack.Screen
         name="Home"
         component={Tabs}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Account"
+        component={AccountScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="DetailAccount"
+        component={AccountDetailScreen}
         options={{headerShown: false}}
       />
       <Stack.Screen
