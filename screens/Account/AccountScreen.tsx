@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef, useEffect, ReactElement} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   StyleSheet,
@@ -6,95 +6,110 @@ import {
   View,
   TouchableOpacity,
   ImageBackground,
+  ScrollView,
 } from 'react-native';
+import {
+  BanknotesIcon,
+  BuildingStorefrontIcon,
+  ClipboardDocumentListIcon,
+  ShoppingBagIcon,
+  TruckIcon,
+} from 'react-native-heroicons/solid';
 import {AppColors} from 'constants/AppColors';
 import {ImagesAssets} from 'assets/images/ImagesAssets';
 import scale from 'constants/Responsive';
-import AccountIcon from 'assets/svg/AccountIcon';
 import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+import Phase from './components/Phase';
+import Momo from 'assets/svg/Momo';
+import Vietcombank from 'assets/svg/Vietcombank';
 
 interface IAccountScreenProps {}
 
+type IconType = {
+  child: ReactElement;
+};
+
+const icons = new Map<string, IconType>();
+icons.set('Vietcombank', {
+  child: <Vietcombank></Vietcombank>,
+});
+
+icons.set('Momo', {
+  child: <Momo></Momo>,
+});
+
 const AccountScreen: React.FunctionComponent<IAccountScreenProps> = props => {
-  firestore()
-    .collection('accounts')
-    .get()
-    .then(querySnapshot => {
-      console.log('Total users: ', querySnapshot.size);
+  const [wallets, setWallets] = useState<Map<string, Array<any>>>();
+  const [totalPrice, setTotalPrice] = useState<any>(null);
+  const fetchAccountsData = useRef<any>(null);
 
-      querySnapshot.forEach(documentSnapshot => {
-        console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
-      });
-    });
+  useEffect(() => {
+    fetchAccountsData.current = async () => {
+      try {
+        await firestore()
+          .collection('accounts')
+          .where('userId', '==', auth().currentUser?.uid)
+          .get()
+          .then(querySnapshot => {
+            let results = new Map<string, Array<any>>();
+            let totalPrice = 0;
 
-  const [data, setData] = useState(null);
+            querySnapshot.forEach(documentSnapshot => {
+              const data = documentSnapshot.data();
+              let key = '';
+              
+              const items = {
+                id: documentSnapshot.id,
+                userId: auth().currentUser?.uid,
+                icon: icons.get(data.type_item.name)?.child,
+                title: data.name,
+                price: `${'$'}${data.balance}`,
+              };
+              totalPrice = data.balance + totalPrice;
+              
+              const filteredArray = results.get(key) || [];
+              results.set(key, [...filteredArray, items]);
+            });
+            setWallets(results);
+            setTotalPrice(totalPrice);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchAccountsData.current();
+  });
 
   return (
     <SafeAreaView style={styles.container}>
-      <View>
+      <ScrollView
+        style={{backgroundColor: AppColors.screenColor}}
+        contentContainerStyle={{
+          flexGrow: 1,
+        }}>
         <ImageBackground
           source={ImagesAssets.bg}
           style={styles.imageBg}
           resizeMode="stretch">
           <View style={styles.titleContainer}>
             <Text style={styles.title}>Account Balance</Text>
-            <Text style={styles.number}>$9400</Text>
+            <Text style={styles.number}>${totalPrice}</Text>
           </View>
         </ImageBackground>
+      <ScrollView>
+        {Array.from(wallets?.keys() || []).map(key => (
+          <Phase key={key} wallets={wallets?.get(key as string)} />
+        ))}
+      </ScrollView>
+      <View style={styles.bottomContainer}>
+        <TouchableOpacity style={styles.button} onPress={() => {}}>
+          <View style={styles.titleButtonContainer}>
+            <Text style={styles.titleButton}>+ Add new wallet</Text>
+          </View>
+        </TouchableOpacity>
       </View>
-      <View style={styles.categoryContainer}>
-        <TouchableOpacity onPress={() => {}}>
-          <View style={styles.content}>
-            <View style={styles.category}>
-              <View style={styles.icons}>
-                <AccountIcon></AccountIcon>
-              </View>
-              <Text style={styles.contentTitle}>Wallet</Text>
-            </View>
-            <Text style={styles.cash}>$400</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <View style={styles.content}>
-            <View style={styles.category}>
-              <View style={styles.icons}>
-                <AccountIcon></AccountIcon>
-              </View>
-              <Text style={styles.contentTitle}>Chase</Text>
-            </View>
-            <Text style={styles.cash}>$1000</Text>
-          </View>
-        </TouchableOpacity>
-        {/* <TouchableOpacity>
-          <View style={styles.content}>
-            <View style={styles.category}>
-              <View style={styles.icons}>
-                <AccountIcon></AccountIcon>
-              </View>
-              <Text style={styles.contentTitle}>Citi</Text>
-            </View>
-            <Text style={styles.cash}>$6000</Text>
-          </View>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <View style={styles.content}>
-            <View style={styles.category}>
-              <View style={styles.icons}>
-                <AccountIcon></AccountIcon>
-              </View>
-              <Text style={styles.contentTitle}>Paypal</Text>
-            </View>
-            <Text style={styles.cash}>$2000</Text>
-          </View>
-        </TouchableOpacity> */}
-        <View style={styles.bottomContainer}>
-          <TouchableOpacity style={styles.button} onPress={() => {}}>
-            <View style={styles.titleButtonContainer}>
-              <Text style={styles.titleButton}>+ Add new wallet</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {ReactElement, useEffect, useRef, useState} from 'react';
 import {ScrollView, View, StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {AppColors} from 'constants/AppColors';
 import {useNavigation} from '@react-navigation/native';
@@ -9,23 +9,28 @@ import auth from '@react-native-firebase/auth';
 import scale from 'constants/Responsive';
 import AccountIcon from 'assets/svg/AccountIcon';
 
-interface IWalletCardProps {
+interface ICardProps {
+  icon: ReactElement;
+  title: string;
+  price: string;
 }
 
 
-const WalletCard: React.FunctionComponent<
-IWalletCardProps
-> = props => {
+const Card: React.FunctionComponent<ICardProps> = ({
+  icon,
+  title,
+  price,
+}) => {
   return (
     <TouchableOpacity onPress={() => {}}>
           <View style={styles.content}>
             <View style={styles.category}>
               <View style={styles.icons}>
-                <AccountIcon></AccountIcon>
+                {icon}
               </View>
-              <Text style={styles.contentTitle}>Wallet</Text>
+              <Text style={styles.contentTitle}>{title}</Text>
             </View>
-            <Text style={styles.cash}>$400</Text>
+            <Text style={styles.cash}>{price}</Text>
           </View>
         </TouchableOpacity>
   );
@@ -69,4 +74,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WalletCard;
+export default Card;

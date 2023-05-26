@@ -45,7 +45,7 @@ const AppStack: React.FunctionComponent<IAppStackProps> = props => {
       <Stack.Screen
         name="Account"
         component={AccountScreen}
-        options={{headerShown: false}}
+        options={{header: () => <HeaderBar name="Account"></HeaderBar>}}
       />
       <Stack.Screen
         name="DetailAccount"
