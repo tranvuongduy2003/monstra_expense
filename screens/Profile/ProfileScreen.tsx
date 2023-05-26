@@ -11,7 +11,6 @@ import LogoutIcon from 'assets/svg/LogoutIcon';
 import EditIcon from 'assets/svg/EditIcon';
 import {AuthContext} from 'providers/AuthProvider';
 import ProfileOption from './components/ProfileOption';
-import {useNavigation} from '@react-navigation/native';
 
 interface IProfileScreenProps {}
 
