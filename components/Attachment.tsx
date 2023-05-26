@@ -19,7 +19,7 @@ const Attachment: React.FunctionComponent<IAttachmentProps> = ({
       {attachment ? (
         <Image
           source={{
-            uri: attachment.uri,
+            uri: attachment.uri || attachment,
           }}
           style={{
             width: '100%',

@@ -17,6 +17,7 @@ import {
 import Phase from './components/Phase';
 import BottomSheet from '@gorhom/bottom-sheet';
 import {
+  ArrowsRightLeftIcon,
   BanknotesIcon,
   BuildingStorefrontIcon,
   ClipboardDocumentListIcon,
@@ -203,21 +204,40 @@ const TransactionScreen: React.FunctionComponent<
                 }
               }
 
+              if (
+                data.type !== 'transfer' &&
+                !filterCategories
+                  .map(item => item.value)
+                  .includes(data.category?.value || '')
+              ) {
+                return;
+              }
+
               const items = {
                 id: documentSnapshot.id,
                 userId: auth().currentUser?.uid,
-                icon: icons.get(data.category.value)?.child,
-                title: data.category.title,
+                icon:
+                  data.type !== 'transfer' ? (
+                    icons.get(data.category?.value || '')?.child
+                  ) : (
+                    <ArrowsRightLeftIcon
+                      color={AppColors.primaryBlue}
+                      fontSize={30}
+                    />
+                  ),
+                title:
+                  data.type !== 'transfer' ? data.category.title : 'Transfer',
                 desc: data.title,
-                price: `${data.type === 'expense' ? '- $' : '+ $'}${
-                  data.balance
-                }`,
+                price: data.balance,
                 time: itemDate.toLocaleTimeString('vi-VI', {
                   hour: '2-digit',
                   minute: '2-digit',
                 }),
-                iconBgColor: icons.get(data.category.value)?.bgColor,
-                negative: data.type === 'expense',
+                iconBgColor:
+                  data.type !== 'transfer'
+                    ? icons.get(data.category?.value || '')?.bgColor
+                    : AppColors.primaryBlue100,
+                type: data.type,
               };
 
               const filteredArray = results.get(key) || [];
@@ -230,6 +250,7 @@ const TransactionScreen: React.FunctionComponent<
       }
     };
     fetchTransactionsData.current();
+    return fetchTransactionsData.current;
   }, [filterType, filterCategories, sortBy, filterTime, isFocused]);
 
   const handleApplyFilter = (
@@ -277,7 +298,12 @@ const TransactionScreen: React.FunctionComponent<
     setSortBy(sortOption);
 
     if (selectedCategories && selectedCategories.length > 0) {
-      setFilterCategories(selectedCategories);
+      setFilterCategories([...selectedCategories]);
+    } else {
+      setFilterCategories([
+        ...incomeCategoryOptions,
+        ...expenseCategoryOptions,
+      ]);
     }
   };
 
@@ -320,8 +346,6 @@ const TransactionScreen: React.FunctionComponent<
               transactions={transactions?.get(key as string)}
             />
           ))}
-          {/* <Phase timeTitle="Today" transactions={transactions} /> */}
-          {/* <Phase timeTitle="Yesterday" transactions={yesterdayTransactions} /> */}
         </ScrollView>
       </ScrollView>
       {showFilter && (

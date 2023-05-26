@@ -184,6 +184,7 @@ const FilterBottomSheet: React.FunctionComponent<IFilterBottomSheetProps> = ({
                     filteredCategories,
                   );
                   setShow(false);
+                  navigation.setOptions({tabBarStyle: styles.tabBarStyle});
                 }}
               />
             </View>

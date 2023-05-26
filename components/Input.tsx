@@ -12,6 +12,7 @@ import ErrorMessage from './ErrorMessage';
 
 interface IInputProps {
   name?: string;
+  defaultValue?: string;
   onChangeText?: any;
   placeholder: string;
   isPassword?: boolean;
@@ -22,6 +23,7 @@ interface IInputProps {
 
 const Input: React.FunctionComponent<IInputProps> = ({
   name,
+  defaultValue,
   onChangeText,
   placeholder,
   isPassword = false,
@@ -64,6 +66,7 @@ const Input: React.FunctionComponent<IInputProps> = ({
       {isPassword ? (
         <View style={styles.passwordContainer}>
           <TextInput
+            defaultValue={defaultValue}
             onChangeText={text => onTextInputChange(text)}
             style={[styles.input, {paddingRight: 50}]}
             placeholder={placeholder}
@@ -83,6 +86,7 @@ const Input: React.FunctionComponent<IInputProps> = ({
         </View>
       ) : (
         <TextInput
+          defaultValue={defaultValue}
           onChangeText={text => onTextInputChange(text)}
           style={styles.input}
           placeholder={placeholder}

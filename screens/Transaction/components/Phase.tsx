@@ -21,13 +21,14 @@ const Phase: React.FunctionComponent<IPhaseProps> = ({
         {transactions.map((transaction: any) => (
           <TransactionCard
             key={transaction.id}
+            id={transaction.id}
             icon={transaction.icon}
             title={transaction.title}
             desc={transaction.desc}
             price={transaction.price}
             time={transaction.time}
             iconBgColor={transaction.iconBgColor}
-            negative={transaction.negative}
+            type={transaction.type}
           />
         ))}
       </View>

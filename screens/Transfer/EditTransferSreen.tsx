@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import BottomSheet from '@gorhom/bottom-sheet';
 import {AppColors} from 'constants/AppColors';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import Input from 'components/Input';
 import AppButton from 'components/AppButton';
 import Attachment from 'components/Attachment';
@@ -35,22 +35,26 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
 
-interface ITransferScreenProps {}
+interface IEditTransferScreenProps {}
 
-const TransferScreen: React.FunctionComponent<ITransferScreenProps> = props => {
+const EditTransferScreen: React.FunctionComponent<
+  IEditTransferScreenProps
+> = props => {
   const navigation = useNavigation();
-  const {user} = useContext(AuthContext) as any;
+  const route = useRoute();
+  const {transaction}: any = route.params;
+
   const [showAttachment, setShowAttachment] = useState<boolean>(false);
   const [showInform, setShowInform] = useState<boolean>(false);
   const [statusInfo, setStatusInfo] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
   const [options, setOptions] = useState<any>();
 
-  const [balance, setBalance] = useState<number | null>();
-  const [title, setTitle] = useState<string>();
-  const [from, setFrom] = useState<any>();
-  const [to, setTo] = useState<any>();
-  const [desc, setDesc] = useState<string>();
+  const [balance, setBalance] = useState<number | null>(transaction.balance);
+  const [title, setTitle] = useState<string>(transaction.title);
+  const [from, setFrom] = useState<any>(transaction.from);
+  const [to, setTo] = useState<any>(transaction.to);
+  const [desc, setDesc] = useState<string>(transaction.desc);
   const [attachment, setAttachment] = useState<any>();
 
   const attachmentRef = useRef<BottomSheet>(null);
@@ -91,30 +95,33 @@ const TransferScreen: React.FunctionComponent<ITransferScreenProps> = props => {
   const handleAddExpense = async () => {
     setLoading(true);
     try {
-      if (!balance || !title || !from || !to || !attachment) {
+      if (!balance || !title || !from || !to) {
         throw new Error();
       }
 
-      const reference = storage().ref('transfer/' + attachment.fileName);
-      await reference.putFile(attachment.uri);
-      const attachmentURL = await reference.getDownloadURL();
+      const payload: any = {
+        balance: balance,
+        title: title,
+        from: from,
+        to: to,
+        desc: desc,
+        updatedAt: firestore.Timestamp.fromDate(new Date()),
+      };
+
+      if (attachment) {
+        const reference = storage().ref('transfer/' + attachment.fileName);
+        await reference.putFile(attachment.uri);
+        const attachmentURL = await reference.getDownloadURL();
+        payload.attachment = attachmentURL;
+      }
 
       await firestore()
         .collection('transactions')
-        .add({
-          userId: user?.uid,
-          balance: balance,
-          title: title,
-          desc: desc,
-          from: from,
-          to: to,
-          attachment: attachmentURL,
-          type: 'transfer',
-          createdAt: firestore.Timestamp.fromDate(new Date()),
-        });
+        .doc(transaction.id)
+        .update(payload);
       setStatusInfo({
         status: 'success',
-        title: 'Transfer has been successfully added!',
+        title: 'Transfer has been successfully updated!',
       });
       setLoading(false);
       setShowInform(true);
@@ -122,7 +129,7 @@ const TransferScreen: React.FunctionComponent<ITransferScreenProps> = props => {
       console.log(error);
       setStatusInfo({
         status: 'error',
-        title: 'Add new transfer unsuccessfully!',
+        title: 'Update transfer unsuccessfully!',
       });
       setLoading(false);
       setShowInform(true);
@@ -175,17 +182,21 @@ const TransferScreen: React.FunctionComponent<ITransferScreenProps> = props => {
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text style={styles.amount}>$</Text>
               <TextInput
+                defaultValue={JSON.stringify(balance)}
                 style={styles.amount}
                 keyboardType="numeric"
-                onChangeText={val =>
-                  val ? setBalance(parseInt(val)) : setBalance(null)
-                }
+                onChangeText={val => val && setBalance(parseInt(val))}
               />
             </View>
           </View>
           <View style={styles.setupContainer}>
             <View style={styles.inputContainer}>
-              <Input placeholder="Title" name="Title" onChangeText={setTitle} />
+              <Input
+                defaultValue={title}
+                placeholder="Title"
+                name="Title"
+                onChangeText={setTitle}
+              />
               <View style={styles.transfer}>
                 <Dropdown
                   options={options}
@@ -203,13 +214,14 @@ const TransferScreen: React.FunctionComponent<ITransferScreenProps> = props => {
                 />
               </View>
               <Input
+                defaultValue={desc}
                 placeholder="Description"
                 name="Description"
                 onChangeText={setDesc}
               />
               <Attachment
                 onPress={() => handleAttachmentSheetChanges(0)}
-                attachment={attachment}
+                attachment={attachment || transaction.attachment}
               />
             </View>
             <View>
@@ -303,4 +315,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TransferScreen;
+export default EditTransferScreen;
