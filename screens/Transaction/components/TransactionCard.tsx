@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import {AppColors} from 'constants/AppColors';
 import React, {ReactElement} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
@@ -5,26 +6,34 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import {ShoppingBagIcon} from 'react-native-heroicons/solid';
 
 interface ITransactionCardProps {
+  id: string;
   icon: ReactElement;
   title: string;
-  price: string;
+  price: number;
   desc: string;
   time: string;
   iconBgColor: string;
-  negative: boolean;
+  type: string;
 }
 
 const TransactionCard: React.FunctionComponent<ITransactionCardProps> = ({
+  id,
   icon,
   title,
   price,
   desc,
   time,
   iconBgColor,
-  negative,
+  type,
 }) => {
+  const navigation: any = useNavigation();
+
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity
+      style={styles.container}
+      onPress={() =>
+        navigation.navigate('DetailTransaction', {transactionId: id})
+      }>
       <View style={[styles.iconContainer, {backgroundColor: iconBgColor}]}>
         {icon}
       </View>
@@ -37,9 +46,18 @@ const TransactionCard: React.FunctionComponent<ITransactionCardProps> = ({
           <Text
             style={[
               styles.titleContent,
-              {color: negative ? AppColors.red : AppColors.primaryGreen},
+              {
+                color:
+                  type === 'expense'
+                    ? AppColors.red
+                    : type === 'income'
+                    ? AppColors.primaryGreen
+                    : AppColors.primaryBlue,
+              },
             ]}>
-            {price}
+            {`${
+              type === 'expense' ? '-' : type === 'income' ? '+' : ''
+            }$${price}`}
           </Text>
         </View>
         <View style={styles.textContainer}>

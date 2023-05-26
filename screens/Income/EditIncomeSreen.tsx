@@ -17,104 +17,94 @@ import {
 } from 'react-native';
 import BottomSheet from '@gorhom/bottom-sheet';
 import {AppColors} from 'constants/AppColors';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import Input from 'components/Input';
 import AppButton from 'components/AppButton';
 import Attachment from 'components/Attachment';
-import Toggle from 'components/Toggle';
 import Dropdown from 'components/Dropdown';
 import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
 import AttachmentBottomSheet from './components/AttachmentBottomSheet';
-import RecurringBottomSheet from './components/RecurringBottomSheet';
-import Tag from './components/Tag';
-import RecurringInfo from './components/RecurringInfo';
 import StatusModal from '../../components/StatusModal';
 import firestore from '@react-native-firebase/firestore';
 import {AuthContext} from 'providers/AuthProvider';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
-import auth from '@react-native-firebase/auth';
+import {OptionType} from 'types/option.type';
+import {incomeCategoryOptions} from 'constants/Category';
 
-interface ITransferScreenProps {}
+interface IEditIncomeScreenProps {}
 
-const TransferScreen: React.FunctionComponent<ITransferScreenProps> = props => {
-  const navigation = useNavigation();
-  const {user} = useContext(AuthContext) as any;
+const walletOptions: OptionType[] = [
+  {
+    title: 'Momo',
+    value: 'momo',
+  },
+  {
+    title: 'Banking',
+    value: 'banking',
+  },
+  {
+    title: 'Cash',
+    value: 'cash',
+  },
+];
+
+const EditIncomeScreen: React.FunctionComponent<
+  IEditIncomeScreenProps
+> = props => {
+  const navigation: any = useNavigation();
+  const route = useRoute();
+  const {transaction}: any = route.params;
+
   const [showAttachment, setShowAttachment] = useState<boolean>(false);
   const [showInform, setShowInform] = useState<boolean>(false);
   const [statusInfo, setStatusInfo] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [options, setOptions] = useState<any>();
 
-  const [balance, setBalance] = useState<number | null>();
-  const [title, setTitle] = useState<string>();
-  const [from, setFrom] = useState<any>();
-  const [to, setTo] = useState<any>();
-  const [desc, setDesc] = useState<string>();
+  const [balance, setBalance] = useState<number | null>(transaction.balance);
+  const [title, setTitle] = useState<string>(transaction.title);
+  const [category, setCatogory] = useState<OptionType>(transaction.category);
+  const [wallet, setWallet] = useState<OptionType>(transaction.wallet);
+  const [desc, setDesc] = useState<string>(transaction.desc);
   const [attachment, setAttachment] = useState<any>();
 
   const attachmentRef = useRef<BottomSheet>(null);
-  const fetchAccountData = useRef<any>(null);
 
   const handleAttachmentSheetChanges = useCallback((index: number) => {
     attachmentRef.current?.snapToIndex(index);
     setShowAttachment(true);
   }, []);
 
-  useEffect(() => {
-    fetchAccountData.current = async () => {
-      try {
-        await firestore()
-          .collection('accounts')
-          .where('userId', '==', auth().currentUser?.uid)
-          .get()
-          .then(querySnapshot => {
-            let results: any = [];
-
-            querySnapshot.forEach(documentSnapshot => {
-              results.push({
-                id: documentSnapshot.id,
-                value: documentSnapshot.data().name.toLowerCase(),
-                title: documentSnapshot.data().name,
-              });
-            });
-
-            setOptions(results);
-          });
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchAccountData.current();
-  }, []);
-
-  const handleAddExpense = async () => {
+  const handleEditNewIncome = async () => {
     setLoading(true);
     try {
-      if (!balance || !title || !from || !to || !attachment) {
+      if (!balance || !title || !category || !wallet) {
         throw new Error();
       }
 
-      const reference = storage().ref('transfer/' + attachment.fileName);
-      await reference.putFile(attachment.uri);
-      const attachmentURL = await reference.getDownloadURL();
+      const payload: any = {
+        balance: balance,
+        title: title,
+        category: category,
+        desc: desc,
+        wallet: wallet,
+        updatedAt: firestore.Timestamp.fromDate(new Date()),
+      };
+
+      if (attachment) {
+        const reference = storage().ref('income/' + attachment.fileName);
+        await reference.putFile(attachment.uri);
+        const attachmentURL = await reference.getDownloadURL();
+        payload.attachment = attachmentURL;
+      }
 
       await firestore()
         .collection('transactions')
-        .add({
-          userId: user?.uid,
-          balance: balance,
-          title: title,
-          desc: desc,
-          from: from,
-          to: to,
-          attachment: attachmentURL,
-          type: 'transfer',
-          createdAt: firestore.Timestamp.fromDate(new Date()),
-        });
+        .doc(transaction.id)
+        .update(payload);
       setStatusInfo({
         status: 'success',
-        title: 'Transfer has been successfully added!',
+        title: 'Income has been successfully updated!',
       });
       setLoading(false);
       setShowInform(true);
@@ -122,12 +112,23 @@ const TransferScreen: React.FunctionComponent<ITransferScreenProps> = props => {
       console.log(error);
       setStatusInfo({
         status: 'error',
-        title: 'Add new transfer unsuccessfully!',
+        title: 'Update income unsuccessfully!',
       });
       setLoading(false);
       setShowInform(true);
     }
   };
+
+  // useEffect(() => {
+  //   if (showEditRecurring) {
+  //     handleRecurringSheetChanges(0);
+  //   }
+  // }, [showEditRecurring]);
+
+  // const handleRecurringSheetChanges = useCallback((index: number) => {
+  //   recurringRef.current?.snapToIndex(index);
+  //   setShowRecurring(true);
+  // }, []);
 
   const handleTakePhoto = async () => {
     try {
@@ -159,70 +160,87 @@ const TransferScreen: React.FunctionComponent<ITransferScreenProps> = props => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <View
-        style={[
-          {
-            backgroundColor: AppColors.primaryBlue,
-            flexGrow: 1,
-            justifyContent: 'flex-end',
-            position: 'relative',
-          },
-        ]}>
-        {showAttachment && <View style={styles.overlay}></View>}
+      <ScrollView
+        style={{backgroundColor: AppColors.primaryGreen}}
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: 'flex-end',
+          position: 'relative',
+        }}>
+        {/* {(showInform || showAttachment || showRecurring) && ( */}
+        {(showInform || showAttachment) && <View style={styles.overlay}></View>}
         <ClickOutsideProvider>
           <View style={styles.balanceContainer}>
             <Text style={styles.title}>How much?</Text>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text style={styles.amount}>$</Text>
               <TextInput
+                defaultValue={JSON.stringify(balance)}
                 style={styles.amount}
                 keyboardType="numeric"
-                onChangeText={val =>
-                  val ? setBalance(parseInt(val)) : setBalance(null)
-                }
+                onChangeText={val => val && setBalance(parseInt(val))}
               />
             </View>
           </View>
           <View style={styles.setupContainer}>
             <View style={styles.inputContainer}>
-              <Input placeholder="Title" name="Title" onChangeText={setTitle} />
-              <View style={styles.transfer}>
-                <Dropdown
-                  options={options}
-                  placeholder="From"
-                  zIndex={40}
-                  select={from}
-                  setSelect={setFrom}
-                />
-                <Dropdown
-                  options={options}
-                  placeholder="To"
-                  zIndex={40}
-                  select={to}
-                  setSelect={setTo}
-                />
-              </View>
               <Input
+                defaultValue={title}
+                placeholder="Title"
+                name="Title"
+                onChangeText={setTitle}
+              />
+              <Dropdown
+                options={incomeCategoryOptions}
+                placeholder="Category"
+                zIndex={50}
+                select={category}
+                setSelect={setCatogory}
+              />
+              <Input
+                defaultValue={desc}
                 placeholder="Description"
                 name="Description"
                 onChangeText={setDesc}
               />
+              <Dropdown
+                options={walletOptions}
+                placeholder="Wallet"
+                zIndex={40}
+                select={wallet}
+                setSelect={setWallet}
+              />
               <Attachment
                 onPress={() => handleAttachmentSheetChanges(0)}
-                attachment={attachment}
+                attachment={attachment || transaction.attachment}
               />
+              {/* <View style={styles.serviceContainer}>
+                <Tag title="Repeat" desc="Repeat transaction" />
+                <View>
+                  <Toggle
+                    on={showEditRecurring}
+                    setOn={() => setShowEditRecurring(!showEditRecurring)}
+                  />
+                </View>
+              </View>
+              {showEditRecurring && (
+                <RecurringInfo
+                  editable={true}
+                  onEdit={() => handleRecurringSheetChanges(0)}
+                />
+              )} */}
             </View>
             <View>
               <AppButton
                 title="Continue"
                 backgroundColor={AppColors.primaryColor}
-                onPress={handleAddExpense}
+                onPress={handleEditNewIncome}
                 loading={loading}
               />
             </View>
           </View>
         </ClickOutsideProvider>
-      </View>
+      </ScrollView>
       {showAttachment && (
         <AttachmentBottomSheet
           bottomSheetRef={attachmentRef}
@@ -231,6 +249,12 @@ const TransferScreen: React.FunctionComponent<ITransferScreenProps> = props => {
           handleTakePhoto={handleTakePhoto}
         />
       )}
+      {/* {showRecurring && (
+        <RecurringBottomSheet
+          bottomSheetRef={recurringRef}
+          setShow={setShowRecurring}
+        />
+      )} */}
       {showInform && (
         <StatusModal
           status={statusInfo.status}
@@ -245,12 +269,6 @@ const TransferScreen: React.FunctionComponent<ITransferScreenProps> = props => {
 };
 
 const styles = StyleSheet.create({
-  transfer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 16,
-    zIndex: 100,
-  },
   overlay: {
     backgroundColor: '#000000',
     opacity: 0.6,
@@ -291,7 +309,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     gap: 16,
     marginBottom: 40,
-    zIndex: 100,
+    zIndex: 50,
   },
   toggleTextContainer: {
     gap: 4,
@@ -303,4 +321,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TransferScreen;
+export default EditIncomeScreen;
