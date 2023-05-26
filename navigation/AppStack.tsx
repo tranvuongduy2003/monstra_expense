@@ -10,6 +10,8 @@ import ThemeScreen from 'screens/Settings/ThemeScreen';
 import SecurityScreen from 'screens/Settings/SecurityScreen';
 import NotificationScreen from 'screens/Settings/Notification';
 import ExpenseScreen from 'screens/Expense/ExpenseSreen';
+import IncomeScreen from 'screens/Income/IncomeSreen';
+import TransferScreen from 'screens/Transfer/TransferSreen';
 import ExportScreen from 'screens/Settings/ExportScreen';
 import ExporNotitScreen from 'screens/Settings/ExportNotiScreen';
 import DetailTransactionScreen from 'screens/Expense/DetailTransactionScreen';
@@ -107,6 +109,32 @@ const AppStack: React.FunctionComponent<IAppStackProps> = props => {
             <HeaderBar
               name="Expense"
               backgroundColor={AppColors.red}
+              color={AppColors.screenColor}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="Income"
+        component={IncomeScreen}
+        options={{
+          header: () => (
+            <HeaderBar
+              name="Income"
+              backgroundColor={AppColors.primaryGreen}
+              color={AppColors.screenColor}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="Transfer"
+        component={TransferScreen}
+        options={{
+          header: () => (
+            <HeaderBar
+              name="Transfer"
+              backgroundColor={AppColors.primaryBlue}
               color={AppColors.screenColor}
             />
           ),

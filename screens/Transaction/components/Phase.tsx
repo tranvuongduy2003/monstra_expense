@@ -18,7 +18,7 @@ const Phase: React.FunctionComponent<IPhaseProps> = ({
         <Text style={styles.barsText}>{timeTitle}</Text>
       </View>
       <View style={styles.transactionContainer}>
-        {transactions.map(transaction => (
+        {transactions.map((transaction: any) => (
           <TransactionCard
             key={transaction.id}
             icon={transaction.icon}

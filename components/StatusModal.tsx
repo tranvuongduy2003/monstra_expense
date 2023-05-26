@@ -1,20 +1,30 @@
 import {AppColors} from 'constants/AppColors';
 import React, {useEffect} from 'react';
 import {Modal, StyleSheet, Text, View} from 'react-native';
-import {CheckCircleIcon} from 'react-native-heroicons/solid';
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+} from 'react-native-heroicons/solid';
 
-interface IAddSuccessModalProps {
+interface IStatusModalProps {
+  status: 'success' | 'error';
+  title: string;
   show?: boolean;
   setShow: (props: any) => void;
+  onClose?: any;
 }
 
-const AddSuccessModal: React.FunctionComponent<IAddSuccessModalProps> = ({
+const StatusModal: React.FunctionComponent<IStatusModalProps> = ({
+  status,
+  title,
   show,
   setShow,
+  onClose,
 }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShow(!show);
+      onClose && onClose();
     }, 600);
     return () => clearTimeout(timer);
   }, []);
@@ -23,10 +33,13 @@ const AddSuccessModal: React.FunctionComponent<IAddSuccessModalProps> = ({
     <Modal animationType="fade" transparent={true} visible={show}>
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
-          <CheckCircleIcon size={48} color={AppColors.primaryColor} />
-          <Text style={styles.modalTitle}>
-            Transaction has been successfully added
-          </Text>
+          {status === 'error' && (
+            <ExclamationCircleIcon size={48} color={AppColors.red} />
+          )}
+          {status === 'success' && (
+            <CheckCircleIcon size={48} color={AppColors.primaryColor} />
+          )}
+          <Text style={styles.modalTitle}>{title}</Text>
         </View>
       </View>
     </Modal>
@@ -54,4 +67,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddSuccessModal;
+export default StatusModal;
