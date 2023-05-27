@@ -10,11 +10,14 @@ import ThemeScreen from 'screens/Settings/ThemeScreen';
 import SecurityScreen from 'screens/Settings/SecurityScreen';
 import NotificationScreen from 'screens/Settings/Notification';
 import ExpenseScreen from 'screens/Expense/ExpenseSreen';
+import EditExpenseScreen from 'screens/Expense/EditExpenseSreen';
 import IncomeScreen from 'screens/Income/IncomeSreen';
+import EditIncomeScreen from 'screens/Income/EditIncomeSreen';
 import TransferScreen from 'screens/Transfer/TransferSreen';
+import EditTransferScreen from 'screens/Transfer/EditTransferSreen';
 import ExportScreen from 'screens/Settings/ExportScreen';
 import ExporNotitScreen from 'screens/Settings/ExportNotiScreen';
-import DetailTransactionScreen from 'screens/Expense/DetailTransactionScreen';
+import DetailTransactionScreen from 'screens/Transaction/DetailTransactionScreen';
 import CreateBudgetScreen from 'screens/Budget/CreateBudgetScreen';
 import EditBudgetScreen from 'screens/Budget/EditBudgetScreen';
 import DetailBudgetScreen from 'screens/Budget/DetailBudgetScreen';
@@ -98,20 +101,7 @@ const AppStack: React.FunctionComponent<IAppStackProps> = props => {
       <Stack.Screen
         name="DetailTransaction"
         component={DetailTransactionScreen}
-        options={{
-          header: () => (
-            <HeaderBar
-              name="Detail Transaction"
-              backgroundColor={AppColors.red}
-              color={AppColors.screenColor}
-              icon={
-                <TouchableOpacity onPress={() => {}}>
-                  <TrashIcon color={AppColors.screenColor} />
-                </TouchableOpacity>
-              }
-            />
-          ),
-        }}
+        options={{headerShown: false}}
       />
       <Stack.Screen
         name="ExportNoti"
@@ -154,6 +144,45 @@ const AppStack: React.FunctionComponent<IAppStackProps> = props => {
       <Stack.Screen
         name="Transfer"
         component={TransferScreen}
+        options={{
+          header: () => (
+            <HeaderBar
+              name="Transfer"
+              backgroundColor={AppColors.primaryBlue}
+              color={AppColors.screenColor}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditExpense"
+        component={EditExpenseScreen}
+        options={{
+          header: () => (
+            <HeaderBar
+              name="Expense"
+              backgroundColor={AppColors.red}
+              color={AppColors.screenColor}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditIncome"
+        component={EditIncomeScreen}
+        options={{
+          header: () => (
+            <HeaderBar
+              name="Income"
+              backgroundColor={AppColors.primaryGreen}
+              color={AppColors.screenColor}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="EditTransfer"
+        component={EditTransferScreen}
         options={{
           header: () => (
             <HeaderBar
