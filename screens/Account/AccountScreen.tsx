@@ -71,6 +71,7 @@ const AccountScreen: React.FunctionComponent<IAccountScreenProps> = props => {
               const filteredArray = results.get(key) || [];
               results.set(key, [...filteredArray, items]);
             });
+            Data.GetInstance().setAccBalance(totalPrice.toString())
             setWallets(results);
             setTotalPrice(totalPrice);
           });

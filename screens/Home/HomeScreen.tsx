@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {AppColors} from 'constants/AppColors';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ScrollView, Text, View, StyleSheet, Image, TouchableOpacity} from 'react-native';
-import {OptionType} from 'components/Dropdown';
+import { OptionType } from 'components/CustomDropList';
 import {useNavigation} from '@react-navigation/native';
 import scale from 'constants/Responsive';
 import BellIcon from 'assets/svg/BellIcon';
@@ -66,6 +66,7 @@ const options: OptionType[] = [
 ];
 const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
   const navigation = useNavigation();
+  const [AccBalance, setAccBalance] = useState(Data.GetInstance().getAccBalance())
   return (
     <SafeAreaView
       style={{
@@ -87,7 +88,7 @@ const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
           </View>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>Account Balance</Text>
-            <Text style={styles.number}>$9400</Text>
+            <Text style={styles.number}>{AccBalance}</Text>
           </View>
           <View style={styles.moneyStatusContainer}>
             <View style={styles.incomeStatus}>

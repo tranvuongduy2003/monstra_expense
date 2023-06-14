@@ -9,6 +9,7 @@ import {AuthProvider} from 'providers/AuthProvider';
 interface IAppProps {}
 
 const App: React.FunctionComponent<IAppProps> = props => {
+  const data = Data.GetInstance()
   return (
     <AuthProvider>
       <GestureHandlerRootView style={{flex: 1}}>
