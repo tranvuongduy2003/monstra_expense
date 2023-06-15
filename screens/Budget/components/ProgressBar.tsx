@@ -1,14 +1,14 @@
-import {StyleSheet, View, TextInput, Dimensions} from 'react-native';
+import {AppColors} from 'constants/AppColors';
 import React from 'react';
+import {Dimensions, StyleSheet, TextInput, View} from 'react-native';
 import {PanGestureHandler} from 'react-native-gesture-handler';
 import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
+  runOnJS,
   useAnimatedGestureHandler,
   useAnimatedProps,
-  runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
 } from 'react-native-reanimated';
-import {AppColors} from 'constants/AppColors';
 
 const {width} = Dimensions.get('screen');
 
@@ -16,10 +16,20 @@ const min = 0;
 const max = 100;
 const step = 1;
 const sliderWidth = width - 32 * 2;
-const onValueChange = () => {};
 
-const ProgressBar = () => {
-  const position = useSharedValue(0);
+interface IProgressBarProps {
+  limit: number;
+  setLimit: any;
+}
+
+const ProgressBar: React.FunctionComponent<IProgressBarProps> = ({
+  limit,
+  setLimit,
+}) => {
+  const position = useSharedValue((limit / 100) * sliderWidth);
+  const onValueChange = value => {
+    setLimit(value.min);
+  };
 
   const gestureHandler = useAnimatedGestureHandler({
     onStart: (_, ctx: any) => {
@@ -58,10 +68,7 @@ const ProgressBar = () => {
   const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
   const labelText = useAnimatedProps(() => {
     return {
-      text: `${
-        min +
-        Math.floor(position.value / (sliderWidth / ((max - min) / step))) * step
-      }%`,
+      text: `${limit}%`,
     };
   });
   return (
@@ -74,7 +81,7 @@ const ProgressBar = () => {
               style={styles.labelText}
               animatedProps={labelText as any}
               editable={false}
-              defaultValue={'0%'}
+              defaultValue={`${limit}%`}
             />
           </Animated.View>
         </Animated.View>

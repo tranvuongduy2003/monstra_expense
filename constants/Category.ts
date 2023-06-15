@@ -17,6 +17,10 @@ export const expenseCategoryOptions: OptionType[] = [
     value: 'subscription',
   },
   {
+    title: 'Transportation',
+    value: 'transportation',
+  },
+  {
     title: 'Shopping',
     value: 'shopping',
   },
