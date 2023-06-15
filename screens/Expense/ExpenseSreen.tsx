@@ -1,40 +1,22 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {
-  ScrollView,
-  StyleSheet,
-  View,
-  Text,
-  Modal,
-  TextInput,
-  Image,
-} from 'react-native';
 import BottomSheet from '@gorhom/bottom-sheet';
-import {AppColors} from 'constants/AppColors';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 import {useNavigation} from '@react-navigation/native';
-import Input from 'components/Input';
 import AppButton from 'components/AppButton';
 import Attachment from 'components/Attachment';
-import Toggle from 'components/Toggle';
 import Dropdown from 'components/Dropdown';
-import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
-import AttachmentBottomSheet from './components/AttachmentBottomSheet';
-import RecurringBottomSheet from './components/RecurringBottomSheet';
-import Tag from './components/Tag';
-import RecurringInfo from './components/RecurringInfo';
-import StatusModal from '../../components/StatusModal';
-import firestore from '@react-native-firebase/firestore';
-import {AuthContext} from 'providers/AuthProvider';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import storage from '@react-native-firebase/storage';
-import {OptionType} from 'types/option.type';
+import Input from 'components/Input';
+import {AppColors} from 'constants/AppColors';
 import {expenseCategoryOptions} from 'constants/Category';
+import {AuthContext} from 'providers/AuthProvider';
+import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
+import React, {useCallback, useContext, useRef, useState} from 'react';
+import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {OptionType} from 'types/option.type';
+import StatusModal from '../../components/StatusModal';
+import AttachmentBottomSheet from './components/AttachmentBottomSheet';
 
 interface IExpenseScreenProps {}
 
@@ -101,13 +83,40 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
           attachment: attachmentURL,
           type: 'expense',
           createdAt: firestore.Timestamp.fromDate(new Date()),
+        })
+        .then(expenseSnapshot => {
+          const expenseId = expenseSnapshot.id;
+          firestore()
+            .collection('budgets')
+            .get()
+            .then(querySnapshot => {
+              querySnapshot.forEach(documentSnapshot => {
+                const data = documentSnapshot.data();
+                const itemDate = data.createdAt.toDate();
+                const now = new Date();
+                if (
+                  data.category.value === category.value &&
+                  now.getMonth() === itemDate.getMonth() &&
+                  now.getFullYear() === itemDate.getFullYear()
+                ) {
+                  const expenses = data.expenses;
+                  expenses.push({
+                    id: expenseId,
+                    balance: balance,
+                  });
+                  documentSnapshot.ref.update({
+                    expenses: expenses,
+                  });
+                }
+              });
+            });
         });
       setStatusInfo({
         status: 'success',
         title: 'Expense has been successfully added!',
       });
-      setLoading(false);
       setShowInform(true);
+      setLoading(false);
     } catch (error) {
       console.log(error);
       setStatusInfo({

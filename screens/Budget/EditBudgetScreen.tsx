@@ -1,34 +1,68 @@
-import {AppColors} from 'constants/AppColors';
-import React, {useState} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {ScrollView, StyleSheet, View, Text} from 'react-native';
-import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
+import firestore from '@react-native-firebase/firestore';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import AppButton from 'components/AppButton';
-import Dropdown, {OptionType} from 'components/Dropdown';
+import Dropdown from 'components/Dropdown';
+import StatusModal from 'components/StatusModal';
 import Toggle from 'components/Toggle';
+import {AppColors} from 'constants/AppColors';
+import {expenseCategoryOptions} from 'constants/Category';
+import {AuthContext} from 'providers/AuthProvider';
+import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
+import React, {useContext, useState} from 'react';
+import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {OptionType} from 'types/option.type';
 import ProgressBar from './components/ProgressBar';
 
 interface IEditBudgetScreenProps {}
 
-const categoryOptions: OptionType[] = [
-  {
-    title: 'Subscription',
-    value: 'subscription',
-  },
-  {
-    title: 'Shopping',
-    value: 'shopping',
-  },
-  {
-    title: 'Food',
-    value: 'food',
-  },
-];
-
 const EditBudgetScreen: React.FunctionComponent<
   IEditBudgetScreenProps
 > = props => {
-  const [showProgressBar, setShowProgressBar] = useState<boolean>(false);
+  const navigation: any = useNavigation();
+  const route = useRoute();
+  const {data}: any = route.params;
+
+  const {user} = useContext(AuthContext) as any;
+  const [isReceiveAlert, setIsReceiveAlert] = useState<boolean>(
+    data.isReceiveAlert,
+  );
+  const [budget, setBudget] = useState<number | null>(data.budget);
+  const [limit, setLimit] = useState<number>(data.limit);
+  const [category, setCatogory] = useState<OptionType>(data.category);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const [showInform, setShowInform] = useState<boolean>(false);
+  const [statusInfo, setStatusInfo] = useState<any>();
+
+  const handleEditBudget = async () => {
+    setLoading(true);
+    try {
+      await firestore()
+        .collection('budgets')
+        .doc(data.id)
+        .update({
+          budget: budget,
+          isReceiveAlert: isReceiveAlert,
+          ...(isReceiveAlert && {limit: limit}),
+          category: category,
+        });
+      setStatusInfo({
+        status: 'success',
+        title: 'Edit budget successfully!',
+      });
+      setShowInform(true);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setStatusInfo({
+        status: 'error',
+        title: 'Failed to edit budget!',
+      });
+      setLoading(false);
+      setShowInform(true);
+    }
+  };
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -41,13 +75,25 @@ const EditBudgetScreen: React.FunctionComponent<
         <ClickOutsideProvider>
           <View style={styles.balanceContainer}>
             <Text style={styles.title}>How much do yo want to spend?</Text>
-            <Text style={styles.amount}>$0</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Text style={styles.amount}>$</Text>
+              <TextInput
+                value={JSON.stringify(budget)}
+                style={styles.amount}
+                keyboardType="numeric"
+                onChangeText={val =>
+                  val ? setBudget(parseInt(val)) : setBudget(null)
+                }
+              />
+            </View>
           </View>
           <View style={styles.setupContainer}>
             <Dropdown
-              options={categoryOptions}
+              options={expenseCategoryOptions}
               placeholder="Category"
               zIndex={50}
+              select={category}
+              setSelect={setCatogory}
             />
             <View style={styles.alertSetting}>
               <View>
@@ -58,26 +104,40 @@ const EditBudgetScreen: React.FunctionComponent<
               </View>
               <View>
                 <Toggle
-                  on={showProgressBar}
-                  setOn={() => setShowProgressBar(!showProgressBar)}
+                  on={isReceiveAlert}
+                  setOn={() => setIsReceiveAlert(!isReceiveAlert)}
                 />
               </View>
               <View
                 style={{
                   width: '100%',
-                  display: showProgressBar ? 'flex' : 'none',
+                  display: isReceiveAlert ? 'flex' : 'none',
                 }}>
-                {showProgressBar && <ProgressBar />}
+                {isReceiveAlert && (
+                  <ProgressBar limit={limit} setLimit={setLimit} />
+                )}
               </View>
             </View>
             <AppButton
+              loading={loading}
               title="Continue"
               backgroundColor={AppColors.primaryColor}
-              onPress={() => {}}
+              onPress={handleEditBudget}
             />
           </View>
         </ClickOutsideProvider>
       </ScrollView>
+      {showInform && (
+        <StatusModal
+          status={statusInfo.status}
+          show={showInform}
+          setShow={setShowInform}
+          title={statusInfo.title}
+          onClose={() =>
+            statusInfo.status === 'success' && navigation.navigate('Budget')
+          }
+        />
+      )}
     </SafeAreaView>
   );
 };

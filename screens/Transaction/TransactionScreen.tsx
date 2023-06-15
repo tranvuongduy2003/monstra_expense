@@ -1,38 +1,28 @@
-import React, {
-  ReactElement,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import {AppColors} from 'constants/AppColors';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {ScrollView, Text, View, StyleSheet} from 'react-native';
-import Dropdown from 'components/Dropdown';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import {
-  AdjustmentsHorizontalIcon,
-  ChevronRightIcon,
-} from 'react-native-heroicons/outline';
-import Phase from './components/Phase';
 import BottomSheet from '@gorhom/bottom-sheet';
-import {
-  ArrowsRightLeftIcon,
-  BanknotesIcon,
-  BuildingStorefrontIcon,
-  ClipboardDocumentListIcon,
-  ShoppingBagIcon,
-  TruckIcon,
-} from 'react-native-heroicons/solid';
-import FilterBottomSheet from './components/FilterBottomSheet';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
-import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import {OptionType} from 'types/option.type';
+import firestore from '@react-native-firebase/firestore';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
+import Dropdown from 'components/Dropdown';
+import {AppColors} from 'constants/AppColors';
 import {
   expenseCategoryOptions,
   incomeCategoryOptions,
 } from 'constants/Category';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {
+  AdjustmentsHorizontalIcon,
+  ArrowsRightLeftIcon,
+  ChevronRightIcon,
+} from 'react-native-heroicons/outline';
+
+import {icons} from 'constants/CategoryIcon';
+import {ITransaction} from 'interfaces/Transaction';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {OptionType} from 'types/option.type';
+import FilterBottomSheet from './components/FilterBottomSheet';
+import Phase from './components/Phase';
 
 interface ITransactionScreenProps {}
 
@@ -51,39 +41,6 @@ const options: OptionType[] = [
   },
 ];
 
-type IconType = {
-  bgColor: string;
-  child: ReactElement;
-};
-
-const icons = new Map<string, IconType>();
-icons.set('salary', {
-  bgColor: AppColors.primaryGreen100,
-  child: <BanknotesIcon color={AppColors.primaryGreen} fontSize={30} />,
-});
-icons.set('passive-income', {
-  bgColor: AppColors.black100,
-  child: <ShoppingBagIcon color={AppColors.black} fontSize={30} />,
-});
-icons.set('shopping', {
-  bgColor: AppColors.yellow100,
-  child: <ShoppingBagIcon color={AppColors.yellow} fontSize={30} />,
-});
-icons.set('subscription', {
-  bgColor: AppColors.primaryColor100,
-  child: (
-    <ClipboardDocumentListIcon color={AppColors.primaryColor} fontSize={30} />
-  ),
-});
-icons.set('food', {
-  bgColor: AppColors.red100,
-  child: <BuildingStorefrontIcon color={AppColors.red} fontSize={30} />,
-});
-icons.set('transportation', {
-  bgColor: AppColors.primaryBlue100,
-  child: <TruckIcon color={AppColors.primaryBlue} fontSize={30} />,
-});
-
 const TransactionScreen: React.FunctionComponent<
   ITransactionScreenProps
 > = props => {
@@ -100,7 +57,8 @@ const TransactionScreen: React.FunctionComponent<
   );
 
   const [showFilter, setShowFilter] = useState<boolean>(false);
-  const [transactions, setTransactions] = useState<Map<string, Array<any>>>();
+  const [transactions, setTransactions] =
+    useState<Map<string, Array<ITransaction>>>();
   const [filterTime, setFilterTime] = useState<any>(options[1]);
   const [filterType, setFilterType] = useState<any>([
     'expense',

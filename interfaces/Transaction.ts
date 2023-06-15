@@ -1,3 +1,5 @@
+import {ReactElement} from 'react';
+
 export interface IIncome {
   userId: string;
   value: number;
@@ -29,8 +31,13 @@ export interface ITransfer {
 }
 
 export interface ITransaction {
-  name: string;
   desc: string;
-  type: 'Income' | 'Expense' | 'Transfer';
-  transactionId: string;
+  icon: ReactElement;
+  iconBgColor: string;
+  id: string;
+  price: number;
+  time: string;
+  title: string;
+  type: string;
+  userId: string;
 }

@@ -1,18 +1,20 @@
 import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
-import React, {useMemo} from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import AppButton from 'components/AppButton';
 import {AppColors} from 'constants/AppColors';
 import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
-import AppButton from 'components/AppButton';
+import React, {useMemo} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
 
 interface IRemoveConfirmationBottomSheetProps {
   setShow: any;
   bottomSheetRef: any;
+  handleDeleteBudget: any;
+  loading: boolean;
 }
 
 const RemoveConfirmationBottomSheet: React.FunctionComponent<
   IRemoveConfirmationBottomSheetProps
-> = ({setShow, bottomSheetRef}) => {
+> = ({setShow, bottomSheetRef, handleDeleteBudget, loading}) => {
   const snapPoints = useMemo(() => ['30%'], []);
 
   return (
@@ -40,14 +42,15 @@ const RemoveConfirmationBottomSheet: React.FunctionComponent<
                 title="No"
                 backgroundColor={AppColors.primaryColor100}
                 color={AppColors.primaryColor}
-                onPress={() => {}}
+                onPress={() => setShow(false)}
               />
             </View>
             <View style={{flex: 1}}>
               <AppButton
+                loading={loading}
                 title="Yes"
                 backgroundColor={AppColors.primaryColor}
-                onPress={() => {}}
+                onPress={handleDeleteBudget}
               />
             </View>
           </View>

@@ -1,23 +1,22 @@
+import BottomSheet from '@gorhom/bottom-sheet';
+import firestore from '@react-native-firebase/firestore';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import AppButton from 'components/AppButton';
+import StatusModal from 'components/StatusModal';
 import {AppColors} from 'constants/AppColors';
+import {icons} from 'constants/CategoryIcon';
 import React, {useCallback, useRef, useState} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {
   ScrollView,
-  View,
   StyleSheet,
   Text,
   TouchableOpacity,
+  View,
 } from 'react-native';
-import AppButton from 'components/AppButton';
-import {useNavigation} from '@react-navigation/native';
-import {
-  ExclamationCircleIcon,
-  ShoppingBagIcon,
-  TrashIcon,
-} from 'react-native-heroicons/solid';
+import {ExclamationCircleIcon, TrashIcon} from 'react-native-heroicons/solid';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import HeaderBar from 'screens/layout/HeaderBar';
 import RemoveConfirmationBottomSheet from './components/RemoveConfirmationBottomSheet';
-import BottomSheet from '@gorhom/bottom-sheet';
 
 interface IDetailBudgetScreenProps {}
 
@@ -26,7 +25,13 @@ const DetailBudgetScreen: React.FunctionComponent<
 > = props => {
   const [showRemoveConfirmation, setShowRemoveConfirmation] =
     useState<boolean>(false);
-  const navigation = useNavigation();
+  const navigation: any = useNavigation();
+  const route = useRoute();
+  const {data}: any = route.params;
+
+  const [loading, setLoading] = useState<boolean>(false);
+  const [showInform, setShowInform] = useState<boolean>(false);
+  const [statusInfo, setStatusInfo] = useState<any>();
 
   const removeConfirmationRef = useRef<BottomSheet>(null);
 
@@ -34,6 +39,31 @@ const DetailBudgetScreen: React.FunctionComponent<
     removeConfirmationRef.current?.snapToIndex(index);
     setShowRemoveConfirmation(true);
   }, []);
+
+  const currentBalance = data.expenses
+    .map(item => item.balance)
+    .reduce((prev, cur) => prev + cur, 0);
+
+  const handleDeleteBudget = async () => {
+    setLoading(true);
+    try {
+      await firestore().collection('budgets').doc(data.id).delete();
+      setStatusInfo({
+        status: 'success',
+        title: 'Delete budget successfully!',
+      });
+      setShowInform(true);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setStatusInfo({
+        status: 'error',
+        title: 'Failed to delete budget!',
+      });
+      setLoading(false);
+      setShowInform(true);
+    }
+  };
 
   return (
     <SafeAreaView style={{flex: 1, position: 'relative'}}>
@@ -58,31 +88,51 @@ const DetailBudgetScreen: React.FunctionComponent<
         <View style={styles.body}>
           {/* TAG */}
           <View style={styles.tag}>
-            <View style={styles.tagIcon}>
-              <ShoppingBagIcon color={AppColors.yellow} fontSize={18} />
+            <View
+              style={[
+                styles.tagIcon,
+                {backgroundColor: icons.get(data.category.value)?.bgColor},
+              ]}>
+              {icons.get(data.category.value)?.child}
             </View>
-            <Text style={styles.tagTitle}>Shopping</Text>
+            <Text style={styles.tagTitle}>{data.category.title}</Text>
           </View>
           {/* TITLE */}
           <View style={{alignItems: 'center'}}>
             <Text style={styles.title}>Remaining</Text>
-            <Text style={styles.amount}>$0</Text>
+            <Text style={styles.amount}>{`$${
+              currentBalance <= data.budget ? data.budget - currentBalance : 0
+            }`}</Text>
           </View>
           {/* PROGRESS BAR */}
           <View style={styles.baseBar}>
-            <View style={styles.progressBar} />
+            <View
+              style={[
+                styles.progressBar,
+                {
+                  backgroundColor: icons.get(data.category.value)?.color,
+                  width: `${
+                    currentBalance <= data.budget
+                      ? (currentBalance / data.budget) * 100
+                      : 100
+                  }%`,
+                },
+              ]}
+            />
           </View>
           {/* WARNING */}
-          <View style={styles.warningContainer}>
-            <ExclamationCircleIcon color={AppColors.screenColor} />
-            <Text style={styles.warningText}>You've exceed the limit!</Text>
-          </View>
+          {data.budget <= currentBalance && (
+            <View style={styles.warningContainer}>
+              <ExclamationCircleIcon color={AppColors.screenColor} />
+              <Text style={styles.warningText}>You've exceed the limit!</Text>
+            </View>
+          )}
         </View>
         <View style={styles.buttonContainer}>
           <AppButton
             title="Edit"
             backgroundColor={AppColors.primaryColor}
-            onPress={() => navigation.navigate('EditBudget' as never)}
+            onPress={() => navigation.navigate('EditBudget', {data: data})}
           />
         </View>
       </ScrollView>
@@ -90,6 +140,17 @@ const DetailBudgetScreen: React.FunctionComponent<
         <RemoveConfirmationBottomSheet
           bottomSheetRef={removeConfirmationRef}
           setShow={setShowRemoveConfirmation}
+          handleDeleteBudget={handleDeleteBudget}
+          loading={loading}
+        />
+      )}
+      {showInform && (
+        <StatusModal
+          status={statusInfo.status}
+          show={showInform}
+          setShow={setShowInform}
+          title={statusInfo.title}
+          onClose={() => statusInfo.status === 'success' && navigation.goBack()}
         />
       )}
     </SafeAreaView>

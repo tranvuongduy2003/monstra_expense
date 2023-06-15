@@ -1,36 +1,74 @@
 import {useNavigation} from '@react-navigation/native';
 import {AppColors} from 'constants/AppColors';
+import {icons} from 'constants/CategoryIcon';
+import {IBudget} from 'interfaces/IBudget';
 import React from 'react';
-import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {ExclamationCircleIcon} from 'react-native-heroicons/solid';
 
-interface IBudgetCardProps {}
+interface IBudgetCardProps {
+  data: IBudget;
+}
 
-const BudgetCard: React.FunctionComponent<IBudgetCardProps> = props => {
-  const navigation = useNavigation();
+const BudgetCard: React.FunctionComponent<IBudgetCardProps> = ({data}) => {
+  const navigation: any = useNavigation();
+
+  const currentBalance = data.expenses
+    .map(item => item.balance)
+    .reduce((prev, cur) => prev + cur, 0);
+
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate('DetailBudget' as never)}
+      onPress={() =>
+        navigation.navigate('DetailBudget', {
+          data: data,
+        })
+      }
       style={styles.container}>
       <View style={styles.top}>
         <View style={styles.tag}>
-          <View style={styles.dot} />
-          <Text style={styles.tagTitle}>Shopping</Text>
+          <View
+            style={[
+              styles.dot,
+              {backgroundColor: icons.get(data.category.value)?.color},
+            ]}
+          />
+          <Text style={styles.tagTitle}>{data.category.title}</Text>
         </View>
-        <View>
-          <ExclamationCircleIcon color={AppColors.red} />
-        </View>
+        {data.budget <= currentBalance && (
+          <View>
+            <ExclamationCircleIcon color={AppColors.red} />
+          </View>
+        )}
       </View>
       <View style={styles.main}>
-        <Text style={styles.title}>Remaining $0</Text>
+        <Text style={styles.title}>{`Remaining $${
+          currentBalance <= data.budget ? data.budget - currentBalance : 0
+        }`}</Text>
         <View style={styles.baseBar}>
-          <View style={styles.progressBar} />
+          <View
+            style={[
+              styles.progressBar,
+              {
+                backgroundColor: icons.get(data.category.value)?.color,
+                width: `${
+                  currentBalance <= data.budget
+                    ? (currentBalance / data.budget) * 100
+                    : 100
+                }%`,
+              },
+            ]}
+          />
         </View>
-        <Text style={styles.amount}>$1200 of $1000</Text>
+        <Text
+          style={styles.amount}>{`$${currentBalance} of $${data.budget}`}</Text>
       </View>
-      <View>
-        <Text style={styles.warningText}>You've exceed the limit!</Text>
-      </View>
+
+      {data.budget <= currentBalance && (
+        <View>
+          <Text style={styles.warningText}>You've exceed the limit!</Text>
+        </View>
+      )}
     </TouchableOpacity>
   );
 };
@@ -41,6 +79,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     gap: 8,
+    elevation: 2,
   },
   top: {
     flexDirection: 'row',
