@@ -292,7 +292,9 @@ const TransactionScreen: React.FunctionComponent<
           </TouchableOpacity>
         </View>
         {/* See financial report */}
-        <TouchableOpacity style={styles.reportNavigator}>
+        <TouchableOpacity
+          style={styles.reportNavigator}
+          onPress={() => navigation.navigate('FinancialSplash' as never)}>
           <Text style={styles.navigatorText}>See your financial report</Text>
           <ChevronRightIcon color={AppColors.primaryColor} />
         </TouchableOpacity>
