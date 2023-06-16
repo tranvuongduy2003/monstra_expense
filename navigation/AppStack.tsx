@@ -26,11 +26,13 @@ import TransferScreen from 'screens/Transfer/TransferSreen';
 
 import Tabs from './Tabs';
 
+import {useNavigation} from '@react-navigation/native';
 import {AppColors} from 'constants/AppColors';
 
 interface IAppStackProps {}
 
 const AppStack: React.FunctionComponent<IAppStackProps> = props => {
+  const navigation = useNavigation();
   const Stack = createNativeStackNavigator();
 
   return (
@@ -96,6 +98,7 @@ const AppStack: React.FunctionComponent<IAppStackProps> = props => {
             <HeaderBar
               name="Financial Report"
               backgroundColor={AppColors.white}
+              onBack={() => navigation.navigate('Transaction' as never)}
             />
           ),
         }}

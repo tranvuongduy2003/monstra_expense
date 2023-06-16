@@ -1,14 +1,15 @@
-import React, {ReactElement, ReactNode} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {AppColors} from 'constants/AppColors';
-import {ArrowLeftIcon as ArrowLeftIconOutline} from 'react-native-heroicons/outline';
 import {useNavigation} from '@react-navigation/native';
+import {AppColors} from 'constants/AppColors';
+import React, {ReactElement} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ArrowLeftIcon as ArrowLeftIconOutline} from 'react-native-heroicons/outline';
 
 interface IHeaderBarProps {
   name: string;
   backgroundColor?: string;
   color?: string;
   icon?: ReactElement;
+  onBack?: any;
 }
 
 const HeaderBar: React.FunctionComponent<IHeaderBarProps> = ({
@@ -16,6 +17,7 @@ const HeaderBar: React.FunctionComponent<IHeaderBarProps> = ({
   backgroundColor,
   color,
   icon,
+  onBack,
 }) => {
   const navigation = useNavigation();
 
@@ -29,7 +31,7 @@ const HeaderBar: React.FunctionComponent<IHeaderBarProps> = ({
             : AppColors.screenColor,
         },
       ]}>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
+      <TouchableOpacity onPress={onBack ? onBack : () => navigation.goBack()}>
         <ArrowLeftIconOutline
           color={color ? color : AppColors.primaryTextColor}
         />
