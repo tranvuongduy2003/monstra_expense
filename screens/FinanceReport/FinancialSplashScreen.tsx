@@ -1,5 +1,9 @@
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import {AppColors} from 'constants/AppColors';
-import React, {useEffect, useState} from 'react';
+import {IBudget} from 'interfaces/IBudget';
+import {ITransaction} from 'interfaces/Transaction';
+import React, {useEffect, useRef, useState} from 'react';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
 import Swiper from 'react-native-swiper';
 import ExceedLimitSlide from './components/ExceedLimitSlide';
@@ -12,19 +16,72 @@ interface IFinancialSplashScreenProps {}
 const FinancialSplashScreen: React.FunctionComponent<
   IFinancialSplashScreenProps
 > = () => {
-  const [slide, setSlide] = useState<number>(0);
-  const [bgColor, setBgColor] = useState<string>(AppColors.red);
+  const [expense, setExpense] = useState<ITransaction[]>([]);
+  const [income, setIncome] = useState<ITransaction[]>([]);
+  const [budget, setBudget] = useState<IBudget[]>([]);
+
+  const handleFetchData = useRef<any>();
 
   useEffect(() => {
-    if (slide === 0) setBgColor(AppColors.red);
-    else if (slide === 1) setBgColor(AppColors.primaryGreen);
-    else setBgColor(AppColors.primaryColor);
-  }, [slide]);
+    handleFetchData.current = () => {
+      firestore()
+        .collection('transactions')
+        .where('userId', '==', auth().currentUser?.uid)
+        .get()
+        .then(querySnapshot => {
+          const expenseResult: any = [];
+          const incomeResult: any = [];
+
+          querySnapshot.forEach(documentSnapshot => {
+            const data = documentSnapshot.data();
+            const itemDate = data.createdAt.toDate();
+            const now = new Date();
+
+            if (
+              now.getMonth() === itemDate.getMonth() &&
+              now.getFullYear() === itemDate.getFullYear()
+            ) {
+              if (data.type === 'expense') {
+                expenseResult.push(data);
+              } else if (data.type === 'income') {
+                incomeResult.push(data);
+              }
+            }
+          });
+
+          setExpense(expenseResult);
+          setIncome(incomeResult);
+        });
+
+      firestore()
+        .collection('budgets')
+        .where('userId', '==', auth().currentUser?.uid)
+        .get()
+        .then(querySnapshot => {
+          const result: any = [];
+
+          querySnapshot.forEach(documentSnapshot => {
+            const data = documentSnapshot.data();
+            const itemDate = data.createdAt.toDate();
+            const now = new Date();
+
+            if (
+              now.getMonth() === itemDate.getMonth() &&
+              now.getFullYear() === itemDate.getFullYear()
+            ) {
+              result.push(data);
+            }
+          });
+
+          setBudget(result);
+        });
+    };
+    handleFetchData.current();
+  }, []);
 
   return (
     <SafeAreaView style={{flex: 1}}>
       <Swiper
-        showsButtons={true}
         renderPagination={index => (
           <View style={[styles.slideBar]}>
             {Array(4)
@@ -39,9 +96,9 @@ const FinancialSplashScreen: React.FunctionComponent<
               ))}
           </View>
         )}>
-        <ExpenseSlide />
-        <IncomeSlide />
-        <ExceedLimitSlide />
+        <ExpenseSlide data={expense} />
+        <IncomeSlide data={income} />
+        <ExceedLimitSlide data={budget} />
         <LastSlide />
       </Swiper>
     </SafeAreaView>

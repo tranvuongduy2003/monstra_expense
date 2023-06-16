@@ -1,39 +1,43 @@
 import {AppColors} from 'constants/AppColors';
 import {icons} from 'constants/CategoryIcon';
+import {IBudget} from 'interfaces/IBudget';
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 
-interface IExceedLimitSlideProps {}
+interface IExceedLimitSlideProps {
+  data: IBudget[];
+}
 
-const ExceedLimitSlide: React.FunctionComponent<
-  IExceedLimitSlideProps
-> = () => {
+const ExceedLimitSlide: React.FunctionComponent<IExceedLimitSlideProps> = ({
+  data,
+}) => {
+  const exceedLimitBudgets = data.filter(budget => {
+    const currentBalance = budget.expenses
+      .map(item => item.balance)
+      .reduce((prev, cur) => prev + cur, 0);
+    return budget.budget <= currentBalance;
+  });
+
   return (
     <View style={styles.container}>
       <Text style={styles.contentTitle}>
-        2 of 12 Budget is{'\n'}exceeds the limit
+        {`${exceedLimitBudgets.length} of ${
+          data.length
+        } Budget is${'\n'}exceeds the limit`}
       </Text>
       <View style={styles.tagContainer}>
-        <View style={styles.tag}>
-          <View
-            style={[
-              styles.tagIcon,
-              {backgroundColor: icons.get('shopping')?.bgColor},
-            ]}>
-            {icons.get('shopping')?.child}
+        {exceedLimitBudgets.map((item, index) => (
+          <View key={index} style={styles.tag}>
+            <View
+              style={[
+                styles.tagIcon,
+                {backgroundColor: icons.get(item.category.value)?.bgColor},
+              ]}>
+              {icons.get(item.category.value)?.child}
+            </View>
+            <Text style={styles.tagTitle}>{item.category.title}</Text>
           </View>
-          <Text style={styles.tagTitle}>Shopping</Text>
-        </View>
-        <View style={styles.tag}>
-          <View
-            style={[
-              styles.tagIcon,
-              {backgroundColor: icons.get('food')?.bgColor},
-            ]}>
-            {icons.get('food')?.child}
-          </View>
-          <Text style={styles.tagTitle}>Food</Text>
-        </View>
+        ))}
       </View>
     </View>
   );
