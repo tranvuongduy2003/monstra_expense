@@ -1,4 +1,5 @@
 import {ReactElement} from 'react';
+import {ICategory} from './ICategory';
 
 export interface IIncome {
   userId: string;
@@ -33,6 +34,8 @@ export interface ITransfer {
 export interface ITransaction {
   desc: string;
   icon: ReactElement;
+  balance: number;
+  category: ICategory;
   iconBgColor: string;
   id: string;
   price: number;
