@@ -1,10 +1,10 @@
+import {store} from 'app/store';
 import React from 'react';
 import {Provider} from 'react-redux';
-import {store} from 'app/store';
 
 import {AppNavigation} from 'navigation/AppNavigation';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {AuthProvider} from 'providers/AuthProvider';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 interface IAppProps {}
 
