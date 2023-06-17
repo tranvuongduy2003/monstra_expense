@@ -1,16 +1,25 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {AppColors} from 'constants/AppColors';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import {ScrollView, Text, View, StyleSheet, Image, TouchableOpacity} from 'react-native';
-import {OptionType} from 'components/Dropdown';
+import {
+  ScrollView,
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
+import {OptionType} from 'components/CustomDropList';
 import {useNavigation} from '@react-navigation/native';
 import scale from 'constants/Responsive';
 import BellIcon from 'assets/svg/BellIcon';
 import CustomDropDown from 'components/CustomDropList';
 import IncomeStatus from 'assets/svg/IncomeStatus';
 import ExpenseStatus from 'assets/svg/ExpenseStatus';
-import { ImagesAssets } from 'assets/images/ImagesAssets';
+import {ImagesAssets} from 'assets/images/ImagesAssets';
 import DateCateButton from 'components/DateCateButton';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 interface IHomeScreenProps {}
 
@@ -66,6 +75,80 @@ const options: OptionType[] = [
 ];
 const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
   const navigation = useNavigation();
+  //const [AccBalance, setAccBalance] = useState(Data.GetInstance().getAccBalance())
+  const [totalExpense, setTotalExpense] = useState<any>(null);
+  const [totalIncome, setTotalIncome] = useState<any>(null);
+  const [totalPrice, setTotalPrice] = useState<any>(null);
+  const fetchAccountsData = useRef<any>(null);
+
+  useEffect(() => {
+    fetchAccountsData.current = async () => {
+      try {
+        await firestore()
+          .collection('accounts')
+          .where('userId', '==', auth().currentUser?.uid)
+          .get()
+          .then(querySnapshot => {
+            let results = new Map<string, Array<any>>();
+            let totalPrice = 0;
+
+            querySnapshot.forEach(documentSnapshot => {
+              const data = documentSnapshot.data();
+              let key = '';
+
+              const items = {
+                id: documentSnapshot.id,
+                userId: auth().currentUser?.uid,
+                //icon: icons.get(data.type_item.name)?.child,
+                title: data.name,
+                price: `${'$'}${data.balance}`,
+              };
+              totalPrice = data.balance + totalPrice;
+
+              const filteredArray = results.get(key) || [];
+              results.set(key, [...filteredArray, items]);
+            });
+            //Data.GetInstance().setAccBalance(totalPrice.toString())
+            //setWallets(results);
+            setTotalPrice(totalPrice);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchAccountsData.current();
+  });
+
+  useEffect(() => {
+    fetchAccountsData.current = async () => {
+      try {
+        await firestore()
+          .collection('transactions')
+          .where('userId', '==', auth().currentUser?.uid)
+          .get()
+          .then(querySnapshot => {
+            let totalExpense = 0;
+            let totalIncome = 0;
+
+            querySnapshot.forEach(documentSnapshot => {
+              const data = documentSnapshot.data();
+              if (data.type === 'expense')
+                totalIncome = data.balance + totalIncome;
+              else if (data.type === 'income')
+                totalExpense = data.balance + totalExpense;
+            });
+            //Data.GetInstance().setAccBalance(totalPrice.toString())
+            //setWallets(results);
+            setTotalIncome(totalIncome);
+            setTotalExpense(totalExpense);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchAccountsData.current();
+  });
+
   return (
     <SafeAreaView
       style={{
@@ -87,21 +170,21 @@ const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
           </View>
           <View style={styles.titleContainer}>
             <Text style={styles.title}>Account Balance</Text>
-            <Text style={styles.number}>$9400</Text>
+            <Text style={styles.number}>${totalPrice}</Text>
           </View>
           <View style={styles.moneyStatusContainer}>
             <View style={styles.incomeStatus}>
               <IncomeStatus style={styles.iconContainer}></IncomeStatus>
               <View style={styles.statusTitleContainer}>
                 <Text style={styles.statusTitle}>Income</Text>
-                <Text style={styles.moneyTitle}>5000$</Text>
+                <Text style={styles.moneyTitle}>${totalIncome}</Text>
               </View>
             </View>
             <View style={styles.expenseStatus}>
               <ExpenseStatus></ExpenseStatus>
               <View style={styles.statusTitleContainer}>
                 <Text style={styles.statusTitle}>Expense</Text>
-                <Text style={styles.moneyTitle}>1200$</Text>
+                <Text style={styles.moneyTitle}>${totalExpense}</Text>
               </View>
             </View>
           </View>
@@ -111,9 +194,8 @@ const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
           <Image source={ImagesAssets.chart}></Image>
         </View>
         <View style={styles.buttonContainer}>
-        <DateCateButton></DateCateButton>
+          <DateCateButton></DateCateButton>
         </View>
-        
       </ScrollView>
     </SafeAreaView>
   );
@@ -213,10 +295,10 @@ const styles = StyleSheet.create({
     width: '100%',
     height: scale(186),
   },
-  buttonContainer:{
+  buttonContainer: {
     alignSelf: 'center',
     marginTop: scale(9),
-  }
+  },
 });
 
 export default HomeScreen;

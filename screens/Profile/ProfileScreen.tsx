@@ -1,5 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {StyleSheet, View, Text, Button, TouchableOpacity} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {AppColors} from 'constants/AppColors';
 import scale from 'constants/Responsive';
@@ -10,7 +11,6 @@ import LogoutIcon from 'assets/svg/LogoutIcon';
 import EditIcon from 'assets/svg/EditIcon';
 import {AuthContext} from 'providers/AuthProvider';
 import ProfileOption from './components/ProfileOption';
-import {useNavigation} from '@react-navigation/native';
 
 interface IProfileScreenProps {}
 
@@ -46,7 +46,7 @@ const ProfileScreen: React.FunctionComponent<IProfileScreenProps> = props => {
       </View>
       <View style={styles.bodyContainer}>
         <View style={styles.contentContainer}>
-          <ProfileOption icon={<AccountIcon />} title="Account" />
+          <ProfileOption icon={<AccountIcon />} title="Account" onPress={() => navigation.navigate('Account' as never)}/>
           <ProfileOption icon={<SettingsIcon />} title="Settings" />
           <ProfileOption
             icon={<LogoutIcon />}
