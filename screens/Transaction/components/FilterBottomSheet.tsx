@@ -1,17 +1,17 @@
-import React, {useCallback, useMemo, useRef, useState} from 'react';
 import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
-import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
-import {View, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import AppButton from 'components/AppButton';
 import {AppColors} from 'constants/AppColors';
-import {useNavigation} from '@react-navigation/native';
-import {ChevronRightIcon} from 'react-native-heroicons/outline';
-import CategoryBottomSheet from './CategoryBottomSheet';
-import {OptionType} from 'types/option.type';
 import {
   expenseCategoryOptions,
   incomeCategoryOptions,
 } from 'constants/Category';
+import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ChevronRightIcon} from 'react-native-heroicons/outline';
+import {OptionType} from 'types/option.type';
+import CategoryBottomSheet from './CategoryBottomSheet';
 
 interface IFilterBottomSheetProps {
   setShow: any;
