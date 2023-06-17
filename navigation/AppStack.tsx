@@ -1,31 +1,33 @@
-import React, {useContext} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import HeaderBar from 'screens/layout/HeaderBar';
+import React from 'react';
 import ProfileScreen from 'screens/Profile/ProfileScreen';
-
-import SettingsScreen from 'screens/Settings/SettingScreen';
-import CurrencyScreen from 'screens/Settings/CurrencyScreen';
-import LanguageScreen from 'screens/Settings/LanguageScreen';
-import ThemeScreen from 'screens/Settings/ThemeScreen';
-import SecurityScreen from 'screens/Settings/SecurityScreen';
-import NotificationScreen from 'screens/Settings/Notification';
-import ExpenseScreen from 'screens/Expense/ExpenseSreen';
-import EditExpenseScreen from 'screens/Expense/EditExpenseSreen';
-import IncomeScreen from 'screens/Income/IncomeSreen';
-import EditIncomeScreen from 'screens/Income/EditIncomeSreen';
-import TransferScreen from 'screens/Transfer/TransferSreen';
-import EditTransferScreen from 'screens/Transfer/EditTransferSreen';
-import ExportScreen from 'screens/Settings/ExportScreen';
-import ExporNotitScreen from 'screens/Settings/ExportNotiScreen';
-import DetailTransactionScreen from 'screens/Transaction/DetailTransactionScreen';
-import CreateBudgetScreen from 'screens/Budget/CreateBudgetScreen';
-import EditBudgetScreen from 'screens/Budget/EditBudgetScreen';
-import DetailBudgetScreen from 'screens/Budget/DetailBudgetScreen';
+import HeaderBar from 'screens/layout/HeaderBar';
 import AccountScreen from 'screens/Account/AccountScreen';
 import AccountDetailScreen from 'screens/Account/AccountDetailScreen';
+import CreateBudgetScreen from 'screens/Budget/CreateBudgetScreen';
+import DetailBudgetScreen from 'screens/Budget/DetailBudgetScreen';
+import EditBudgetScreen from 'screens/Budget/EditBudgetScreen';
+import EditExpenseScreen from 'screens/Expense/EditExpenseSreen';
+import ExpenseScreen from 'screens/Expense/ExpenseSreen';
+import FinancialReportScreen from 'screens/FinanceReport/FinancialReportScreen';
+import FinancialSplashScreen from 'screens/FinanceReport/FinancialSplashScreen';
+import EditIncomeScreen from 'screens/Income/EditIncomeSreen';
+import IncomeScreen from 'screens/Income/IncomeSreen';
+import CurrencyScreen from 'screens/Settings/CurrencyScreen';
+import ExporNotitScreen from 'screens/Settings/ExportNotiScreen';
+import ExportScreen from 'screens/Settings/ExportScreen';
+import LanguageScreen from 'screens/Settings/LanguageScreen';
+import NotificationScreen from 'screens/Settings/Notification';
+import SecurityScreen from 'screens/Settings/SecurityScreen';
+import SettingsScreen from 'screens/Settings/SettingScreen';
+import ThemeScreen from 'screens/Settings/ThemeScreen';
+import DetailTransactionScreen from 'screens/Transaction/DetailTransactionScreen';
+import EditTransferScreen from 'screens/Transfer/EditTransferSreen';
+import TransferScreen from 'screens/Transfer/TransferSreen';
 
 import Tabs from './Tabs';
 
+import {useNavigation} from '@react-navigation/native';
 import {AppColors} from 'constants/AppColors';
 
 import {TrashIcon} from 'react-native-heroicons/solid';
@@ -37,6 +39,7 @@ import EditIcon from 'assets/svg/EditIcon';
 interface IAppStackProps {}
 
 const AppStack: React.FunctionComponent<IAppStackProps> = props => {
+  const navigation = useNavigation();
   const Stack = createNativeStackNavigator();
 
   return (
@@ -113,6 +116,26 @@ const AppStack: React.FunctionComponent<IAppStackProps> = props => {
         component={ExportScreen}
         options={{
           header: () => <HeaderBar name="Export Data" />,
+        }}
+      />
+      <Stack.Screen
+        name="FinancialReport"
+        component={FinancialReportScreen}
+        options={{
+          header: () => (
+            <HeaderBar
+              name="Financial Report"
+              backgroundColor={AppColors.white}
+              onBack={() => navigation.navigate('Transaction' as never)}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="FinancialSplash"
+        component={FinancialSplashScreen}
+        options={{
+          headerShown: false,
         }}
       />
       <Stack.Screen
