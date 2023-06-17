@@ -1,3 +1,4 @@
+import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import AppButton from 'components/AppButton';
@@ -50,6 +51,7 @@ const BudgetScreen: React.FunctionComponent<IBudgetScreenProps> = props => {
       try {
         await firestore()
           .collection('budgets')
+          .where('userId', '==', auth().currentUser?.uid)
           .get()
           .then(querySnapshot => {
             const results: any = [];
