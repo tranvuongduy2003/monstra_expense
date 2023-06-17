@@ -2,7 +2,8 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import ProfileScreen from 'screens/Profile/ProfileScreen';
 import HeaderBar from 'screens/layout/HeaderBar';
-
+import AccountScreen from 'screens/Account/AccountScreen';
+import AccountDetailScreen from 'screens/Account/AccountDetailScreen';
 import CreateBudgetScreen from 'screens/Budget/CreateBudgetScreen';
 import DetailBudgetScreen from 'screens/Budget/DetailBudgetScreen';
 import EditBudgetScreen from 'screens/Budget/EditBudgetScreen';
@@ -29,6 +30,12 @@ import Tabs from './Tabs';
 import {useNavigation} from '@react-navigation/native';
 import {AppColors} from 'constants/AppColors';
 
+import {TrashIcon} from 'react-native-heroicons/solid';
+
+import {TouchableOpacity} from 'react-native';
+import {AuthContext} from 'providers/AuthProvider';
+import EditIcon from 'assets/svg/EditIcon';
+
 interface IAppStackProps {}
 
 const AppStack: React.FunctionComponent<IAppStackProps> = props => {
@@ -41,6 +48,27 @@ const AppStack: React.FunctionComponent<IAppStackProps> = props => {
         name="Home"
         component={Tabs}
         options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="Account"
+        component={AccountScreen}
+        options={{header: () => <HeaderBar name="Account"></HeaderBar>}}
+      />
+      <Stack.Screen
+        name="DetailAccount"
+        component={AccountDetailScreen}
+        options={{
+          header: () => (
+            <HeaderBar
+              name="Detail account"
+              icon={
+                <TouchableOpacity onPress={() => {}}>
+                  <EditIcon color={AppColors.black} />
+                </TouchableOpacity>
+              }
+            />
+          ),
+        }}
       />
       <Stack.Screen
         name="DetailBudget"
