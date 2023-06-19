@@ -274,7 +274,7 @@ const FinancialReportScreen: React.FunctionComponent<
           </View>
         </View>
         <View
-          style={{height: 300, justifyContent: 'center', alignItems: 'center'}}>
+          style={{height: 220, justifyContent: 'center', alignItems: 'center'}}>
           {chartType?.value === chartTypeOptions[0].value &&
           chartData &&
           chartData.length > 0 ? (

@@ -1,58 +1,30 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {
-  ScrollView,
-  StyleSheet,
-  View,
-  Text,
-  Modal,
-  TextInput,
-  Image,
-} from 'react-native';
 import BottomSheet from '@gorhom/bottom-sheet';
-import {AppColors} from 'constants/AppColors';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import Input from 'components/Input';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
+import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import AppButton from 'components/AppButton';
 import Attachment from 'components/Attachment';
 import Dropdown from 'components/Dropdown';
-import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
-import AttachmentBottomSheet from './components/AttachmentBottomSheet';
-import StatusModal from '../../components/StatusModal';
-import firestore from '@react-native-firebase/firestore';
-import {AuthContext} from 'providers/AuthProvider';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import storage from '@react-native-firebase/storage';
-import {OptionType} from 'types/option.type';
+import Input from 'components/Input';
+import {AppColors} from 'constants/AppColors';
 import {incomeCategoryOptions} from 'constants/Category';
+import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {OptionType} from 'types/option.type';
+import StatusModal from '../../components/StatusModal';
+import AttachmentBottomSheet from './components/AttachmentBottomSheet';
 
 interface IEditIncomeScreenProps {}
-
-const walletOptions: OptionType[] = [
-  {
-    title: 'Momo',
-    value: 'momo',
-  },
-  {
-    title: 'Banking',
-    value: 'banking',
-  },
-  {
-    title: 'Cash',
-    value: 'cash',
-  },
-];
 
 const EditIncomeScreen: React.FunctionComponent<
   IEditIncomeScreenProps
 > = props => {
   const navigation: any = useNavigation();
+  const isFocused = useIsFocused();
   const route = useRoute();
   const {transaction}: any = route.params;
 
@@ -61,14 +33,15 @@ const EditIncomeScreen: React.FunctionComponent<
   const [statusInfo, setStatusInfo] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
 
-  const [balance, setBalance] = useState<number | null>(transaction.balance);
   const [title, setTitle] = useState<string>(transaction.title);
   const [category, setCatogory] = useState<OptionType>(transaction.category);
+  const [wallets, setWallets] = useState<OptionType[]>();
   const [wallet, setWallet] = useState<OptionType>(transaction.wallet);
   const [desc, setDesc] = useState<string>(transaction.desc);
   const [attachment, setAttachment] = useState<any>();
 
   const attachmentRef = useRef<BottomSheet>(null);
+  const handleFetchWallets = useRef<any>(null);
 
   const handleAttachmentSheetChanges = useCallback((index: number) => {
     attachmentRef.current?.snapToIndex(index);
@@ -78,12 +51,17 @@ const EditIncomeScreen: React.FunctionComponent<
   const handleEditNewIncome = async () => {
     setLoading(true);
     try {
-      if (!balance || !title || !category || !wallet) {
-        throw new Error();
+      if (!title || !category || !wallet) {
+        setStatusInfo({
+          status: 'error',
+          title: "You're missing something!",
+        });
+        setLoading(false);
+        setShowInform(true);
+        return;
       }
 
       const payload: any = {
-        balance: balance,
         title: title,
         category: category,
         desc: desc,
@@ -118,6 +96,32 @@ const EditIncomeScreen: React.FunctionComponent<
       setShowInform(true);
     }
   };
+
+  useEffect(() => {
+    handleFetchWallets.current = async () => {
+      try {
+        await firestore()
+          .collection('accounts')
+          .where('userId', '==', auth().currentUser?.uid)
+          .get()
+          .then(querySnapshot => {
+            const results: any = [];
+            querySnapshot.forEach(documentSnapshot => {
+              const data = documentSnapshot.data();
+              results.push({
+                id: documentSnapshot.id,
+                value: data.name,
+                title: data.name,
+              });
+            });
+            setWallets(results);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    handleFetchWallets.current();
+  }, [isFocused]);
 
   // useEffect(() => {
   //   if (showEditRecurring) {
@@ -174,12 +178,7 @@ const EditIncomeScreen: React.FunctionComponent<
             <Text style={styles.title}>How much?</Text>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text style={styles.amount}>$</Text>
-              <TextInput
-                defaultValue={JSON.stringify(balance)}
-                style={styles.amount}
-                keyboardType="numeric"
-                onChangeText={val => val && setBalance(parseInt(val))}
-              />
+              <Text style={styles.amount}>{transaction.balance}</Text>
             </View>
           </View>
           <View style={styles.setupContainer}>
@@ -203,13 +202,15 @@ const EditIncomeScreen: React.FunctionComponent<
                 name="Description"
                 onChangeText={setDesc}
               />
-              <Dropdown
-                options={walletOptions}
-                placeholder="Wallet"
-                zIndex={40}
-                select={wallet}
-                setSelect={setWallet}
-              />
+              {wallets && (
+                <Dropdown
+                  options={wallets}
+                  placeholder="Wallet"
+                  zIndex={40}
+                  select={wallet}
+                  setSelect={setWallet}
+                />
+              )}
               <Attachment
                 onPress={() => handleAttachmentSheetChanges(0)}
                 attachment={attachment || transaction.attachment}

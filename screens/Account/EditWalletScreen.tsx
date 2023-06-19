@@ -1,10 +1,8 @@
-import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import AppButton from 'components/AppButton';
 import {OptionType} from 'components/CustomDropList';
 import Dropdown from 'components/Dropdown';
-import ErrorMessage from 'components/ErrorMessage';
 import Input from 'components/Input';
 import StatusModal from 'components/StatusModal';
 import {AppColors} from 'constants/AppColors';
@@ -15,10 +13,10 @@ import React, {useEffect, useRef, useState} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import AccountTypeItem from 'screens/Auth/components/AccountTypeItem';
 import {AccountListType} from 'types/account.type';
-import AccountTypeItem from './components/AccountTypeItem';
 
-interface IAddNewAccountScreenProps {}
+interface IEditWalletScreenProps {}
 
 const accountTypeOptions: OptionType[] = [
   {
@@ -31,17 +29,21 @@ const accountTypeOptions: OptionType[] = [
   },
 ];
 
-const AddNewAccountScreen: React.FunctionComponent<
-  IAddNewAccountScreenProps
+const EditWalletScreen: React.FunctionComponent<
+  IEditWalletScreenProps
 > = props => {
+  const route = useRoute();
+  const {data}: any = route.params;
   const navigation = useNavigation();
-  const [balance, setBalance] = useState<number | null>();
-  const [name, setName] = useState<string>();
-  const [select, setSelect] = useState<OptionType>();
+
+  const [balance, setBalance] = useState<number | null>(data.balance);
+  const [name, setName] = useState<string>(data.name);
+  const [select, setSelect] = useState<OptionType>(data.type);
   const [typeList, setTypeList] = useState<AccountListType[]>();
-  const [typeItem, setTypeItem] = useState<AccountListType>();
-  const [error, setError] = useState<string>();
-  const [showStatus, setShowStaus] = useState<boolean>(false);
+  const [typeItem, setTypeItem] = useState<AccountListType>(data.type_item);
+
+  const [showInform, setShowInform] = useState<boolean>(false);
+  const [statusInfo, setStatusInfo] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleAccountTypeChange = useRef<any>(null);
@@ -57,30 +59,39 @@ const AddNewAccountScreen: React.FunctionComponent<
     handleAccountTypeChange.current();
   }, [select]);
 
-  const handleAddNewAccount = async () => {
+  const handleEditAccount = async () => {
     setLoading(true);
     try {
       if (!name || !typeItem || !balance) {
-        setError('You are missing something!');
-      } else {
-        await firestore()
-          .collection('accounts')
-          .add({
-            userId: auth().currentUser?.uid,
-            balance: balance,
-            name: name,
-            type: select,
-            type_item: typeItem,
-            createdAt: firestore.Timestamp.fromDate(new Date()),
-          });
+        setStatusInfo({
+          status: 'error',
+          title: "You're missing something!",
+        });
         setLoading(false);
-        navigation.navigate('Set' as never);
+        setShowInform(true);
+        return;
+      } else {
+        await firestore().collection('accounts').doc(data.id).update({
+          balance: balance,
+          name: name,
+          type: select,
+          type_item: typeItem,
+        });
+        setStatusInfo({
+          status: 'success',
+          title: 'Edit wallet successfully!',
+        });
+        setShowInform(true);
+        setLoading(false);
       }
     } catch (error) {
       console.log(error);
-      setError('Failed to add new account!');
-      setShowStaus(true);
+      setStatusInfo({
+        status: 'error',
+        title: 'Failed to edit wallet!',
+      });
       setLoading(false);
+      setShowInform(true);
     }
   };
 
@@ -100,6 +111,7 @@ const AddNewAccountScreen: React.FunctionComponent<
               <Text style={styles.amount}>$</Text>
               <TextInput
                 style={styles.amount}
+                defaultValue={JSON.stringify(balance)}
                 keyboardType="numeric"
                 onChangeText={val =>
                   val ? setBalance(parseInt(val)) : setBalance(null)
@@ -109,7 +121,11 @@ const AddNewAccountScreen: React.FunctionComponent<
           </View>
           <View style={styles.setupContainer}>
             <View style={styles.inputContainer}>
-              <Input placeholder="Name" onChangeText={val => setName(val)} />
+              <Input
+                placeholder="Name"
+                defaultValue={name}
+                onChangeText={val => setName(val)}
+              />
               <Dropdown
                 select={select}
                 setSelect={setSelect}
@@ -124,6 +140,10 @@ const AddNewAccountScreen: React.FunctionComponent<
                     {typeList?.map(item => {
                       return (
                         <AccountTypeItem
+                          selected={
+                            typeItem.id === item.id &&
+                            typeItem.name === item.name
+                          }
                           onPress={() => setTypeItem(item)}
                           key={item.id}
                           imageSource={item.image}
@@ -133,25 +153,28 @@ const AddNewAccountScreen: React.FunctionComponent<
                   </View>
                 </>
               )}
-              {error && <ErrorMessage title={error} />}
             </View>
             <View style={{zIndex: 0}}>
               <AppButton
                 loading={loading}
                 title="Continue"
                 backgroundColor={AppColors.primaryColor}
-                onPress={handleAddNewAccount}
+                onPress={handleEditAccount}
               />
             </View>
           </View>
         </ClickOutsideProvider>
       </ScrollView>
-      {showStatus && error && (
+      {showInform && (
         <StatusModal
-          status={'error'}
-          show={showStatus}
-          setShow={setShowStaus}
-          title={error}
+          status={statusInfo.status}
+          show={showInform}
+          setShow={setShowInform}
+          title={statusInfo.title}
+          onClose={() =>
+            statusInfo.status === 'success' &&
+            navigation.navigate('Account' as never)
+          }
         />
       )}
     </SafeAreaView>
@@ -203,4 +226,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddNewAccountScreen;
+export default EditWalletScreen;

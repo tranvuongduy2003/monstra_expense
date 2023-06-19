@@ -15,10 +15,10 @@ import React, {useEffect, useRef, useState} from 'react';
 import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import AccountTypeItem from 'screens/Auth/components/AccountTypeItem';
 import {AccountListType} from 'types/account.type';
-import AccountTypeItem from './components/AccountTypeItem';
 
-interface IAddNewAccountScreenProps {}
+interface IAddNewWalletScreenProps {}
 
 const accountTypeOptions: OptionType[] = [
   {
@@ -31,8 +31,8 @@ const accountTypeOptions: OptionType[] = [
   },
 ];
 
-const AddNewAccountScreen: React.FunctionComponent<
-  IAddNewAccountScreenProps
+const AddNewWalletScreen: React.FunctionComponent<
+  IAddNewWalletScreenProps
 > = props => {
   const navigation = useNavigation();
   const [balance, setBalance] = useState<number | null>();
@@ -42,6 +42,9 @@ const AddNewAccountScreen: React.FunctionComponent<
   const [typeItem, setTypeItem] = useState<AccountListType>();
   const [error, setError] = useState<string>();
   const [showStatus, setShowStaus] = useState<boolean>(false);
+
+  const [showInform, setShowInform] = useState<boolean>(false);
+  const [statusInfo, setStatusInfo] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleAccountTypeChange = useRef<any>(null);
@@ -57,11 +60,17 @@ const AddNewAccountScreen: React.FunctionComponent<
     handleAccountTypeChange.current();
   }, [select]);
 
-  const handleAddNewAccount = async () => {
+  const handleAddNewWallet = async () => {
     setLoading(true);
     try {
       if (!name || !typeItem || !balance) {
-        setError('You are missing something!');
+        setStatusInfo({
+          status: 'error',
+          title: "You're missing something!",
+        });
+        setLoading(false);
+        setShowInform(true);
+        return;
       } else {
         await firestore()
           .collection('accounts')
@@ -73,14 +82,21 @@ const AddNewAccountScreen: React.FunctionComponent<
             type_item: typeItem,
             createdAt: firestore.Timestamp.fromDate(new Date()),
           });
+        setStatusInfo({
+          status: 'success',
+          title: 'Add new wallet successfully!',
+        });
+        setShowInform(true);
         setLoading(false);
-        navigation.navigate('Set' as never);
       }
     } catch (error) {
       console.log(error);
-      setError('Failed to add new account!');
-      setShowStaus(true);
+      setStatusInfo({
+        status: 'error',
+        title: 'Failed to add new wallet!',
+      });
       setLoading(false);
+      setShowInform(true);
     }
   };
 
@@ -93,6 +109,7 @@ const AddNewAccountScreen: React.FunctionComponent<
           justifyContent: 'flex-end',
           position: 'relative',
         }}>
+        {showInform && <View style={styles.overlay}></View>}
         <ClickOutsideProvider>
           <View style={styles.balanceContainer}>
             <Text style={styles.title}>Balance</Text>
@@ -124,6 +141,10 @@ const AddNewAccountScreen: React.FunctionComponent<
                     {typeList?.map(item => {
                       return (
                         <AccountTypeItem
+                          selected={
+                            typeItem?.id === item.id &&
+                            typeItem.name === typeItem.name
+                          }
                           onPress={() => setTypeItem(item)}
                           key={item.id}
                           imageSource={item.image}
@@ -140,18 +161,19 @@ const AddNewAccountScreen: React.FunctionComponent<
                 loading={loading}
                 title="Continue"
                 backgroundColor={AppColors.primaryColor}
-                onPress={handleAddNewAccount}
+                onPress={handleAddNewWallet}
               />
             </View>
           </View>
         </ClickOutsideProvider>
       </ScrollView>
-      {showStatus && error && (
+      {showInform && (
         <StatusModal
-          status={'error'}
-          show={showStatus}
-          setShow={setShowStaus}
-          title={error}
+          status={statusInfo.status}
+          show={showInform}
+          setShow={setShowInform}
+          title={statusInfo.title}
+          onClose={() => statusInfo.status === 'success' && navigation.goBack()}
         />
       )}
     </SafeAreaView>
@@ -159,6 +181,17 @@ const AddNewAccountScreen: React.FunctionComponent<
 };
 
 const styles = StyleSheet.create({
+  overlay: {
+    backgroundColor: '#000000',
+    opacity: 0.6,
+    position: 'absolute',
+    flex: 1,
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    zIndex: 10,
+  },
   balanceContainer: {
     paddingHorizontal: 16,
     gap: 13,
@@ -203,4 +236,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddNewAccountScreen;
+export default AddNewWalletScreen;
