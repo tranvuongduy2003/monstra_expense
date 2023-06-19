@@ -1,16 +1,17 @@
-import React, {useEffect, useState} from 'react';
+import {AppColors} from 'constants/AppColors';
+import React from 'react';
 import {
-  StyleSheet,
   Dimensions,
   Image,
   ImageSourcePropType,
+  StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import {AppColors} from 'constants/AppColors';
 
 interface IAccountTypeItemProps {
   imageSource: ImageSourcePropType;
-  onPress: Function;
+  onPress: any;
+  selected: boolean;
 }
 
 const {width} = Dimensions.get('screen');
@@ -18,17 +19,12 @@ const {width} = Dimensions.get('screen');
 const AccountTypeItem: React.FunctionComponent<IAccountTypeItemProps> = ({
   imageSource,
   onPress,
+  selected,
 }) => {
-  const [selected, setSelected] = useState<boolean>(false);
-
-  useEffect(() => {
-    selected && onPress();
-  }, [selected]);
-
   return (
     <TouchableOpacity
       style={[styles.typeItem, selected && styles.selectedItem]}
-      onPress={() => setSelected(!selected)}>
+      onPress={onPress}>
       <Image source={imageSource} style={styles.image} resizeMode="contain" />
     </TouchableOpacity>
   );
@@ -50,8 +46,8 @@ const styles = StyleSheet.create({
     borderColor: AppColors.primaryColor,
   },
   image: {
-    width: 24,
-    height: 24,
+    width: '70%',
+    height: '70%',
   },
 });
 

@@ -1,6 +1,14 @@
 export interface IAccount {
-  userId: string;
+  id: string;
   balance: number;
   name: string;
-  type: 'Bank' | 'Wallet';
+  type: string;
+  type_item: TypeItem;
+  userId: string;
+}
+
+export interface TypeItem {
+  id: string;
+  image: number;
+  name: string;
 }

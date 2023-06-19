@@ -1,4 +1,3 @@
-import {OptionType} from 'types/option.type';
 import {AppColors} from 'constants/AppColors';
 import {useClickOutside} from 'hooks/useClickOutside';
 import React, {useState} from 'react';
@@ -8,10 +7,9 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  ScrollView,
-  FlatList,
 } from 'react-native';
 import {ChevronDownIcon, ChevronUpIcon} from 'react-native-heroicons/outline';
+import {OptionType} from 'types/option.type';
 
 interface IDropdownProps {
   options: OptionType[];
@@ -49,7 +47,7 @@ const Dropdown: React.FunctionComponent<IDropdownProps> = ({
         )}
       </TouchableOpacity>
       {show && (
-        <ScrollView style={styles.optionList}>
+        <View style={styles.optionList}>
           {options.map((item, index) => (
             <Option
               key={index}
@@ -61,7 +59,7 @@ const Dropdown: React.FunctionComponent<IDropdownProps> = ({
               }}
             />
           ))}
-        </ScrollView>
+        </View>
       )}
     </View>
   );
@@ -87,7 +85,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderWidth: 1,
-    borderColor: '#F1F1FA',
+    borderColor: AppColors.borderColor,
     borderRadius: 16,
     color: AppColors.primaryTextColor,
     fontWeight: '400',

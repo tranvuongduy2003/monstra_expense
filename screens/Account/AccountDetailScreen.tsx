@@ -1,98 +1,151 @@
-import React from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {StyleSheet, Text, View, ScrollView} from 'react-native';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
+import EditIcon from 'assets/svg/EditIcon';
 import {AppColors} from 'constants/AppColors';
+import {icons} from 'constants/CategoryIcon';
 import scale from 'constants/Responsive';
-import AccountIcon from 'assets/svg/AccountIcon';
+import {ITransaction} from 'interfaces/Transaction';
+import React, {useEffect, useRef, useState} from 'react';
 import {
-  BanknotesIcon,
-  ClipboardDocumentListIcon,
-  ShoppingBagIcon,
-  TruckIcon,
-} from 'react-native-heroicons/solid';
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {ArrowsRightLeftIcon} from 'react-native-heroicons/solid';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import Phase from 'screens/Transaction/components/Phase';
+import HeaderBar from 'screens/layout/HeaderBar';
 
 interface IAccountDetailScreenProps {}
 
-// DUMMY DATA
-const todayTransactions = [
-  {
-    id: 1,
-    icon: <ShoppingBagIcon color={AppColors.yellow} fontSize={30} />,
-    title: 'Shopping',
-    desc: 'Buy some grocery',
-    price: '-120$',
-    time: '10:00 AM',
-    iconBgColor: AppColors.yellow100,
-    negative: true,
-  },
-  {
-    id: 2,
-    icon: (
-      <ClipboardDocumentListIcon color={AppColors.primaryColor} fontSize={30} />
-    ),
-    title: 'Subscription',
-    desc: 'Disney+ Annual Subscription',
-    price: '-80$',
-    time: '03:30 PM',
-    iconBgColor: AppColors.primaryColor100,
-    negative: true,
-  },
-  {
-    id: 3,
-    icon: <ShoppingBagIcon color={AppColors.red} fontSize={30} />,
-    title: 'Food',
-    desc: 'Buy a ramen',
-    price: '-32$',
-    time: '07:30 PM',
-    iconBgColor: AppColors.red100,
-    negative: true,
-  },
-];
-
-const yesterdayTransactions = [
-  {
-    id: 1,
-    icon: <BanknotesIcon color={AppColors.primaryGreen} fontSize={30} />,
-    title: 'Salary',
-    desc: 'Salary for July',
-    price: '+5000$',
-    time: '04:30 PM',
-    iconBgColor: AppColors.primaryGreen100,
-    negative: false,
-  },
-  {
-    id: 2,
-    icon: <TruckIcon color={AppColors.primaryBlue} fontSize={30} />,
-    title: 'Transportation',
-    desc: 'Charging Tesla',
-    price: '-18$',
-    time: '08:30 PM',
-    iconBgColor: AppColors.primaryBlue100,
-    negative: true,
-  },
-];
-
 const AccountDetailScreen: React.FunctionComponent<
   IAccountDetailScreenProps
-> = props => {
+> = () => {
+  const route = useRoute();
+  const {data}: any = route.params;
+  const isFocused = useIsFocused();
+  const navigation: any = useNavigation();
+
+  const [transactions, setTransactions] =
+    useState<Map<string, Array<ITransaction>>>();
+
+  const fetchTransactionsData = useRef<any>(null);
+
+  useEffect(() => {
+    fetchTransactionsData.current = async () => {
+      try {
+        await firestore()
+          .collection('transactions')
+          .where('userId', '==', auth().currentUser?.uid)
+          .where('wallet.id', '==', data.id)
+          .get()
+          .then(querySnapshot => {
+            let results = new Map<string, Array<any>>();
+            let dateOptions: any;
+
+            querySnapshot.forEach(documentSnapshot => {
+              const data = documentSnapshot.data();
+              const itemDate: Date = data.createdAt.toDate();
+              const now = new Date();
+              let key = '';
+
+              if (itemDate.getFullYear() !== now.getFullYear()) {
+                key = itemDate.toLocaleDateString('en-US', {
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                });
+              } else {
+                key = itemDate.toLocaleDateString('en-US', {
+                  day: 'numeric',
+                  month: 'long',
+                });
+              }
+
+              const items = {
+                id: documentSnapshot.id,
+                userId: auth().currentUser?.uid,
+                icon:
+                  data.type !== 'transfer' ? (
+                    icons.get(data.category?.value || '')?.child
+                  ) : (
+                    <ArrowsRightLeftIcon
+                      color={AppColors.primaryBlue}
+                      fontSize={30}
+                    />
+                  ),
+                title:
+                  data.type !== 'transfer' ? data.category.title : 'Transfer',
+                desc: data.title,
+                price: data.balance,
+                time: itemDate.toLocaleTimeString('vi-VI', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                }),
+                iconBgColor:
+                  data.type !== 'transfer'
+                    ? icons.get(data.category?.value || '')?.bgColor
+                    : AppColors.primaryBlue100,
+                type: data.type,
+              };
+
+              const filteredArray = results.get(key) || [];
+              results.set(key, [...filteredArray, items]);
+            });
+            setTransactions(results);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchTransactionsData.current();
+    return fetchTransactionsData.current;
+  }, [isFocused]);
+
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={{backgroundColor: AppColors.screenColor}}
+      <HeaderBar
+        name="Detail account"
+        icon={
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('EditWallet', {
+                data: data,
+              })
+            }>
+            <EditIcon color={AppColors.black} />
+          </TouchableOpacity>
+        }
+      />
+      <ScrollView
+        style={{backgroundColor: AppColors.screenColor}}
         contentContainerStyle={{
           flexGrow: 1,
         }}>
         <View>
           <View style={styles.walletContainer}>
-            <View style={styles.icons}>
-              <AccountIcon></AccountIcon>
+            <View style={styles.iconContainer}>
+              <Image
+                source={data.type_item.image}
+                style={styles.icon}
+                resizeMode="contain"
+              />
             </View>
-            <Text style={styles.contentTitle}>Paypal</Text>
+            <Text style={styles.contentTitle}>{data.name}</Text>
           </View>
         </View>
         <ScrollView>
-          <Phase timeTitle="Today" transactions={todayTransactions} />
-          <Phase timeTitle="Yesterday" transactions={yesterdayTransactions} />
+          {Array.from(transactions?.keys() || []).map(key => (
+            <Phase
+              key={key}
+              timeTitle={key as string}
+              transactions={transactions?.get(key as string)}
+            />
+          ))}
         </ScrollView>
       </ScrollView>
     </SafeAreaView>
@@ -105,24 +158,25 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.white,
   },
   walletContainer: {
-    marginTop: scale(31),
+    marginTop: scale(30),
     alignItems: 'center',
-    marginBottom: scale(103),
-  },
-  icons: {
-    width: scale(50),
-    height: scale(50),
-    alignItems: 'center',
-    alignSelf: 'center',
-    justifyContent: 'center',
-    borderRadius: 15,
-    backgroundColor: AppColors.lavender,
+    marginBottom: scale(50),
+    gap: 8,
   },
   contentTitle: {
-    fontSize: scale(24),
-    marginTop: scale(8),
-    color: AppColors.textColor,
-    fontFamily: 'Inter-SemiBold',
+    fontWeight: '600',
+    fontSize: 24,
+    lineHeight: 29,
+    color: AppColors.primaryTextColor,
+  },
+  iconContainer: {
+    padding: 12,
+    borderRadius: 16,
+    backgroundColor: AppColors.borderColor,
+  },
+  icon: {
+    width: 32,
+    height: 32,
   },
 });
 

@@ -1,3 +1,16 @@
+import BottomSheet from '@gorhom/bottom-sheet';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
+import AppButton from 'components/AppButton';
+import Attachment from 'components/Attachment';
+import Dropdown from 'components/Dropdown';
+import Input from 'components/Input';
+import {AppColors} from 'constants/AppColors';
+import {incomeCategoryOptions} from 'constants/Category';
+import {AuthContext} from 'providers/AuthProvider';
+import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
 import React, {
   useCallback,
   useContext,
@@ -5,56 +18,18 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {
-  ScrollView,
-  StyleSheet,
-  View,
-  Text,
-  Modal,
-  TextInput,
-  Image,
-} from 'react-native';
-import BottomSheet from '@gorhom/bottom-sheet';
-import {AppColors} from 'constants/AppColors';
-import {useNavigation} from '@react-navigation/native';
-import Input from 'components/Input';
-import AppButton from 'components/AppButton';
-import Attachment from 'components/Attachment';
-import Toggle from 'components/Toggle';
-import Dropdown from 'components/Dropdown';
-import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
-import AttachmentBottomSheet from './components/AttachmentBottomSheet';
-import RecurringBottomSheet from './components/RecurringBottomSheet';
-import Tag from './components/Tag';
-import RecurringInfo from './components/RecurringInfo';
-import StatusModal from '../../components/StatusModal';
-import firestore from '@react-native-firebase/firestore';
-import {AuthContext} from 'providers/AuthProvider';
+import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import storage from '@react-native-firebase/storage';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {OptionType} from 'types/option.type';
-import {incomeCategoryOptions} from 'constants/Category';
+import StatusModal from '../../components/StatusModal';
+import AttachmentBottomSheet from './components/AttachmentBottomSheet';
 
 interface IIncomeScreenProps {}
 
-const walletOptions: OptionType[] = [
-  {
-    title: 'Momo',
-    value: 'momo',
-  },
-  {
-    title: 'Banking',
-    value: 'banking',
-  },
-  {
-    title: 'Cash',
-    value: 'cash',
-  },
-];
-
 const IncomeScreen: React.FunctionComponent<IIncomeScreenProps> = props => {
   const navigation: any = useNavigation();
+  const isFocused = useIsFocused();
   const {user} = useContext(AuthContext) as any;
   const [showAttachment, setShowAttachment] = useState<boolean>(false);
   // const [showRecurring, setShowRecurring] = useState<boolean>(false);
@@ -67,10 +42,12 @@ const IncomeScreen: React.FunctionComponent<IIncomeScreenProps> = props => {
   const [title, setTitle] = useState<string>();
   const [category, setCatogory] = useState<OptionType>();
   const [wallet, setWallet] = useState<OptionType>();
+  const [wallets, setWallets] = useState<OptionType[]>();
   const [desc, setDesc] = useState<string>();
   const [attachment, setAttachment] = useState<any>();
 
   const attachmentRef = useRef<BottomSheet>(null);
+  const handleFetchWallets = useRef<any>(null);
   // const recurringRef = useRef<BottomSheet>(null);
 
   const handleAttachmentSheetChanges = useCallback((index: number) => {
@@ -82,7 +59,13 @@ const IncomeScreen: React.FunctionComponent<IIncomeScreenProps> = props => {
     setLoading(true);
     try {
       if (!balance || !title || !category || !wallet || !attachment) {
-        throw new Error();
+        setStatusInfo({
+          status: 'error',
+          title: "You're missing something!",
+        });
+        setLoading(false);
+        setShowInform(true);
+        return;
       }
 
       const reference = storage().ref('income/' + attachment.fileName);
@@ -97,11 +80,21 @@ const IncomeScreen: React.FunctionComponent<IIncomeScreenProps> = props => {
           title: title,
           category: category,
           desc: desc,
-          wallet: wallet,
+          wallet: {id: wallet.id, title: wallet.title, value: wallet.value},
           attachment: attachmentURL,
           type: 'income',
           createdAt: firestore.Timestamp.fromDate(new Date()),
         });
+
+      if (wallet.balance) {
+        await firestore()
+          .collection('accounts')
+          .doc(wallet.id)
+          .update({
+            balance: wallet.balance + balance,
+          });
+      }
+
       setStatusInfo({
         status: 'success',
         title: 'Income has been successfully added!',
@@ -112,12 +105,40 @@ const IncomeScreen: React.FunctionComponent<IIncomeScreenProps> = props => {
       console.log(error);
       setStatusInfo({
         status: 'error',
-        title: 'Add new income unsuccessfully!',
+        title: 'Failed to add new income!',
       });
       setLoading(false);
       setShowInform(true);
     }
   };
+
+  useEffect(() => {
+    handleFetchWallets.current = async () => {
+      try {
+        await firestore()
+          .collection('accounts')
+          .where('userId', '==', auth().currentUser?.uid)
+          .get()
+          .then(querySnapshot => {
+            const results: any = [];
+            querySnapshot.forEach(documentSnapshot => {
+              const data = documentSnapshot.data();
+              results.push({
+                id: documentSnapshot.id,
+                value: data.name,
+                title: data.name,
+                balance: data.balance,
+              });
+            });
+            console.log(results);
+            setWallets(results);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    handleFetchWallets.current();
+  }, [isFocused]);
 
   // useEffect(() => {
   //   if (showEditRecurring) {
@@ -198,13 +219,15 @@ const IncomeScreen: React.FunctionComponent<IIncomeScreenProps> = props => {
                 name="Description"
                 onChangeText={setDesc}
               />
-              <Dropdown
-                options={walletOptions}
-                placeholder="Wallet"
-                zIndex={40}
-                select={wallet}
-                setSelect={setWallet}
-              />
+              {wallets && (
+                <Dropdown
+                  options={wallets}
+                  placeholder="Wallet"
+                  zIndex={40}
+                  select={wallet}
+                  setSelect={setWallet}
+                />
+              )}
               <Attachment
                 onPress={() => handleAttachmentSheetChanges(0)}
                 attachment={attachment}

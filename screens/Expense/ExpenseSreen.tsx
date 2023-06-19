@@ -1,7 +1,8 @@
 import BottomSheet from '@gorhom/bottom-sheet';
+import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import AppButton from 'components/AppButton';
 import Attachment from 'components/Attachment';
 import Dropdown from 'components/Dropdown';
@@ -10,7 +11,13 @@ import {AppColors} from 'constants/AppColors';
 import {expenseCategoryOptions} from 'constants/Category';
 import {AuthContext} from 'providers/AuthProvider';
 import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
-import React, {useCallback, useContext, useRef, useState} from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -37,6 +44,7 @@ const walletOptions: OptionType[] = [
 
 const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
   const {user} = useContext(AuthContext) as any;
   const [showAttachment, setShowAttachment] = useState<boolean>(false);
   // const [showRecurring, setShowRecurring] = useState<boolean>(false);
@@ -48,11 +56,13 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
   const [balance, setBalance] = useState<number | null>();
   const [title, setTitle] = useState<string>();
   const [category, setCatogory] = useState<OptionType>();
+  const [wallets, setWallets] = useState<OptionType[]>();
   const [wallet, setWallet] = useState<OptionType>();
   const [desc, setDesc] = useState<string>();
   const [attachment, setAttachment] = useState<any>();
 
   const attachmentRef = useRef<BottomSheet>(null);
+  const handleFetchWallets = useRef<any>(null);
   // const recurringRef = useRef<BottomSheet>(null);
 
   const handleAttachmentSheetChanges = useCallback((index: number) => {
@@ -64,7 +74,23 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
     setLoading(true);
     try {
       if (!balance || !title || !category || !wallet || !attachment) {
-        throw new Error();
+        setStatusInfo({
+          status: 'error',
+          title: "You're missing something!",
+        });
+        setLoading(false);
+        setShowInform(true);
+        return;
+      }
+
+      if (!wallet.balance || wallet.balance < balance) {
+        setStatusInfo({
+          status: 'error',
+          title: "Your account doesn't have enough capacity!",
+        });
+        setLoading(false);
+        setShowInform(true);
+        return;
       }
 
       const reference = storage().ref('expense/' + attachment.fileName);
@@ -79,7 +105,7 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
           title: title,
           category: category,
           desc: desc,
-          wallet: wallet,
+          wallet: {id: wallet.id, title: wallet.title, value: wallet.value},
           attachment: attachmentURL,
           type: 'expense',
           createdAt: firestore.Timestamp.fromDate(new Date()),
@@ -111,6 +137,14 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
               });
             });
         });
+
+      await firestore()
+        .collection('accounts')
+        .doc(wallet.id)
+        .update({
+          balance: wallet.balance - balance,
+        });
+
       setStatusInfo({
         status: 'success',
         title: 'Expense has been successfully added!',
@@ -121,12 +155,39 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
       console.log(error);
       setStatusInfo({
         status: 'error',
-        title: 'Add new expense unsuccessfully!',
+        title: 'Failed to add new expense!',
       });
       setLoading(false);
       setShowInform(true);
     }
   };
+
+  useEffect(() => {
+    handleFetchWallets.current = async () => {
+      try {
+        await firestore()
+          .collection('accounts')
+          .where('userId', '==', auth().currentUser?.uid)
+          .get()
+          .then(querySnapshot => {
+            const results: any = [];
+            querySnapshot.forEach(documentSnapshot => {
+              const data = documentSnapshot.data();
+              results.push({
+                id: documentSnapshot.id,
+                value: data.name,
+                title: data.name,
+                balance: data.balance,
+              });
+            });
+            setWallets(results);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    handleFetchWallets.current();
+  }, [isFocused]);
 
   // useEffect(() => {
   //   if (showEditRecurring) {
@@ -207,13 +268,15 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
                 name="Description"
                 onChangeText={setDesc}
               />
-              <Dropdown
-                options={walletOptions}
-                placeholder="Wallet"
-                zIndex={40}
-                select={wallet}
-                setSelect={setWallet}
-              />
+              {wallets && (
+                <Dropdown
+                  options={wallets}
+                  placeholder="Wallet"
+                  zIndex={40}
+                  select={wallet}
+                  setSelect={setWallet}
+                />
+              )}
               <Attachment
                 onPress={() => handleAttachmentSheetChanges(0)}
                 attachment={attachment}

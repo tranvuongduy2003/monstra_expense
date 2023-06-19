@@ -1,3 +1,15 @@
+import BottomSheet from '@gorhom/bottom-sheet';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
+import {useNavigation} from '@react-navigation/native';
+import AppButton from 'components/AppButton';
+import Attachment from 'components/Attachment';
+import Dropdown from 'components/Dropdown';
+import Input from 'components/Input';
+import {AppColors} from 'constants/AppColors';
+import {AuthContext} from 'providers/AuthProvider';
+import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
 import React, {
   useCallback,
   useContext,
@@ -5,35 +17,11 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {
-  ScrollView,
-  StyleSheet,
-  View,
-  Text,
-  Modal,
-  TextInput,
-  Image,
-} from 'react-native';
-import BottomSheet from '@gorhom/bottom-sheet';
-import {AppColors} from 'constants/AppColors';
-import {useNavigation} from '@react-navigation/native';
-import Input from 'components/Input';
-import AppButton from 'components/AppButton';
-import Attachment from 'components/Attachment';
-import Toggle from 'components/Toggle';
-import Dropdown from 'components/Dropdown';
-import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
-import AttachmentBottomSheet from './components/AttachmentBottomSheet';
-import RecurringBottomSheet from './components/RecurringBottomSheet';
-import Tag from './components/Tag';
-import RecurringInfo from './components/RecurringInfo';
-import StatusModal from '../../components/StatusModal';
-import firestore from '@react-native-firebase/firestore';
-import {AuthContext} from 'providers/AuthProvider';
+import {StyleSheet, Text, TextInput, View} from 'react-native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
-import storage from '@react-native-firebase/storage';
-import auth from '@react-native-firebase/auth';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import StatusModal from '../../components/StatusModal';
+import AttachmentBottomSheet from './components/AttachmentBottomSheet';
 
 interface ITransferScreenProps {}
 
@@ -69,16 +57,16 @@ const TransferScreen: React.FunctionComponent<ITransferScreenProps> = props => {
           .where('userId', '==', auth().currentUser?.uid)
           .get()
           .then(querySnapshot => {
-            let results: any = [];
-
+            const results: any = [];
             querySnapshot.forEach(documentSnapshot => {
+              const data = documentSnapshot.data();
               results.push({
                 id: documentSnapshot.id,
-                value: documentSnapshot.data().name.toLowerCase(),
-                title: documentSnapshot.data().name,
+                value: data.name,
+                title: data.name,
+                balance: data.balance,
               });
             });
-
             setOptions(results);
           });
       } catch (error) {
@@ -92,7 +80,23 @@ const TransferScreen: React.FunctionComponent<ITransferScreenProps> = props => {
     setLoading(true);
     try {
       if (!balance || !title || !from || !to || !attachment) {
-        throw new Error();
+        setStatusInfo({
+          status: 'error',
+          title: "You're missing something!",
+        });
+        setLoading(false);
+        setShowInform(true);
+        return;
+      }
+
+      if (!from.balance || from.balance < balance) {
+        setStatusInfo({
+          status: 'error',
+          title: "Your account doesn't have enough capacity!",
+        });
+        setLoading(false);
+        setShowInform(true);
+        return;
       }
 
       const reference = storage().ref('transfer/' + attachment.fileName);
@@ -106,12 +110,27 @@ const TransferScreen: React.FunctionComponent<ITransferScreenProps> = props => {
           balance: balance,
           title: title,
           desc: desc,
-          from: from,
-          to: to,
+          from: {id: from.id, title: from.title, value: from.value},
+          to: {id: to.id, title: to.title, value: to.value},
           attachment: attachmentURL,
           type: 'transfer',
           createdAt: firestore.Timestamp.fromDate(new Date()),
         });
+
+      await firestore()
+        .collection('accounts')
+        .doc(from.id)
+        .update({
+          balance: from.balance - balance,
+        });
+
+      await firestore()
+        .collection('accounts')
+        .doc(to.id)
+        .update({
+          balance: to.balance + balance,
+        });
+
       setStatusInfo({
         status: 'success',
         title: 'Transfer has been successfully added!',

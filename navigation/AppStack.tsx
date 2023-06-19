@@ -1,9 +1,9 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
-import ProfileScreen from 'screens/Profile/ProfileScreen';
-import HeaderBar from 'screens/layout/HeaderBar';
-import AccountScreen from 'screens/Account/AccountScreen';
 import AccountDetailScreen from 'screens/Account/AccountDetailScreen';
+import AccountScreen from 'screens/Account/AccountScreen';
+import AddNewWalletScreen from 'screens/Account/AddNewWalletScreen';
+import EditWalletScreen from 'screens/Account/EditWalletScreen';
 import CreateBudgetScreen from 'screens/Budget/CreateBudgetScreen';
 import DetailBudgetScreen from 'screens/Budget/DetailBudgetScreen';
 import EditBudgetScreen from 'screens/Budget/EditBudgetScreen';
@@ -13,6 +13,8 @@ import FinancialReportScreen from 'screens/FinanceReport/FinancialReportScreen';
 import FinancialSplashScreen from 'screens/FinanceReport/FinancialSplashScreen';
 import EditIncomeScreen from 'screens/Income/EditIncomeSreen';
 import IncomeScreen from 'screens/Income/IncomeSreen';
+import EditProfileScreen from 'screens/Profile/EditProfileScreen';
+import ProfileScreen from 'screens/Profile/ProfileScreen';
 import CurrencyScreen from 'screens/Settings/CurrencyScreen';
 import ExporNotitScreen from 'screens/Settings/ExportNotiScreen';
 import ExportScreen from 'screens/Settings/ExportScreen';
@@ -24,17 +26,12 @@ import ThemeScreen from 'screens/Settings/ThemeScreen';
 import DetailTransactionScreen from 'screens/Transaction/DetailTransactionScreen';
 import EditTransferScreen from 'screens/Transfer/EditTransferSreen';
 import TransferScreen from 'screens/Transfer/TransferSreen';
+import HeaderBar from 'screens/layout/HeaderBar';
 
 import Tabs from './Tabs';
 
 import {useNavigation} from '@react-navigation/native';
 import {AppColors} from 'constants/AppColors';
-
-import {TrashIcon} from 'react-native-heroicons/solid';
-
-import {TouchableOpacity} from 'react-native';
-import {AuthContext} from 'providers/AuthProvider';
-import EditIcon from 'assets/svg/EditIcon';
 
 interface IAppStackProps {}
 
@@ -50,24 +47,46 @@ const AppStack: React.FunctionComponent<IAppStackProps> = props => {
         options={{headerShown: false}}
       />
       <Stack.Screen
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={{header: () => <HeaderBar name="Edit Profile"></HeaderBar>}}
+      />
+      <Stack.Screen
         name="Account"
         component={AccountScreen}
         options={{header: () => <HeaderBar name="Account"></HeaderBar>}}
       />
       <Stack.Screen
-        name="DetailAccount"
-        component={AccountDetailScreen}
+        name="AddNewWallet"
+        component={AddNewWalletScreen}
         options={{
           header: () => (
             <HeaderBar
-              name="Detail account"
-              icon={
-                <TouchableOpacity onPress={() => {}}>
-                  <EditIcon color={AppColors.black} />
-                </TouchableOpacity>
-              }
+              name="Add New Wallet"
+              backgroundColor={AppColors.primaryColor}
+              color={AppColors.screenColor}
             />
           ),
+        }}
+      />
+      <Stack.Screen
+        name="EditWallet"
+        component={EditWalletScreen}
+        options={{
+          header: () => (
+            <HeaderBar
+              name="Edit Wallet"
+              backgroundColor={AppColors.primaryColor}
+              color={AppColors.screenColor}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="DetailAccount"
+        component={AccountDetailScreen}
+        options={{
+          headerShown: false,
         }}
       />
       <Stack.Screen

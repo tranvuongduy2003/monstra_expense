@@ -71,7 +71,10 @@ const FinancialReportScreen: React.FunctionComponent<
   const [chartType, setChartType] = useState<OptionType | null>(
     chartTypeOptions[0],
   );
-  const [category, setCatogory] = useState<OptionType | null>();
+  const [category, setCatogory] = useState<OptionType>({
+    title: 'All',
+    value: 'all',
+  });
   const [transactions, setTransactions] = useState<any>([]);
   const [chartData, setChartData] = useState<DataPoint[]>([]);
   const [pieChartData, setPieChartData] = useState<PieSection[]>([]);
@@ -142,7 +145,10 @@ const FinancialReportScreen: React.FunctionComponent<
                 value: data.balance,
               });
 
-              if (category && data.category.value !== category.value) {
+              if (
+                category.value !== 'all' &&
+                data.category.value !== category.value
+              ) {
                 return;
               }
 
@@ -268,7 +274,7 @@ const FinancialReportScreen: React.FunctionComponent<
           </View>
         </View>
         <View
-          style={{height: 300, justifyContent: 'center', alignItems: 'center'}}>
+          style={{height: 220, justifyContent: 'center', alignItems: 'center'}}>
           {chartType?.value === chartTypeOptions[0].value &&
           chartData &&
           chartData.length > 0 ? (
@@ -293,7 +299,7 @@ const FinancialReportScreen: React.FunctionComponent<
               key={index}
               onPress={() => {
                 setSelect(option.value);
-                setCatogory(null);
+                setCatogory({title: 'All', value: 'all'});
               }}>
               <Text
                 style={[
@@ -309,7 +315,10 @@ const FinancialReportScreen: React.FunctionComponent<
           <View style={{width: '50%'}}>
             {select === categoryOptions[0].value && (
               <CategorySelector
-                options={expenseCategoryOptions}
+                options={[
+                  ...expenseCategoryOptions,
+                  {title: 'All', value: 'all'},
+                ]}
                 zIndex={10}
                 select={category as OptionType}
                 setSelect={setCatogory}
@@ -317,7 +326,10 @@ const FinancialReportScreen: React.FunctionComponent<
             )}
             {select === categoryOptions[1].value && (
               <CategorySelector
-                options={incomeCategoryOptions}
+                options={[
+                  ...incomeCategoryOptions,
+                  {title: 'All', value: 'all'},
+                ]}
                 zIndex={10}
                 select={category as OptionType}
                 setSelect={setCatogory}
