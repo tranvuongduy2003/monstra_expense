@@ -73,7 +73,7 @@ const EditProfileScreen: React.FunctionComponent<
     setLoading(true);
     try {
       const payload: any = await new Promise(async resolve => {
-        if (avatar) {
+        if (avatar.uri) {
           const reference = storage().ref('expense/' + avatar.fileName);
           await reference.putFile(avatar.uri);
           const attachmentURL = await reference.getDownloadURL();

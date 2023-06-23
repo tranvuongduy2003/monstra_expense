@@ -124,6 +124,10 @@ const AddNewAccountScreen: React.FunctionComponent<
                     {typeList?.map(item => {
                       return (
                         <AccountTypeItem
+                          selected={
+                            typeItem?.id === item.id &&
+                            typeItem.name === typeItem.name
+                          }
                           onPress={() => setTypeItem(item)}
                           key={item.id}
                           imageSource={item.image}

@@ -1,16 +1,15 @@
-import React, {useContext, useState} from 'react';
-import {View, Text, ScrollView, StyleSheet} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import AppButton from 'components/AppButton';
+import Checkbox from 'components/Checkbox';
+import ErrorMessage from 'components/ErrorMessage';
 import Input from 'components/Input';
 import {AppColors} from 'constants/AppColors';
-import Checkbox from 'components/Checkbox';
-import AppButton from 'components/AppButton';
-import GoogleIcon from 'assets/svg/GoogleIcon';
-import Question from './components/question/Question';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useNavigation} from '@react-navigation/native';
-import {AuthPayload} from 'types/auth.type';
 import {AuthContext} from 'providers/AuthProvider';
-import ErrorMessage from 'components/ErrorMessage';
+import React, {useContext, useState} from 'react';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {AuthPayload} from 'types/auth.type';
+import Question from './components/question/Question';
 
 interface ISignUpScreenProps {}
 
@@ -32,7 +31,7 @@ const SignUpScreen: React.FunctionComponent<ISignUpScreenProps> = props => {
       if (isAcceptPolicy && isValid) {
         setIsPolicyError(false);
         await signUp(signUpPayload);
-        navigation.navigate('SetupPIN');
+        navigation.navigate('SetupAccount');
       } else {
         setIsPolicyError(true);
       }
