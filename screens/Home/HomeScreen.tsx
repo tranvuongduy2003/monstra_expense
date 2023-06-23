@@ -1,13 +1,14 @@
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
-import BellIcon from 'assets/svg/BellIcon';
+import {useAppDispatch, useAppSelector} from 'app/hooks';
 import ExpenseStatus from 'assets/svg/ExpenseStatus';
 import IncomeStatus from 'assets/svg/IncomeStatus';
 import {DataPoint, LineChart} from 'components/LineChart';
 import {AppColors} from 'constants/AppColors';
 import {icons} from 'constants/CategoryIcon';
 import scale from 'constants/Responsive';
+import {setNotify} from 'features/notify/notifySlice';
 import {AuthContext} from 'providers/AuthProvider';
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {
@@ -18,7 +19,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {ArrowsRightLeftIcon} from 'react-native-heroicons/solid';
+import {
+  ArrowsRightLeftIcon,
+  BellIcon,
+  BellSlashIcon,
+} from 'react-native-heroicons/solid';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import TransactionCard from 'screens/Transaction/components/TransactionCard';
 import {OptionType} from 'types/option.type';
@@ -46,7 +51,9 @@ interface IHomeScreenProps {}
 
 const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
   const navigation = useNavigation();
+  const dispatch = useAppDispatch();
   const {user} = useContext(AuthContext) as any;
+  const {isNotify} = useAppSelector(state => state.notify);
 
   //const [AccBalance, setAccBalance] = useState(Data.GetInstance().getAccBalance())
   const [totalExpense, setTotalExpense] = useState<any>(null);
@@ -235,8 +242,12 @@ const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
                 />
               )}
             </View>
-            <TouchableOpacity onPress={() => {}}>
-              <BellIcon></BellIcon>
+            <TouchableOpacity onPress={() => dispatch(setNotify(!isNotify))}>
+              {isNotify ? (
+                <BellIcon color={AppColors.primaryColor} size={30} />
+              ) : (
+                <BellSlashIcon color={AppColors.primaryColor} size={30} />
+              )}
             </TouchableOpacity>
           </View>
           <View style={styles.titleContainer}>
@@ -341,7 +352,7 @@ const styles = StyleSheet.create({
     borderRadius: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
+    backgroundColor: AppColors.white,
     borderWidth: 2,
     borderColor: '#AD00FF',
     overflow: 'hidden',

@@ -101,7 +101,7 @@ android {
     namespace "com.monstra_expense"
     defaultConfig {
         applicationId "com.monstra_expense"
-        minSdkVersion rootProject.ext.minSdkVersion
+        minSdkVersion 30
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"

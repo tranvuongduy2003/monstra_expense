@@ -2,7 +2,6 @@ import {useNavigation} from '@react-navigation/native';
 import AccountIcon from 'assets/svg/AccountIcon';
 import EditIcon from 'assets/svg/EditIcon';
 import LogoutIcon from 'assets/svg/LogoutIcon';
-import SettingsIcon from 'assets/svg/SettingsIcon';
 import {AppColors} from 'constants/AppColors';
 import scale from 'constants/Responsive';
 import {AuthContext} from 'providers/AuthProvider';
@@ -59,7 +58,6 @@ const ProfileScreen: React.FunctionComponent<IProfileScreenProps> = props => {
             title="Account"
             onPress={() => navigation.navigate('Account' as never)}
           />
-          <ProfileOption icon={<SettingsIcon />} title="Settings" />
           <ProfileOption
             icon={<LogoutIcon />}
             title="Logout"

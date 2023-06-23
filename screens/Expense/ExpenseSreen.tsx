@@ -3,6 +3,8 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {useAppDispatch, useAppSelector} from 'app/hooks';
+import axios from 'axios';
 import AppButton from 'components/AppButton';
 import Attachment from 'components/Attachment';
 import Dropdown from 'components/Dropdown';
@@ -45,6 +47,10 @@ const walletOptions: OptionType[] = [
 const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
+  const dispatch = useAppDispatch();
+  const {token} = useAppSelector(state => state.token);
+  const {isNotify} = useAppSelector(state => state.notify);
+
   const {user} = useContext(AuthContext) as any;
   const [showAttachment, setShowAttachment] = useState<boolean>(false);
   // const [showRecurring, setShowRecurring] = useState<boolean>(false);
@@ -112,6 +118,7 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
         })
         .then(expenseSnapshot => {
           const expenseId = expenseSnapshot.id;
+
           firestore()
             .collection('budgets')
             .get()
@@ -126,6 +133,49 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
                   now.getFullYear() === itemDate.getFullYear()
                 ) {
                   const expenses = data.expenses;
+
+                  if (data.isReceiveAlert && isNotify) {
+                    const totalExpense = expenses
+                      .map(item => item.balance)
+                      .reduce((prev, cur) => prev + cur, 0);
+
+                    if (data.budget <= totalExpense + balance) {
+                      // Thông báo exceed limit
+                      axios
+                        .post(
+                          `https://monstraexpenseserver-production.up.railway.app/send-group-message`,
+                          {
+                            title: `${category.title}: Expense limitation`,
+                            body: "You've exceed the limit",
+                            token: token,
+                          },
+                        )
+                        .catch(function (error) {
+                          console.log(
+                            '🚀 ~ file: ExpenseSreen.tsx:157 ~ handleAddExpense ~ error:',
+                            error,
+                          );
+                        });
+                    } else if (
+                      data.budget * (data.limit / 100) <=
+                      totalExpense + balance
+                    ) {
+                      // Hiển thị thông báo
+                      axios
+                        .post(
+                          `https://monstraexpenseserver-production.up.railway.app/send-group-message`,
+                          {
+                            title: `${category.title}: Expense limitation`,
+                            body: 'You are going to reach your budget limit',
+                            token: token,
+                          },
+                        )
+                        .catch(function (error) {
+                          console.log(error);
+                        });
+                    }
+                  }
+
                   expenses.push({
                     id: expenseId,
                     balance: balance,

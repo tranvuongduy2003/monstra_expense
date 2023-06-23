@@ -1,16 +1,14 @@
-import React, {useEffect} from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import ForgotPasswordScreen from 'screens/Auth/ForgotPasswordScreen';
-import SentEmailScreen from 'screens/Auth/SentEmailScreen';
-import ResetPasswordScreen from 'screens/Auth/ResetPasswordScreen';
-import SplashScreen from 'screens/Auth/SplashScreen';
-import SignUpScreen from 'screens/Auth/SignupScreen';
-import LoginScreen from 'screens/Auth/LoginScreen';
-import SetupPINScreen from 'screens/Auth/SetupPINScreen';
-import RetypePINScreen from 'screens/Auth/RetypePINScreen';
-import SetupAccountScreen from 'screens/Auth/SetupAccountScreen';
+import React, {useEffect} from 'react';
 import AddNewAccountScreen from 'screens/Auth/AddNewAccountScreen';
+import ForgotPasswordScreen from 'screens/Auth/ForgotPasswordScreen';
+import LoginScreen from 'screens/Auth/LoginScreen';
+import ResetPasswordScreen from 'screens/Auth/ResetPasswordScreen';
+import SentEmailScreen from 'screens/Auth/SentEmailScreen';
 import SetScreen from 'screens/Auth/SetScreen';
+import SetupAccountScreen from 'screens/Auth/SetupAccountScreen';
+import SignUpScreen from 'screens/Auth/SignupScreen';
+import SplashScreen from 'screens/Auth/SplashScreen';
 import HeaderBar from 'screens/layout/HeaderBar';
 
 import {AppColors} from 'constants/AppColors';
@@ -69,20 +67,6 @@ const AuthStack: React.FunctionComponent<IAuthStackProps> = props => {
         component={ResetPasswordScreen}
         options={{
           header: () => <HeaderBar name="Reset Password" />,
-        }}
-      />
-      <Stack.Screen
-        name="SetupPIN"
-        component={SetupPINScreen}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="RetypePIN"
-        component={RetypePINScreen}
-        options={{
-          headerShown: false,
         }}
       />
       <Stack.Screen
