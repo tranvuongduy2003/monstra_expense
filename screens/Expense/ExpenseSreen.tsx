@@ -142,11 +142,14 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
                     if (data.budget <= totalExpense + balance) {
                       // Thông báo exceed limit
                       axios
-                        .post(`http://10.0.126.180:8080/send-group-message`, {
-                          title: `${category.title}: Expense limitation`,
-                          body: "You've exceed the limit",
-                          token: token,
-                        })
+                        .post(
+                          `https://monstraexpenseserver-production.up.railway.app/send-group-message`,
+                          {
+                            title: `${category.title}: Expense limitation`,
+                            body: "You've exceed the limit",
+                            token: token,
+                          },
+                        )
                         .catch(function (error) {
                           console.log(
                             '🚀 ~ file: ExpenseSreen.tsx:157 ~ handleAddExpense ~ error:',
@@ -159,11 +162,14 @@ const ExpenseScreen: React.FunctionComponent<IExpenseScreenProps> = props => {
                     ) {
                       // Hiển thị thông báo
                       axios
-                        .post(`http://10.0.126.180:8080/send-group-message`, {
-                          title: `${category.title}: Expense limitation`,
-                          body: 'You are going to reach your budget limit',
-                          token: token,
-                        })
+                        .post(
+                          `https://monstraexpenseserver-production.up.railway.app/send-group-message`,
+                          {
+                            title: `${category.title}: Expense limitation`,
+                            body: 'You are going to reach your budget limit',
+                            token: token,
+                          },
+                        )
                         .catch(function (error) {
                           console.log(error);
                         });
