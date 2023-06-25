@@ -280,7 +280,7 @@ const TransactionScreen: React.FunctionComponent<
         <View style={styles.headerContainer}>
           <Dropdown
             options={options}
-            zIndex={50}
+            zIndex={10}
             select={filterTime}
             setSelect={setFilterTime}
           />
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    zIndex: 10,
+    zIndex: 20,
   },
   headerContainer: {
     justifyContent: 'space-between',
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginHorizontal: 16,
     marginVertical: 12,
-    zIndex: 100,
+    zIndex: 10,
   },
   filterContainer: {
     padding: 12,

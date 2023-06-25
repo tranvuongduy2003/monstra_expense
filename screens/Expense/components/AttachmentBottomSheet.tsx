@@ -1,13 +1,9 @@
 import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
-import React, {ReactNode, useMemo} from 'react';
-import {StyleSheet} from 'react-native';
-import AttachmentItem from './AttachmentItem';
-import {
-  CameraIcon,
-  DocumentIcon,
-  PhotoIcon,
-} from 'react-native-heroicons/solid';
 import {AppColors} from 'constants/AppColors';
+import React, {useMemo} from 'react';
+import {StyleSheet} from 'react-native';
+import {CameraIcon, PhotoIcon} from 'react-native-heroicons/solid';
+import AttachmentItem from './AttachmentItem';
 
 interface IAttachmentBottomSheetProps {
   setShow: any;
@@ -37,11 +33,6 @@ const AttachmentBottomSheet: React.FunctionComponent<
           icon={<PhotoIcon size={32} color={AppColors.primaryColor} />}
           title="Image"
           onPress={handleChoosePhoto}
-        />
-        <AttachmentItem
-          icon={<DocumentIcon size={32} color={AppColors.primaryColor} />}
-          title="Document"
-          onPress={() => {}}
         />
       </BottomSheetView>
     </BottomSheet>

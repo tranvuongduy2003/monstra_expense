@@ -1,85 +1,71 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {AppColors} from 'constants/AppColors';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {
-  ScrollView,
-  Text,
-  View,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
-import {OptionType} from 'components/CustomDropList';
-import {useNavigation} from '@react-navigation/native';
-import scale from 'constants/Responsive';
-import BellIcon from 'assets/svg/BellIcon';
-import CustomDropDown from 'components/CustomDropList';
-import IncomeStatus from 'assets/svg/IncomeStatus';
-import ExpenseStatus from 'assets/svg/ExpenseStatus';
-import {ImagesAssets} from 'assets/images/ImagesAssets';
-import DateCateButton from 'components/DateCateButton';
-import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import {useNavigation} from '@react-navigation/native';
+import {useAppDispatch, useAppSelector} from 'app/hooks';
+import ExpenseStatus from 'assets/svg/ExpenseStatus';
+import IncomeStatus from 'assets/svg/IncomeStatus';
+import {DataPoint, LineChart} from 'components/LineChart';
+import {AppColors} from 'constants/AppColors';
+import {icons} from 'constants/CategoryIcon';
+import scale from 'constants/Responsive';
+import {setNotify} from 'features/notify/notifySlice';
+import {AuthContext} from 'providers/AuthProvider';
+import React, {useContext, useEffect, useRef, useState} from 'react';
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {
+  ArrowsRightLeftIcon,
+  BellIcon,
+  BellSlashIcon,
+} from 'react-native-heroicons/solid';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import TransactionCard from 'screens/Transaction/components/TransactionCard';
+import {OptionType} from 'types/option.type';
+
+const timeOptions: OptionType[] = [
+  {
+    title: 'Today',
+    value: 'today',
+  },
+  {
+    title: 'Week',
+    value: 'week',
+  },
+  {
+    title: 'Month',
+    value: 'month',
+  },
+  {
+    title: 'Year',
+    value: 'year',
+  },
+];
 
 interface IHomeScreenProps {}
 
-const options: OptionType[] = [
-  {
-    title: 'January',
-    value: 'jan',
-  },
-  {
-    title: 'February',
-    value: 'feb',
-  },
-  {
-    title: 'March',
-    value: 'mar',
-  },
-  {
-    title: 'April',
-    value: 'apr',
-  },
-  {
-    title: 'May',
-    value: 'may',
-  },
-  {
-    title: 'June',
-    value: 'jun',
-  },
-  {
-    title: 'July',
-    value: 'jul',
-  },
-  {
-    title: 'August',
-    value: 'aug',
-  },
-  {
-    title: 'September',
-    value: 'sep',
-  },
-  {
-    title: 'October',
-    value: 'oct',
-  },
-  {
-    title: 'November',
-    value: 'nov',
-  },
-  {
-    title: 'December',
-    value: 'dec',
-  },
-];
 const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
   const navigation = useNavigation();
+  const dispatch = useAppDispatch();
+  const {user} = useContext(AuthContext) as any;
+  const {isNotify} = useAppSelector(state => state.notify);
+
   //const [AccBalance, setAccBalance] = useState(Data.GetInstance().getAccBalance())
   const [totalExpense, setTotalExpense] = useState<any>(null);
   const [totalIncome, setTotalIncome] = useState<any>(null);
   const [totalPrice, setTotalPrice] = useState<any>(null);
+  const [lineChartData, setLineChartData] = useState<DataPoint[]>([]);
+  const [transactions, setTransactions] = useState<any>([]);
+  const [timeSelect, setTimeSelect] = useState<OptionType>(timeOptions[0]);
+
   const fetchAccountsData = useRef<any>(null);
+  const fetchAccountTransactionsData = useRef<any>(null);
+  const handleFetchTransaction = useRef<any>();
 
   useEffect(() => {
     fetchAccountsData.current = async () => {
@@ -89,24 +75,11 @@ const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
           .where('userId', '==', auth().currentUser?.uid)
           .get()
           .then(querySnapshot => {
-            let results = new Map<string, Array<any>>();
             let totalPrice = 0;
 
             querySnapshot.forEach(documentSnapshot => {
               const data = documentSnapshot.data();
-              let key = '';
-
-              const items = {
-                id: documentSnapshot.id,
-                userId: auth().currentUser?.uid,
-                //icon: icons.get(data.type_item.name)?.child,
-                title: data.name,
-                price: `${'$'}${data.balance}`,
-              };
               totalPrice = data.balance + totalPrice;
-
-              const filteredArray = results.get(key) || [];
-              results.set(key, [...filteredArray, items]);
             });
             //Data.GetInstance().setAccBalance(totalPrice.toString())
             //setWallets(results);
@@ -120,7 +93,7 @@ const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
   });
 
   useEffect(() => {
-    fetchAccountsData.current = async () => {
+    fetchAccountTransactionsData.current = async () => {
       try {
         await firestore()
           .collection('transactions')
@@ -132,6 +105,7 @@ const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
 
             querySnapshot.forEach(documentSnapshot => {
               const data = documentSnapshot.data();
+
               if (data.type === 'expense')
                 totalIncome = data.balance + totalIncome;
               else if (data.type === 'income')
@@ -146,26 +120,134 @@ const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
         console.log(error);
       }
     };
-    fetchAccountsData.current();
+    fetchAccountTransactionsData.current();
   });
 
+  useEffect(() => {
+    handleFetchTransaction.current = async () => {
+      try {
+        firestore()
+          .collection('transactions')
+          .where('userId', '==', auth().currentUser?.uid)
+          .get()
+          .then(querySnapshot => {
+            const results: any = [];
+            const dataPoints: DataPoint[] = [];
+
+            querySnapshot.forEach(documentSnapshot => {
+              const data = documentSnapshot.data();
+              const itemDate: Date = data.createdAt.toDate();
+
+              if (timeSelect.value === 'today') {
+                const today = new Date();
+                if (
+                  itemDate.getDate() !== today.getDate() ||
+                  itemDate.getMonth() !== today.getMonth() ||
+                  itemDate.getFullYear() !== today.getFullYear()
+                ) {
+                  return;
+                }
+              } else if (timeSelect.value === 'week') {
+                const firstDayOfWeek = new Date();
+                const weekDayDigit = firstDayOfWeek.getDay();
+                firstDayOfWeek.setDate(
+                  firstDayOfWeek.getDate() -
+                    ((((weekDayDigit - 1) % 7) + 7) % 7),
+                );
+                if (itemDate < firstDayOfWeek) {
+                  return;
+                }
+              } else if (timeSelect.value === 'month') {
+                var date = new Date();
+                var firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+                if (itemDate < firstDay) {
+                  return;
+                }
+              } else if (timeSelect.value === 'year') {
+                var date = new Date();
+                var firstDay = new Date(date.getFullYear(), 1, 1);
+                if (itemDate < firstDay) {
+                  return;
+                }
+              }
+
+              data.type === 'expense' &&
+                dataPoints.push({
+                  date: itemDate.toISOString(),
+                  value: data.balance,
+                });
+
+              const item = {
+                id: documentSnapshot.id,
+                icon:
+                  data.type !== 'transfer' ? (
+                    icons.get(data.category?.value || '')?.child
+                  ) : (
+                    <ArrowsRightLeftIcon
+                      color={AppColors.primaryBlue}
+                      fontSize={30}
+                    />
+                  ),
+                title:
+                  data.type !== 'transfer' ? data.category.title : 'Transfer',
+                desc: data.title,
+                price: data.balance,
+                time: itemDate.toLocaleTimeString('vi-VI', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                }),
+                iconBgColor:
+                  data.type !== 'transfer'
+                    ? icons.get(data.category?.value || '')?.bgColor
+                    : AppColors.primaryBlue100,
+                type: data.type,
+              };
+              results.push(item);
+            });
+
+            setLineChartData(
+              dataPoints.sort((a, b) => {
+                const prevDate = new Date(a.date);
+                const nextDate = new Date(b.date);
+                return prevDate.getTime() - nextDate.getTime();
+              }),
+            );
+            setTransactions(results);
+          });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    handleFetchTransaction.current();
+  }, [timeSelect]);
+
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-      }}>
+    <SafeAreaView style={{flex: 1}}>
       <ScrollView
         style={{backgroundColor: AppColors.screenColor}}
         contentContainerStyle={{
           flexGrow: 1,
+          paddingBottom: 70,
         }}>
         {/* Header */}
         <View style={styles.topContainer}>
           <View style={styles.headerContainer}>
-            <View style={styles.avatar}></View>
-            <CustomDropDown options={options} zIndex={100} />
-            <TouchableOpacity onPress={() => {}}>
-              <BellIcon></BellIcon>
+            <View style={styles.avatar}>
+              {user.avatar && (
+                <Image
+                  source={{
+                    uri: user.avatar,
+                  }}
+                  style={{width: '96%', height: '96%', borderRadius: 100}}
+                />
+              )}
+            </View>
+            <TouchableOpacity onPress={() => dispatch(setNotify(!isNotify))}>
+              {isNotify ? (
+                <BellIcon color={AppColors.primaryColor} size={30} />
+              ) : (
+                <BellSlashIcon color={AppColors.primaryColor} size={30} />
+              )}
             </TouchableOpacity>
           </View>
           <View style={styles.titleContainer}>
@@ -173,15 +255,20 @@ const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
             <Text style={styles.number}>${totalPrice}</Text>
           </View>
           <View style={styles.moneyStatusContainer}>
-            <View style={styles.incomeStatus}>
-              <IncomeStatus style={styles.iconContainer}></IncomeStatus>
+            <View
+              style={[
+                styles.moneyStatus,
+                {backgroundColor: AppColors.primaryGreen},
+              ]}>
+              <IncomeStatus />
               <View style={styles.statusTitleContainer}>
                 <Text style={styles.statusTitle}>Income</Text>
                 <Text style={styles.moneyTitle}>${totalIncome}</Text>
               </View>
             </View>
-            <View style={styles.expenseStatus}>
-              <ExpenseStatus></ExpenseStatus>
+            <View
+              style={[styles.moneyStatus, {backgroundColor: AppColors.red}]}>
+              <ExpenseStatus />
               <View style={styles.statusTitleContainer}>
                 <Text style={styles.statusTitle}>Expense</Text>
                 <Text style={styles.moneyTitle}>${totalExpense}</Text>
@@ -189,12 +276,62 @@ const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
             </View>
           </View>
         </View>
-        <Text style={styles.statusSpend}>Spend Frequency</Text>
+        <View style={styles.spendTitle}>
+          <Text style={styles.spendTitleText}>Spend Frequency</Text>
+        </View>
         <View style={styles.chartContainer}>
-          <Image source={ImagesAssets.chart}></Image>
+          {lineChartData && lineChartData.length > 0 ? (
+            <LineChart data={lineChartData} />
+          ) : (
+            <Text>No Data</Text>
+          )}
         </View>
         <View style={styles.buttonContainer}>
-          <DateCateButton></DateCateButton>
+          {timeOptions.map((item, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.buttonChild,
+                item.value === timeSelect.value && {
+                  backgroundColor: AppColors.yellow100,
+                },
+              ]}
+              onPress={() => setTimeSelect(item)}>
+              <Text
+                style={[
+                  styles.buttonChildText,
+                  item.value === timeSelect.value && {
+                    color: AppColors.yellow,
+                  },
+                ]}>
+                {item.title}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        <View style={styles.transactionTitle}>
+          <Text style={styles.transactionTitleText}>Recent Transaction</Text>
+          <TouchableOpacity
+            style={styles.seeAllButton}
+            onPress={() => navigation.navigate('Transaction' as never)}>
+            <Text style={styles.seeAllButtonText}>See All</Text>
+          </TouchableOpacity>
+        </View>
+        <View>
+          {transactions &&
+            transactions.map((transaction: any) => (
+              <TransactionCard
+                key={transaction.id}
+                id={transaction.id}
+                icon={transaction.icon}
+                title={transaction.title}
+                desc={transaction.desc}
+                price={transaction.price}
+                time={transaction.time}
+                iconBgColor={transaction.iconBgColor}
+                type={transaction.type}
+              />
+            ))}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -203,8 +340,8 @@ const HomeScreen: React.FunctionComponent<IHomeScreenProps> = props => {
 
 const styles = StyleSheet.create({
   topContainer: {
-    width: scale(375),
-    height: scale(312),
+    paddingBottom: 23,
+    paddingHorizontal: 16,
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
     backgroundColor: '#FFF6E5',
@@ -213,91 +350,121 @@ const styles = StyleSheet.create({
     width: scale(40),
     height: scale(40),
     borderRadius: 40,
-    backgroundColor: AppColors.mistyRose,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: AppColors.white,
+    borderWidth: 2,
+    borderColor: '#AD00FF',
+    overflow: 'hidden',
   },
   headerContainer: {
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',
-    marginHorizontal: 16,
     marginVertical: 12,
-    zIndex: 100,
   },
   titleContainer: {
-    zIndex: 70,
-    textAlign: 'center',
     alignItems: 'center',
-    alignContent: 'center',
+    gap: 9,
   },
   title: {
     fontSize: scale(14),
+    lineHeight: 17,
+    fontWeight: '500',
     color: AppColors.secondaryTextColor,
   },
   number: {
     fontSize: scale(40),
-    fontFamily: 'Inter-SemiBold',
-    color: AppColors.textColor,
+    lineHeight: 48,
+    fontWeight: '600',
+    color: AppColors.primaryTextColor,
   },
   moneyStatusContainer: {
-    width: scale(334),
-    height: scale(80),
     marginTop: scale(27),
-    alignSelf: 'center',
+    alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    gap: 16,
   },
-  incomeStatus: {
-    width: scale(164),
-    height: '100%',
+  moneyStatus: {
+    flex: 1,
     borderRadius: 28,
-    backgroundColor: AppColors.primaryGreen,
+    padding: 16,
     alignItems: 'center',
-    alignContent: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     flexDirection: 'row',
-  },
-  expenseStatus: {
-    width: scale(164),
-    height: '100%',
-    borderRadius: 28,
-    backgroundColor: AppColors.red,
-    alignItems: 'center',
-    alignContent: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
-  },
-  iconContainer: {
-    marginRight: scale(5),
   },
   statusTitleContainer: {
-    marginLeft: scale(5),
-    height: scale(48),
     justifyContent: 'space-between',
   },
   statusTitle: {
     fontSize: scale(14),
-    fontFamily: 'Inter-Medium',
-    color: AppColors.white,
+    fontWeight: '500',
+    lineHeight: 17,
+    color: AppColors.whiteText,
   },
   moneyTitle: {
     fontSize: scale(22),
-    fontFamily: 'Inter-SemiBold',
-    color: AppColors.white,
+    fontWeight: '600',
+    lineHeight: 27,
+    color: AppColors.whiteText,
   },
-  statusSpend: {
-    fontSize: scale(18),
-    fontWeight: 'bold',
-    color: AppColors.black,
-    marginLeft: scale(8),
-    padding: scale(8),
+  spendTitle: {
+    paddingHorizontal: 16,
+    marginVertical: 8,
+  },
+  spendTitleText: {
+    color: AppColors.primaryTextColor,
+    fontSize: 18,
+    lineHeight: 22,
+    fontWeight: '600',
   },
   chartContainer: {
-    width: '100%',
-    height: scale(186),
+    height: 220,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonContainer: {
-    alignSelf: 'center',
-    marginTop: scale(9),
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+  },
+  buttonChild: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 40,
+  },
+  buttonChildText: {
+    textAlign: 'center',
+    color: AppColors.secondaryTextColor,
+    fontSize: 14,
+    fontWeight: '500',
+    lineHeight: 18,
+  },
+  transactionTitle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    marginVertical: 16,
+  },
+  transactionTitleText: {
+    color: AppColors.primaryTextColor,
+    fontSize: 18,
+    lineHeight: 22,
+    fontWeight: '600',
+  },
+  seeAllButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 7,
+    backgroundColor: AppColors.primaryColor100,
+    borderRadius: 50,
+  },
+  seeAllButtonText: {
+    fontSize: 14,
+    lineHeight: 18,
+    fontWeight: '500',
+    textAlign: 'center',
+    color: AppColors.primaryColor,
   },
 });
 

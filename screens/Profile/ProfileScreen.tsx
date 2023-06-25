@@ -1,15 +1,13 @@
-import React, {useContext, useEffect, useState} from 'react';
-import { useNavigation } from '@react-navigation/native';
-import {StyleSheet, View, Text, TouchableOpacity} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {useNavigation} from '@react-navigation/native';
+import AccountIcon from 'assets/svg/AccountIcon';
+import EditIcon from 'assets/svg/EditIcon';
+import LogoutIcon from 'assets/svg/LogoutIcon';
 import {AppColors} from 'constants/AppColors';
 import scale from 'constants/Responsive';
-import AccountIcon from 'assets/svg/AccountIcon';
-import SettingsIcon from 'assets/svg/SettingsIcon';
-import ExportIcon from 'assets/svg/ExportIcon';
-import LogoutIcon from 'assets/svg/LogoutIcon';
-import EditIcon from 'assets/svg/EditIcon';
 import {AuthContext} from 'providers/AuthProvider';
+import React, {useContext, useEffect, useState} from 'react';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import ProfileOption from './components/ProfileOption';
 
 interface IProfileScreenProps {}
@@ -32,7 +30,14 @@ const ProfileScreen: React.FunctionComponent<IProfileScreenProps> = props => {
     <SafeAreaView style={styles.container}>
       <View style={styles.headerContainer}>
         <View style={styles.avatarContainer}>
-          <View style={styles.avatar}></View>
+          {user.avatar && (
+            <Image
+              source={{
+                uri: user.avatar,
+              }}
+              style={{width: '96%', height: '96%', borderRadius: 100}}
+            />
+          )}
         </View>
         <View style={styles.userNameContainer}>
           <Text style={styles.label}>Username</Text>
@@ -40,14 +45,19 @@ const ProfileScreen: React.FunctionComponent<IProfileScreenProps> = props => {
             {name}
           </Text>
         </View>
-        <TouchableOpacity style={styles.edit}>
+        <TouchableOpacity
+          style={styles.edit}
+          onPress={() => navigation.navigate('EditProfile')}>
           <EditIcon></EditIcon>
         </TouchableOpacity>
       </View>
       <View style={styles.bodyContainer}>
         <View style={styles.contentContainer}>
-          <ProfileOption icon={<AccountIcon />} title="Account" onPress={() => navigation.navigate('Account' as never)}/>
-          <ProfileOption icon={<SettingsIcon />} title="Settings" />
+          <ProfileOption
+            icon={<AccountIcon />}
+            title="Account"
+            onPress={() => navigation.navigate('Account' as never)}
+          />
           <ProfileOption
             icon={<LogoutIcon />}
             title="Logout"
@@ -76,13 +86,13 @@ const styles = StyleSheet.create({
   avatarContainer: {
     width: scale(84),
     height: scale(84),
-    padding: 2,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
-    borderRadius: 82,
+    borderRadius: 84,
     borderWidth: 2,
     borderColor: '#AD00FF',
+    overflow: 'hidden',
   },
   avatar: {
     width: '100%',

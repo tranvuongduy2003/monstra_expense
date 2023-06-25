@@ -1,20 +1,20 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import BudgetScreen from 'screens/Budget/BudgetScreen';
-import HomeScreen from 'screens/Home/HomeScreen';
-import TransactionScreen from 'screens/Transaction/TransactionScreen';
-import ProfileScreen from 'screens/Profile/ProfileScreen';
+import AddButton from 'components/AddButton';
+import {AppColors} from 'constants/AppColors';
+import * as shape from 'd3-shape';
 import React from 'react';
+import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import {
   ArrowsRightLeftIcon,
   ChartPieIcon,
   HomeIcon,
   UserIcon,
 } from 'react-native-heroicons/solid';
-import {AppColors} from 'constants/AppColors';
-import {Dimensions, StyleSheet, Text, View, Image} from 'react-native';
-import * as shape from 'd3-shape';
 import {Path, Svg} from 'react-native-svg';
-import AddButton from 'components/AddButton';
+import BudgetScreen from 'screens/Budget/BudgetScreen';
+import HomeScreen from 'screens/Home/HomeScreen';
+import ProfileScreen from 'screens/Profile/ProfileScreen';
+import TransactionScreen from 'screens/Transaction/TransactionScreen';
 
 interface ITabsProps {}
 

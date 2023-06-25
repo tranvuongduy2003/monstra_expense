@@ -1,28 +1,21 @@
-import React, {useState, useRef, useEffect, ReactElement} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
+import {ImagesAssets} from 'assets/images/ImagesAssets';
+import AppButton from 'components/AppButton';
+import {AppColors} from 'constants/AppColors';
+import scale from 'constants/Responsive';
+import {IAccount} from 'interfaces/IAccount';
+import React, {ReactElement, useEffect, useRef, useState} from 'react';
 import {
+  ImageBackground,
+  ScrollView,
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
-  ImageBackground,
-  ScrollView,
 } from 'react-native';
-import {
-  BanknotesIcon,
-  BuildingStorefrontIcon,
-  ClipboardDocumentListIcon,
-  ShoppingBagIcon,
-  TruckIcon,
-} from 'react-native-heroicons/solid';
-import {AppColors} from 'constants/AppColors';
-import {ImagesAssets} from 'assets/images/ImagesAssets';
-import scale from 'constants/Responsive';
-import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
-import Phase from './components/Phase';
-import Momo from 'assets/svg/Momo';
-import Vietcombank from 'assets/svg/Vietcombank';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import AccountItem from './components/AccountItem';
 
 interface IAccountScreenProps {}
 
@@ -30,17 +23,11 @@ type IconType = {
   child: ReactElement;
 };
 
-const icons = new Map<string, IconType>();
-icons.set('Vietcombank', {
-  child: <Vietcombank></Vietcombank>,
-});
-
-icons.set('Momo', {
-  child: <Momo></Momo>,
-});
-
 const AccountScreen: React.FunctionComponent<IAccountScreenProps> = props => {
-  const [wallets, setWallets] = useState<Map<string, Array<any>>>();
+  const navigation = useNavigation();
+  const isFocused = useIsFocused();
+
+  const [wallets, setWallets] = useState<IAccount[]>([]);
   const [totalPrice, setTotalPrice] = useState<any>(null);
   const fetchAccountsData = useRef<any>(null);
 
@@ -52,26 +39,14 @@ const AccountScreen: React.FunctionComponent<IAccountScreenProps> = props => {
           .where('userId', '==', auth().currentUser?.uid)
           .get()
           .then(querySnapshot => {
-            let results = new Map<string, Array<any>>();
+            let results: any = [];
             let totalPrice = 0;
 
             querySnapshot.forEach(documentSnapshot => {
               const data = documentSnapshot.data();
-              let key = '';
-              
-              const items = {
-                id: documentSnapshot.id,
-                userId: auth().currentUser?.uid,
-                icon: icons.get(data.type_item.name)?.child,
-                title: data.name,
-                price: `${'$'}${data.balance}`,
-              };
-              totalPrice = data.balance + totalPrice;
-              
-              const filteredArray = results.get(key) || [];
-              results.set(key, [...filteredArray, items]);
+
+              results.push({...data, id: documentSnapshot.id});
             });
-            //Data.GetInstance().setAccBalance(totalPrice.toString())
             setWallets(results);
             setTotalPrice(totalPrice);
           });
@@ -80,7 +55,7 @@ const AccountScreen: React.FunctionComponent<IAccountScreenProps> = props => {
       }
     };
     fetchAccountsData.current();
-  });
+  }, [isFocused]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -95,21 +70,25 @@ const AccountScreen: React.FunctionComponent<IAccountScreenProps> = props => {
           resizeMode="stretch">
           <View style={styles.titleContainer}>
             <Text style={styles.title}>Account Balance</Text>
-            <Text style={styles.number}>${totalPrice}</Text>
+            <Text style={styles.number}>{`$${wallets
+              .map(item => item.balance)
+              .reduce((prev, cur) => prev + cur, 0)}`}</Text>
           </View>
         </ImageBackground>
-      <ScrollView>
-        {Array.from(wallets?.keys() || []).map(key => (
-          <Phase key={key} wallets={wallets?.get(key as string)} />
-        ))}
-      </ScrollView>
-      <View style={styles.bottomContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => {}}>
-          <View style={styles.titleButtonContainer}>
-            <Text style={styles.titleButton}>+ Add new wallet</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
+        <ScrollView>
+          {wallets &&
+            wallets.map((item, index) => (
+              <AccountItem key={index} data={item} />
+            ))}
+        </ScrollView>
+        <View style={styles.buttonContainer}>
+          <AppButton
+            title="Add new wallet"
+            color={AppColors.white}
+            backgroundColor={AppColors.primaryColor}
+            onPress={() => navigation.navigate('AddNewWallet' as never)}
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -179,31 +158,9 @@ const styles = StyleSheet.create({
     color: AppColors.textColor,
     fontFamily: 'Inter-SemiBold',
   },
-  bottomContainer: {
-    flexDirection: 'column-reverse',
-    height: scale(90),
-    //marginBottom: scale(16),
-    alignItems: 'center',
-  },
-  button: {
-    width: scale(343),
-    height: scale(56),
-    borderRadius: 16,
-    alignItems: 'center',
-    backgroundColor: AppColors.primaryColor,
-  },
-  titleButtonContainer: {
-    alignContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-    marginVertical: scale(16),
-  },
-  titleButton: {
-    fontSize: 18,
-    fontWeight: '600',
-    textAlign: 'center',
-    color: AppColors.white,
-    marginLeft: scale(10),
+  buttonContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 50,
   },
 });
 

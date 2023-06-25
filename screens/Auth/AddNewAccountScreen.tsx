@@ -1,22 +1,22 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {ScrollView, View, StyleSheet, Text} from 'react-native';
-import {AppColors} from 'constants/AppColors';
-import Input from 'components/Input';
-import AppButton from 'components/AppButton';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
-import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
+import AppButton from 'components/AppButton';
+import {OptionType} from 'components/CustomDropList';
 import Dropdown from 'components/Dropdown';
-import { OptionType } from '@components/CustomDropList';
-import {AccountListType} from 'types/account.type';
+import ErrorMessage from 'components/ErrorMessage';
+import Input from 'components/Input';
+import StatusModal from 'components/StatusModal';
+import {AppColors} from 'constants/AppColors';
 import {Banks} from 'constants/Banks';
 import {Wallets} from 'constants/Wallets';
-import AccountTypeItem from './components/AccountTypeItem';
-import ErrorMessage from 'components/ErrorMessage';
+import {ClickOutsideProvider} from 'providers/ClickOutSideProvider';
+import React, {useEffect, useRef, useState} from 'react';
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
-import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
-import StatusModal from 'components/StatusModal';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {AccountListType} from 'types/account.type';
+import AccountTypeItem from './components/AccountTypeItem';
 
 interface IAddNewAccountScreenProps {}
 
@@ -69,7 +69,7 @@ const AddNewAccountScreen: React.FunctionComponent<
             userId: auth().currentUser?.uid,
             balance: balance,
             name: name,
-            type: select?.value,
+            type: select,
             type_item: typeItem,
             createdAt: firestore.Timestamp.fromDate(new Date()),
           });
@@ -124,6 +124,10 @@ const AddNewAccountScreen: React.FunctionComponent<
                     {typeList?.map(item => {
                       return (
                         <AccountTypeItem
+                          selected={
+                            typeItem?.id === item.id &&
+                            typeItem.name === typeItem.name
+                          }
                           onPress={() => setTypeItem(item)}
                           key={item.id}
                           imageSource={item.image}

@@ -1,17 +1,22 @@
-import React, {useContext, useEffect, useRef, useState} from 'react';
-import {NavigationContainer} from '@react-navigation/native';
-import AppStack from './AppStack';
-import AuthStack from './AuthStack';
-import {AuthContext} from 'providers/AuthProvider';
+import AsyncStorage from '@react-native-community/async-storage';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import AsyncStorage from '@react-native-community/async-storage';
+import messaging from '@react-native-firebase/messaging';
+import {NavigationContainer} from '@react-navigation/native';
+import {useAppDispatch} from 'app/hooks';
+import {setToken} from 'features/token/tokenSlice';
+import {AuthContext} from 'providers/AuthProvider';
+import React, {useContext, useEffect, useRef, useState} from 'react';
+import AppStack from './AppStack';
+import AuthStack from './AuthStack';
 
 export interface IAppNavigationProps {}
 
 export function AppNavigation(props: IAppNavigationProps) {
   const {loggedIn, setLoggedIn, user, setUser} = useContext(AuthContext) as any;
   const [initializing, setInitializing] = useState<boolean>(true);
+  const dispatch = useAppDispatch();
+  const initApp = useRef<any>(null);
 
   const handleFetchUser = useRef<any>();
 
@@ -46,6 +51,15 @@ export function AppNavigation(props: IAppNavigationProps) {
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;
+  }, []);
+
+  useEffect(() => {
+    initApp.current = async () => {
+      const token = await messaging().getToken();
+      dispatch(setToken(token));
+      console.log('🚀 ~ file: App.tsx:30 ~ initApp.current= ~ token:', token);
+    };
+    initApp.current();
   }, []);
 
   if (initializing) return null;

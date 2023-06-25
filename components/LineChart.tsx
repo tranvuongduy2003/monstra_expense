@@ -29,7 +29,7 @@ interface ILineChartProps {
 }
 
 const {width} = Dimensions.get('screen');
-const GRAPH_HEIGHT = 300;
+const GRAPH_HEIGHT = 220;
 const GRAPH_WIDTH = width;
 
 const makeGraph = (data: DataPoint[]): GraphData => {
